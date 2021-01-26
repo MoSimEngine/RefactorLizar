@@ -6,8 +6,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.core.javaparser.ModelBuilder;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.core.model.Bundle;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.core.model.LanguageFeature;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.core.pluginparser.Bundle;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.core.pluginparser.BundleParser;
 import spoon.reflect.declaration.CtPackage;
 

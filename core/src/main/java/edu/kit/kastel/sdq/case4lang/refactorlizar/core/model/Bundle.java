@@ -1,4 +1,4 @@
-package edu.kit.kastel.sdq.case4lang.refactorlizar.core.pluginparser;
+package edu.kit.kastel.sdq.case4lang.refactorlizar.core.model;
 
 import java.util.Collection;
 
