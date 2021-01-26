@@ -26,6 +26,7 @@
   </build>
   <modules>
     <module>core</module>
+    <module>analyzer-api</module>
   </modules>
   <dependencies>
     <dependency>
@@ -37,19 +38,19 @@
       <groupId>com.google.flogger</groupId>
       <artifactId>flogger-system-backend</artifactId>
       <version>0.5.1</version>
-  </dependency>
-  <dependency>
-    <groupId>com.google.flogger</groupId>
-    <artifactId>flogger</artifactId>
-    <version>0.5.1</version>
-</dependency>
+    </dependency>
+    <dependency>
+      <groupId>com.google.flogger</groupId>
+      <artifactId>flogger</artifactId>
+      <version>0.5.1</version>
+    </dependency>
 
 
-<dependency>
-  <groupId>org.junit.jupiter</groupId>
-  <artifactId>junit-jupiter-api</artifactId>
-  <version>5.7.0</version>
-  <scope>test</scope>
-</dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.7.0</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>
