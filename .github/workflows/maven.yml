@@ -20,5 +20,11 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
+    - uses: actions/checkout@v2
+      with:
+          token: ${{ secrets.ACCESS_TOKEN }}
+          submodules: true
+    - name: Test with maven
+      run: mvn test
     - name: Build with Maven
       run: mvn -B package --file pom.xml
