@@ -29,11 +29,11 @@ public class ModelBuilder {
         path, model.getAllTypes().size(), model.getAllPackages().size());
   }
 
-  Collection<CtType<?>> getAllTypes() {
+  public Collection<CtType<?>> getAllTypes() {
     return model.getAllTypes();
   }
 
-  Collection<CtPackage> getAllPackages() {
+  public Collection<CtPackage> getAllPackages() {
     return model.getAllPackages();
   }
 }

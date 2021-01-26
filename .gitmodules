@@ -1,3 +1,6 @@
 [submodule "core/src/test/resources/mSimuLizar"]
 	path = core/src/test/resources/mSimuLizar
 	url = git@github.com:layornos/mSimuLizar.git
+[submodule "core/src/test/resources/mPCM_build"]
+	path = core/src/test/resources/mPCM_build
+	url = git@github.com:layornos/mPCM_build.git

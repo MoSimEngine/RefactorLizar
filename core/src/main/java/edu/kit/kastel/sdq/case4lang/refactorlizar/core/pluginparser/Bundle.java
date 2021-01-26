@@ -8,7 +8,7 @@ public class Bundle {
   private String version;
   private Collection<String> exportedPackage;
   private Collection<String> requiredBundle;
-
+  private Collection<String> internalRequiredBundles;
   /**
    * @param name
    * @param version
@@ -88,6 +88,19 @@ public class Bundle {
     return "Bundle [exportedPackage=" + exportedPackage + ", name=" + name + ", requiredBundle="
         + requiredBundle + ", version=" + version + "]";
   }
-
-  
+  /**
+   * @return the interalRequiredBundles
+   */
+  public Collection<String> getInternalRequiredBundles() {
+    return internalRequiredBundles;
+  }
+  /**
+   * @param interalRequiredBundles the interalRequiredBundles to set
+   */
+  public void setInternalRequiredBundles(Collection<String> interalRequiredBundles) {
+    this.internalRequiredBundles = interalRequiredBundles;
+  }
+  public String getSimpleName() {
+    return name.substring(name.lastIndexOf('.') + 1).trim();
+  }
 }
