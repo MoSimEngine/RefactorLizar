@@ -71,6 +71,7 @@
   </build>
   <modules>
     <module>core</module>
+    <module>analyzer-api</module>
   </modules>
   <dependencies>
     <dependency>
@@ -96,8 +97,5 @@
   <version>5.7.0</version>
   <scope>test</scope>
 </dependency>
-
   </dependencies>
-
-
 </project>
