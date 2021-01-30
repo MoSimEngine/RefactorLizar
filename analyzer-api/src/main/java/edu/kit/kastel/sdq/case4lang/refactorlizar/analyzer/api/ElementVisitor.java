@@ -94,9 +94,11 @@ public class ElementVisitor implements CtVisitor {
 
   private boolean result = false;
 
-  boolean canVisit() {
+  public boolean canVisit() {
    return result;
  }
+
+
    @Override
   public <A extends Annotation> void visitCtAnnotation(CtAnnotation<A> arg0) {
     result = false;
@@ -612,6 +614,14 @@ public class ElementVisitor implements CtVisitor {
   public void visitCtYieldStatement(CtYieldStatement arg0) {
     result = false;
 
+  }
+
+
+  /**
+   * @param result the result to set
+   */
+  public void setResult(boolean result) {
+    this.result = result;
   }
 
 }
