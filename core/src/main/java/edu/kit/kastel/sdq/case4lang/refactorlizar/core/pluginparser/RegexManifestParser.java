@@ -10,6 +10,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import com.google.common.flogger.FluentLogger;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.core.model.Bundle;
 /**
  * This defines an regex based manifest parser. For value retrieving regex are used. 
  */

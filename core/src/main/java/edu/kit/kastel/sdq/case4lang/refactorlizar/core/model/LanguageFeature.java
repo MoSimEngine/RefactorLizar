@@ -1,6 +1,5 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.core.model;
 
-import edu.kit.kastel.sdq.case4lang.refactorlizar.core.pluginparser.Bundle;
 import spoon.reflect.declaration.CtPackage;
 
 public class LanguageFeature {
