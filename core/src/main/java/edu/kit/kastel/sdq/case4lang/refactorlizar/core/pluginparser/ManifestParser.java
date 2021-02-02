@@ -2,7 +2,7 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.core.pluginparser;
 
 import java.io.File;
 import java.util.Optional;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.core.model.Bundle;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Bundle;
 /**
  * This defines a manifest.mf file parser. An implementation must convert the input file to a {@link Bundle}.
  * 

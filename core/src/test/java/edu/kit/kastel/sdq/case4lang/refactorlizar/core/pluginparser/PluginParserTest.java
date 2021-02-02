@@ -3,7 +3,7 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.core.pluginparser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Collection;
 import org.junit.jupiter.api.Test;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.core.model.Bundle;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Bundle;
 
 public class PluginParserTest {
   @Test

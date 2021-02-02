@@ -3,7 +3,7 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.core.pluginparser;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.core.model.Bundle;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Bundle;
 
 /**
  * Processes each bundle removing all required packages that are not present. 

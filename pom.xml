@@ -55,23 +55,27 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
           <version>3.2.0</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>3.9.1</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>3.1.1</version>
-      </plugin>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.9.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>3.1.1</version>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
   <modules>
-    <module>core</module>
+    <module>model</module>
     <module>analyzer-api</module>
+    <module>core</module>
+
+    <module>language-blob</module>
+
   </modules>
   <dependencies>
     <dependency>
@@ -83,19 +87,17 @@
       <groupId>com.google.flogger</groupId>
       <artifactId>flogger-system-backend</artifactId>
       <version>0.5</version>
-  </dependency>
-  <dependency>
-    <groupId>com.google.flogger</groupId>
-    <artifactId>flogger</artifactId>
-    <version>0.5</version>
-</dependency>
-
-
-<dependency>
-  <groupId>org.junit.jupiter</groupId>
-  <artifactId>junit-jupiter-api</artifactId>
-  <version>5.7.0</version>
-  <scope>test</scope>
-</dependency>
+    </dependency>
+    <dependency>
+      <groupId>com.google.flogger</groupId>
+      <artifactId>flogger</artifactId>
+      <version>0.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.7.0</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>

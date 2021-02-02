@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import com.google.common.flogger.FluentLogger;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.core.model.Bundle;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Bundle;
 
 /**
  * This class defines the main entry point for the manifest analysis. It analyses the given paths and create a meta model from it.
