@@ -1,11 +1,13 @@
+package SimpleExample.SimulatorComponent;
 
-import featurea;
-import featureb;
+
+import SimpleExample.LanguageFeatureA.FeatureA;
+import SimpleExample.LanguageFeatureB.FeatureB;
 public class Component {
   
   // die Komponente hängt jetzt von LanguageFeatureA+B ab. Ziel trennen
   public void simulate() {
     new FeatureA().featureA();
-    new FeatureB().featureB();
+    new FeatureB().functionB();
   }
 }
