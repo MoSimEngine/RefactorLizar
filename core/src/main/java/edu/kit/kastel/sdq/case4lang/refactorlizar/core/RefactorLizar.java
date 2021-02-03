@@ -1,11 +1,9 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.core;
 
-import edu.kit.kastel.sdq.case4lang.refactorlizar.core.javaparser.ModelBuilder;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.IAnalyzer;
 
 public class RefactorLizar {
   public static void main(String[] args) {
-    // build simulizar model
-    ModelBuilder builder = new ModelBuilder();
-    builder.buildModel(args[0]);
+    IAnalyzer.getAllAnalyzer().forEach(System.out::println);
   }
 }

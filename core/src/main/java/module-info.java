@@ -3,4 +3,6 @@ module edu.kit.kastel.sdq.case4lang.refactorlizar.core {
   requires flogger;
   requires edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api;
   requires edu.kit.kastel.sdq.case4lang.refactorlizar.model;
+  uses edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.IAnalyzer;
+
 }

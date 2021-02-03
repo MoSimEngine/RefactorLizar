@@ -12,6 +12,9 @@ public class LanguageBlobAnalyzer implements IAnalyzer {
   
   private ModularLanguage language;
   private CtModel model;
+  public LanguageBlobAnalyzer() {
+    
+  }
   @Override
   public Report analyze(CtElement element) {
     // jetzt graph bauen mit kanten von sprachfeature -> simulatorpackage. Dann schauen dass jedes Simulatorpaket nur incoming edges = 1 hat.
