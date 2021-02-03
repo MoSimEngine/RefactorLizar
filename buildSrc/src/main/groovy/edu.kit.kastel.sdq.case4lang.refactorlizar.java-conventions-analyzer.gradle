@@ -1,0 +1,9 @@
+plugins {
+      id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions'
+}
+jar {
+    from {configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it)}}
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA'
+}
