@@ -5,7 +5,6 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'java-library-distribution'
-
 }
 
 repositories {
@@ -22,6 +21,7 @@ dependencies {
     implementation 'com.google.flogger:flogger-system-backend:0.5'
     implementation 'com.google.flogger:flogger:0.5'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.0'
     annotationProcessor 'com.google.auto.service:auto-service:1.0-rc7'
     compile group: 'com.google.auto.service', name: 'auto-service', version: '1.0-rc7'
 }
@@ -47,4 +47,3 @@ publishing {
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
-
