@@ -19,8 +19,9 @@ public class LanguageBlobAnalyzer implements IAnalyzer {
   }
   @Override
   public Report analyze(CtElement element) {
-    // jetzt graph bauen mit kanten von sprachfeature -> simulatorpackage. Dann schauen dass jedes Simulatorpaket nur incoming edges = 1 hat.
-    return null;
+    PackageVisitor visitor = new PackageVisitor(language);
+    element.accept(visitor);
+    return visitor.getReport();
   }
 
   @Override

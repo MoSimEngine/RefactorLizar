@@ -8,10 +8,12 @@ public class Report {
   private String text;
   private String description;
   private Collection<Solution> solutions;
-  public Report(String text, String description) {
+  private boolean smellFound;
+  public Report(String text, String description, boolean smellFound) {
     this.text = text;
     this.description = description;
     solutions = Collections.emptyList();
+    this.smellFound = smellFound;
   }
 
   /**
@@ -35,4 +37,22 @@ public class Report {
   public void addSolution(Solution solution) {
     solutions.add(solution);
   }
+  /**
+   * @return the smellFound
+   */
+  public boolean isSmellFound() {
+    return smellFound;
+  }
+
+  /* (non-Javadoc)
+   * @see java.lang.Object#toString()
+   */
+
+  @Override
+  public String toString() {
+    return "Report [description=" + description + ", smellFound=" + smellFound + ", solutions="
+        + solutions + ", text=" + text + "]";
+  }
+
+  
 }
