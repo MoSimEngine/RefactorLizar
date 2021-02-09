@@ -48,5 +48,11 @@ public interface IAnalyzer {
     return UUID.randomUUID();
   }
 
+  default boolean supportsFullAnalysis() {
+    return false;
+  }
+  default Report fullAnalysis() {
+    return new UnsupportedAnalysisReport(getName());
+  }
   boolean canAnalyze(CtElement element);
 }
