@@ -29,5 +29,11 @@ public class SimpleTest {
     assertNotNull(visitor.getReport());
     assertTrue(visitor.getReport().isSmellFound());
     System.out.println(visitor.getReport().toString());
+
+    visitor = new PackageVisitor(lang);
+    visitor.analyzeFullModel(model);
+    assertNotNull(visitor.getReport());
+    assertTrue(visitor.getReport().isSmellFound());
+    System.out.println(visitor.getReport().toString());
   }
 }
