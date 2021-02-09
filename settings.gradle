@@ -5,6 +5,7 @@
 rootProject.name = 'refactorlizar'
 include(':language-blob')
 include(":feature-scatter")
+include(":dependency-cycle")
 include(':assembly')
 include(':analyzer-api')
 include(':core')
