@@ -14,6 +14,7 @@ import com.google.common.graph.MutableGraph;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.LanguageFeature;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
+import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.visitor.CtAbstractVisitor;
@@ -114,5 +115,48 @@ public class PackageVisitor extends CtAbstractVisitor {
    */
   public Report getReport() {
     return report;
+  }
+
+  public void analyzeFullModel(CtModel model) {
+    MutableGraph<Node> graph = GraphBuilder.directed().build();
+    Map<CtPackage, LanguageFeature> featureByPackage = new HashMap<>();
+    for (LanguageFeature feature : language.getLanguageFeature()) {
+      Collection<CtPackage> packages =
+          feature.getJavaPackage().getElements(new TypeFilter<CtPackage>(CtPackage.class));
+      packages.stream().forEach(v -> featureByPackage.put(v, feature));
+    }
+    Set<Node> simulatorPackageNodes = new HashSet<>();
+    Set<EndpointPair<Node>> edges = new HashSet<>();
+    for (CtPackage ctPackage : model.getAllPackages()) {
+      for (CtType<?> type : ctPackage.getTypes()) {
+        simulatorPackageNodes.add(new Node(ctPackage));
+        type.getReferencedTypes().stream().filter(v -> v.getPackage() != null)
+            .map(v -> v.getPackage().getDeclaration()).filter(Objects::nonNull)
+            .filter(v -> featureByPackage.get(v) != null).forEach(v -> edges.add(
+                EndpointPair.ordered(new Node(v, featureByPackage.get(v)), new Node(ctPackage))));
+      }
+    }
+    simulatorPackageNodes.forEach(graph::addNode);
+    // method adds missing nodes of modular language.
+    edges.forEach(graph::putEdge);
+
+    Collection<Node> result =
+        graph.nodes().stream().filter(v -> graph.inDegree(v) > 1).collect(Collectors.toList());
+    if (result.isEmpty()) {
+      report = new Report("Language Blob Analyze", "Es wurde kein language blob gefunden.", false);
+    } else {
+      Collection<String> formattedDescriptions = new ArrayList<>();
+      for (Node node : result) {
+        String blobs = "Simulator Komponente %s verwendet die Sprachfeature %s \n";
+        formattedDescriptions
+            .add(String.format(blobs, node.packag.getQualifiedName(), graph.predecessors(node)
+                .stream().map(v -> v.feature.toString()).collect(Collectors.joining(","))));
+      }
+
+      report = new Report("Language Blob Analyze",
+          String.format("Es wurden %d language blobs gefunden. Die blobs sind:\n%s", result.size(),
+              formattedDescriptions.toString()),
+          true);
+    }
   }
 }

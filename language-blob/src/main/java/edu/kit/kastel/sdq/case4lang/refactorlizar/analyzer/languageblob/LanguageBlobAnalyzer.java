@@ -11,12 +11,14 @@ import spoon.reflect.declaration.CtPackage;
 
 @AutoService(IAnalyzer.class)
 public class LanguageBlobAnalyzer implements IAnalyzer {
-  
+
   private ModularLanguage language;
   private CtModel model;
+
   public LanguageBlobAnalyzer() {
-    
+
   }
+
   @Override
   public Report analyze(CtElement element) {
     PackageVisitor visitor = new PackageVisitor(language);
@@ -29,10 +31,12 @@ public class LanguageBlobAnalyzer implements IAnalyzer {
     this.language = language;
     this.model = simulatorAST;
   }
+
   @Override
   public String getDescription() {
     return "";
   }
+
   @Override
   public String getName() {
     return "LanguageBlobAnalyzer";
@@ -40,13 +44,26 @@ public class LanguageBlobAnalyzer implements IAnalyzer {
 
   @Override
   public boolean canAnalyze(CtElement element) {
-    ElementVisitor visitor = new ElementVisitor(){
+    ElementVisitor visitor = new ElementVisitor() {
       @Override
       public void visitCtPackage(CtPackage arg0) {
-        this.setResult(true);    
+        this.setResult(true);
       }
     };
     element.accept(visitor);
     return visitor.canVisit();
   }
+
+  @Override
+  public Report fullAnalysis() {
+    PackageVisitor visitor = new PackageVisitor(language);
+    visitor.analyzeFullModel(model);
+    return visitor.getReport(); 
+  }
+
+  @Override
+  public boolean supportsFullAnalysis() {
+    return true;
+  }
+  
 }
