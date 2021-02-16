@@ -20,21 +20,21 @@ import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
-import spoon.reflect.CtModel;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.visitor.CtAbstractVisitor;
 
 public class CycleVisitor extends CtAbstractVisitor  {
 
-  public Report fullAnalysis(CtModel model) {
-    Collection<CtPackage> packages = model.getAllPackages();
+  public Report fullAnalysis(SimulatorModel model) {
+    Collection<CtPackage> packages = model.getAllElements(CtPackage.class);
     MutableGraph<CtType<?>> graph = GraphBuilder.directed().build();
     for (CtPackage ctPackage : packages) {
       for (CtType<?> type : ctPackage.getTypes()) {
         type.getReferencedTypes().stream().filter(v -> v.getDeclaration() != null)
             .filter(v -> !v.getDeclaration().equals(type))
-            .forEach(v -> graph.putEdge(type, v.getDeclaration()));;
+            .forEach(v -> graph.putEdge(type, v.getDeclaration()));
       }
     }
     Graph<Set<CtType<?>>> result = findStronglyConnectedComponents(graph);

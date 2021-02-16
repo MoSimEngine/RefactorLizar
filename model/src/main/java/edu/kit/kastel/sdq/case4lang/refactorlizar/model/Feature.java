@@ -2,7 +2,7 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.model;
 
 import spoon.reflect.declaration.CtPackage;
 
-public class LanguageFeature {
+public class Feature {
   
   private CtPackage javaPackage;
   private Bundle bundle;
@@ -25,7 +25,7 @@ public class LanguageFeature {
    * @param javaPackage
    * @param bundle
    */
-  public LanguageFeature(CtPackage javaPackage, Bundle bundle) {
+  public Feature(CtPackage javaPackage, Bundle bundle) {
     this.javaPackage = javaPackage;
     this.bundle = bundle;
   }

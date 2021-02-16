@@ -5,6 +5,7 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.ElementVisitor;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.IAnalyzer;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtPackage;
@@ -13,7 +14,7 @@ import spoon.reflect.declaration.CtPackage;
 public class FeatureScatterAnalyzer implements IAnalyzer {
   
   private ModularLanguage language;
-  private CtModel model;
+  private SimulatorModel model;
   public FeatureScatterAnalyzer() {
     
   }
@@ -25,7 +26,7 @@ public class FeatureScatterAnalyzer implements IAnalyzer {
   }
 
   @Override
-  public void init(ModularLanguage language, CtModel simulatorAST) {
+  public void init(ModularLanguage language, SimulatorModel simulatorAST) {
     this.language = language;
     this.model = simulatorAST;
   }
