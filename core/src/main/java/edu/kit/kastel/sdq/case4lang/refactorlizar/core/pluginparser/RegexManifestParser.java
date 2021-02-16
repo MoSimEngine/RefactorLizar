@@ -24,7 +24,7 @@ public class RegexManifestParser implements ManifestParser {
       String  bundleVersion = parseBundleVersion(manifest);
       Collection<String> exportedPackages = parseExportedPackages(manifest);
       Collection<String> requiredBundles = parseRequiredBundle(manifest);
-      return Optional.of(new Bundle(bundleName, bundleVersion, exportedPackages, requiredBundles));
+      return Optional.of(new Bundle(bundleName, bundleVersion, exportedPackages, requiredBundles, manifestFile));
     } catch (IOException e) {
       logger.atWarning().log("Cant parse %s. Reason %s", manifestFile.getAbsolutePath(), e.getCause());
       return Optional.empty();

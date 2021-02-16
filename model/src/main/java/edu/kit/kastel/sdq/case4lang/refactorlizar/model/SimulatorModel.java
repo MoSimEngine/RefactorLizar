@@ -2,7 +2,6 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.model;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
-import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.visitor.filter.TypeFilter;
 
@@ -12,7 +11,6 @@ import spoon.reflect.visitor.filter.TypeFilter;
 public class SimulatorModel {
 
   private Collection<Feature> languageFeatures;
-  private CtModel model;
 
   public <T extends CtElement> Collection<T> getAllElements(Class<? extends T> clazz) {
     return languageFeatures.stream().flatMap(v -> v.getJavaPackage().getElements(new TypeFilter<>(clazz)).stream()).collect(Collectors.toList());
