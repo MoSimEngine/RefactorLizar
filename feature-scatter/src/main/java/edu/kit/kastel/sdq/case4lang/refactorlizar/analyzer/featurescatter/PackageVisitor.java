@@ -12,9 +12,9 @@ import com.google.common.graph.EndpointPair;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.LanguageFeature;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
-import spoon.reflect.CtModel;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.visitor.CtAbstractVisitor;
@@ -24,9 +24,9 @@ public class PackageVisitor extends CtAbstractVisitor {
 
   private ModularLanguage language;
   private Report report;
-  private CtModel model;
+  private SimulatorModel model;
 
-  public PackageVisitor(ModularLanguage language, CtModel model) {
+  public PackageVisitor(ModularLanguage language, SimulatorModel model) {
     this.language = language;
     this.model = model;
   }
@@ -34,10 +34,10 @@ public class PackageVisitor extends CtAbstractVisitor {
   @Override
   public void visitCtPackage(CtPackage ctPackage) {
     MutableGraph<Node> graph = GraphBuilder.directed().build();
-    Map<CtPackage, LanguageFeature> featureByPackage = new HashMap<>();
+    Map<CtPackage, Feature> featureByPackage = new HashMap<>();
     Map<String, CtPackage> languagePackageByQName = new HashMap<>();
 
-    for (LanguageFeature feature : language.getLanguageFeature()) {
+    for (Feature feature : language.getLanguageFeature()) {
       Collection<CtPackage> packages =
           feature.getJavaPackage().getElements(new TypeFilter<CtPackage>(CtPackage.class));
       packages.stream().forEach(v -> featureByPackage.put(v, feature));
@@ -45,7 +45,7 @@ public class PackageVisitor extends CtAbstractVisitor {
     }
     Set<Node> simulatorPackageNodes = new HashSet<>();
     Set<EndpointPair<Node>> edges = new HashSet<>();
-    for (CtPackage packag : model.getAllPackages()) {
+    for (CtPackage packag : model.getAllElements(CtPackage.class)) {
       for (CtType<?> type : packag.getTypes()) {
         type.getReferencedTypes();
         simulatorPackageNodes.add(new Node(packag));
@@ -85,10 +85,10 @@ public class PackageVisitor extends CtAbstractVisitor {
 
 
   static class Node {
-    private LanguageFeature feature;
+    private Feature feature;
     private CtPackage packag;
 
-    public Node(CtPackage packag, LanguageFeature feature) {
+    public Node(CtPackage packag, Feature feature) {
       this.feature = feature;
       this.packag = packag;
     }

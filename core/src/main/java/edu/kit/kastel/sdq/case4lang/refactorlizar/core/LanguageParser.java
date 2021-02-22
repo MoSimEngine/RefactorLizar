@@ -7,21 +7,21 @@ import java.util.HashMap;
 import java.util.Map;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.core.javaparser.ModelBuilder;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Bundle;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.LanguageFeature;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.core.pluginparser.BundleParser;
 import spoon.reflect.declaration.CtPackage;
 
 public class LanguageParser {
 
-  public Collection<LanguageFeature> parseLanguage(String path) {
+  public Collection<Feature> parseLanguage(String path) {
     Collection<CtPackage> javaPackages = buildJavaPackages(path);
     Collection<Bundle> bundles = new BundleParser().analyzeManifests(path);
     Map<String, CtPackage> packageByQName = convertPackagesToMap(javaPackages);
     assert bundles.size() == packageByQName.size();
-    Collection<LanguageFeature> languageFeatures = new ArrayList<>();
+    Collection<Feature> languageFeatures = new ArrayList<>();
     for (Bundle bundle : bundles) {
       CtPackage bundlePackage = packageByQName.get(bundle.getSimpleName());
-      languageFeatures.add(new LanguageFeature(bundlePackage, bundle));
+      languageFeatures.add(new Feature(bundlePackage, bundle));
     }
     return languageFeatures;
   }

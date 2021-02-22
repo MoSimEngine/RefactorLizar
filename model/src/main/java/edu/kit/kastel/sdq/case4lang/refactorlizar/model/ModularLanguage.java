@@ -4,14 +4,14 @@ import java.util.Collection;
 
 public class ModularLanguage {
   
-  private Collection<LanguageFeature> languageFeatures;
+  private Collection<Feature> languageFeatures;
 
 
   
   /**
    * @return the bundles
    */
-  public Collection<LanguageFeature> getLanguageFeature() {
+  public Collection<Feature> getLanguageFeature() {
     return languageFeatures;
   }
 
@@ -20,7 +20,7 @@ public class ModularLanguage {
   /**
    * @param languageFeatures
    */
-  public ModularLanguage(Collection<LanguageFeature> languageFeatures) {
+  public ModularLanguage(Collection<Feature> languageFeatures) {
     this.languageFeatures = languageFeatures;
   }
 }

@@ -14,7 +14,7 @@ import java.util.ServiceLoader.Provider;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
-import spoon.reflect.CtModel;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import spoon.reflect.declaration.CtElement;
 
 /**
@@ -31,7 +31,7 @@ public interface IAnalyzer {
     } catch (IOException ex) {
       System.out.println(ex);
     }
-    URL[] array = fileNames.stream().toArray(size -> new URL[size]);
+    URL[] array = fileNames.toArray(new URL[0]);
     IAnalyzer.class.getClassLoader();
     ClassLoader cl = new URLClassLoader(array, ClassLoader.getSystemClassLoader());
     return ServiceLoader.load(IAnalyzer.class, cl).stream().map(Provider::get)
@@ -39,7 +39,7 @@ public interface IAnalyzer {
   }
   Report analyze(CtElement element);
 
-  void init(ModularLanguage language, CtModel simulatorAST);
+  void init(ModularLanguage language, SimulatorModel simulatorAST);
   String getDescription();
   String getName();
 

@@ -1,6 +1,8 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.model;
 
+import java.io.File;
 import java.util.Collection;
+
 
 public class Bundle {
 
@@ -9,6 +11,7 @@ public class Bundle {
   private Collection<String> exportedPackage;
   private Collection<String> requiredBundle;
   private Collection<String> internalRequiredBundles;
+  private File manifestFile;
   /**
    * @param name
    * @param version
@@ -16,11 +19,12 @@ public class Bundle {
    * @param requiredBundle
    */
   public Bundle(String name, String version, Collection<String> exportedPackage,
-      Collection<String> requiredBundle) {
+      Collection<String> requiredBundle, File manifestFile) {
     this.name = name;
     this.version = version;
     this.exportedPackage = exportedPackage;
     this.requiredBundle = requiredBundle;
+    this.manifestFile = manifestFile;
   }
 
   /**
@@ -103,4 +107,9 @@ public class Bundle {
   public String getSimpleName() {
     return name.substring(name.lastIndexOf('.') + 1).trim();
   }
+  
+  public File getManifestFile() {
+	return manifestFile;
+  }
+  
 }
