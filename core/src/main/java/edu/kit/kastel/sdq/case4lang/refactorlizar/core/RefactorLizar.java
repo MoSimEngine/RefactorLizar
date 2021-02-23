@@ -9,7 +9,7 @@ public class RefactorLizar {
     ModularLanguage lang = new ModularLanguage(new LanguageParser().parseLanguage(args[0]));
     SimulatorModel model = new SimulatorModel(new LanguageParser().parseLanguage(args[1]));
     IAnalyzer.getAllAnalyzer().forEach(v -> {v.init(lang, model); if(v.supportsFullAnalysis()) {
-      v.fullAnalysis();
+      System.out.println(v.fullAnalysis());
     }});
   }
 }
