@@ -1,6 +1,5 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.dependencycycle;
 
-import static java.util.stream.Collectors.joining;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,6 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
@@ -38,12 +38,12 @@ public class CycleVisitor extends CtAbstractVisitor  {
       }
     }
     Graph<Set<CtType<?>>> result = findStronglyConnectedComponents(graph);
-    result.nodes().forEach(System.out::println);
-    if (result.nodes().isEmpty()) {
+    Collection<Set<CtType<?>>> cycles =  result.nodes().stream().filter(v -> v.size() > 1).collect(Collectors.toList());
+    if (cycles.isEmpty()) {
       return new Report("Dependency Cycle Analysis", "No cycle found.", false);
     }
     return new Report("Dependency Cycle Analysis", String.format("%d Cycles found.%s",
-        result.nodes().size(), result.nodes().stream().map(v->v.stream().map(CtType::getQualifiedName).collect(joining(" -> "))).collect(joining(","))), true);
+      cycles.size(), cycles.stream().map(v->v.stream().map(CtType::getQualifiedName).collect(Collectors.joining(" -> "))).collect(Collectors.joining("\n"))), true);
 
   }
 

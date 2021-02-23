@@ -7,3 +7,7 @@ jar {
         exclude 'META-INF/*.DSA'
         exclude 'META-INF/*.RSA'
 }
+task copyJar(type: Copy) {
+    from jar // here it automatically reads jar file produced from jar task
+    into file("${rootDir}/refactorlizar-1.0-SNAPSHOT")
+}

@@ -13,6 +13,7 @@ import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import com.google.common.flogger.FluentLogger;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import spoon.reflect.declaration.CtElement;
@@ -22,9 +23,9 @@ import spoon.reflect.declaration.CtElement;
  */
 public interface IAnalyzer {
 
-  public static Collection<IAnalyzer> getAllAnalyzer() {
+  public static Collection<IAnalyzer> getAllAnalyzer(String path) {
     List<URL> fileNames = new ArrayList<>();
-    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Path.of("."))) {
+    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Path.of(path))) {
       for (Path each : directoryStream) {
         fileNames.add(each.toUri().toURL());
       }

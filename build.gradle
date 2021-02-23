@@ -1,0 +1,8 @@
+task deploy() {
+  dependsOn "core:distZip"
+  dependsOn "core:unzip"
+  dependsOn "dependency-cycle:copyJar"
+  dependsOn "dependency-direction:copyJar"
+  dependsOn "feature-scatter:copyJar"
+  dependsOn "language-blob:copyJar"
+}

@@ -138,8 +138,10 @@ public class PackageVisitor extends CtAbstractVisitor {
     }
     simulatorPackageNodes.forEach(graph::addNode);
     // method adds missing nodes of modular language.
-    edges.forEach(graph::putEdge);
-
+    edges.forEach(v -> graph.putEdge(v));
+    System.out.println(graph.edges().size());
+    edges.forEach(System.out::println);
+    System.out.println(edges.size());
     Collection<Node> result =
         graph.nodes().stream().filter(v -> graph.inDegree(v) > 1).collect(Collectors.toList());
     if (result.isEmpty()) {
