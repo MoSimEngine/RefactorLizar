@@ -26,5 +26,5 @@ jobs:
     - name: Decompress
       run: gradle core:unzip
     - name: run tests
-      run: java -jar refactorlizar-1.0-SNAPSHOT/core-1.0-SNAPSHOT /mPCM_build /mSimuLizar
+      run: java -jar ./refactorlizar-1.0-SNAPSHOT/core-1.0-SNAPSHOT /mPCM_build /mSimuLizar
         
