@@ -24,9 +24,7 @@ jobs:
     - name: Test with gradle
       run: ./gradlew distZip -x test
     - name: Decompress
-      uses: TonyBogdanov/zip@1.0
-      with:
-            args: unzip -qq core/build/distributions/refactorlizar-1.0-SNAPSHOT.zip -d .
+      run: tar -xvf core/build/distributions/refactorlizar-1.0-SNAPSHOT.tar --directory .
     - name: run tests
       run: java -jar refactorlizar-1.0-SNAPSHOT/core-1.0-SNAPSHOT /mPCM_build /mSimuLizar
         
