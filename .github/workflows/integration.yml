@@ -22,11 +22,11 @@ jobs:
           token: ${{ secrets.ACCESS_TOKEN }}
           submodules: true
     - name: Test with gradle
-      run: ./gradlew distZip
+      run: ./gradlew distZip -x test
     - name: Decompress
       uses: TonyBogdanov/zip@1.0
       with:
-            args: unzip -qq ./core/distributions/refactorlizar-1.0-SNAPSHOT.zip -d .
+            args: unzip -qq /core/distributions/refactorlizar-1.0-SNAPSHOT.zip -d .
     - name: run tests
-      run: cd ./refactorlizar-1.0-SNAPSHOT && java -jar core-1.0-SNAPSHOT ./mPCM_build ./mSimuLizar
+      run: java -jar refactorlizar-1.0-SNAPSHOT/core-1.0-SNAPSHOT /mPCM_build /mSimuLizar
         
