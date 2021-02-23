@@ -22,9 +22,7 @@ jobs:
           token: ${{ secrets.ACCESS_TOKEN }}
           submodules: true
     - name: Test with gradle
-      run: ./gradlew distZip -x test
-    - name: Decompress
-      run: gradle core:unzip
+      run: gradle deploy
     - name: run tests
       run:  ./refactorlizar-1.0-SNAPSHOT/bin/core mPCM_build mSimuLizar
         
