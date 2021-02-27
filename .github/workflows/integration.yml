@@ -17,20 +17,13 @@ jobs:
     - uses: actions/checkout@v2
       with:
           token: ${{ secrets.ACCESS_TOKEN }}
-    - name: ls
-      run: cd .. && ls
-    - uses: actions/checkout@v2
-      with:
-          token: ${{ secrets.ACCESS_TOKEN }}
-          submodules: true
     - uses: oleksiyrudenko/gha-git-credentials@v2-latest
       with:
           token: ${{ secrets.ACCESS_TOKEN }}
     - name: submodules
-      run: git submodule update --init
-
+      run: git submodule update --init --recursive
     - name: ls
-      run: cd .. && ls
+      run: ls
     - name: Set up JDK 11
       uses: actions/setup-java@v1
       with:
