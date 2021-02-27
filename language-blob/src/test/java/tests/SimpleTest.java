@@ -2,12 +2,17 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
+
+import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.languageblob.PackageVisitor;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.core.LanguageParser;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.core.SimulatorParser;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
@@ -38,5 +43,16 @@ public class SimpleTest {
     assertNotNull(visitor.getReport());
     assertTrue(visitor.getReport().isSmellFound());
     System.out.println(visitor.getReport().toString());
+  }
+
+  //Ignored
+    // @Test
+  public void debug() {
+    ModularLanguage lang = new ModularLanguage(new LanguageParser().parseLanguage("./src/test/resources/mPCM_build"));
+    SimulatorModel model = new SimulatorModel(new SimulatorParser().parseLanguage("./src/test/resources/mSimuLizar")); 
+    var foo = new PackageVisitor(lang);
+    foo.analyzeFullModel(model);
+    Report report = foo.getReport();
+    int a = 3;
   }
 }
