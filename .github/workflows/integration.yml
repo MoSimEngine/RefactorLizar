@@ -23,6 +23,8 @@ jobs:
           submodules: true
     - name: Test with gradle
       run: gradle deploy
+    - name: ls
+      run: ls
     - name: run tests
       run:  ./refactorlizar-1.0-SNAPSHOT/bin/core refactorlizar-1.0-SNAPSHOT mPCM_build mSimuLizar
         
