@@ -11,3 +11,8 @@ task copyJar(type: Copy) {
     from jar // here it automatically reads jar file produced from jar task
     into file("${rootDir}/refactorlizar-1.0-SNAPSHOT")
 }
+dependencies {
+    testImplementation project(":core")
+    implementation project(':analyzer-api')
+    implementation project(':model')
+}

@@ -125,6 +125,9 @@ public class PackageVisitor extends CtAbstractVisitor {
           feature.getJavaPackage().getElements(new TypeFilter<CtPackage>(CtPackage.class));
       packages.stream().forEach(v -> featureByPackage.put(v, feature));
     }
+
+    featureByPackage.entrySet().forEach(System.out::println);
+    
     Set<Node> simulatorPackageNodes = new HashSet<>();
     Set<EndpointPair<Node>> edges = new HashSet<>();
     for (CtPackage ctPackage : model.getAllElements(CtPackage.class)) {
@@ -136,9 +139,13 @@ public class PackageVisitor extends CtAbstractVisitor {
                 EndpointPair.ordered(new Node(v, featureByPackage.get(v)), new Node(ctPackage))));
       }
     }
+    System.out.println("Anzahl an Simulator Nodes" +simulatorPackageNodes.size());
+    simulatorPackageNodes.forEach(System.out::println);
     simulatorPackageNodes.forEach(graph::addNode);
     // method adds missing nodes of modular language.
-    edges.forEach(v -> graph.putEdge(v));
+    for (EndpointPair<Node> endpointPair : edges) {
+      graph.putEdge(endpointPair);
+    }
     System.out.println(graph.edges().size());
     edges.forEach(System.out::println);
     System.out.println(edges.size());

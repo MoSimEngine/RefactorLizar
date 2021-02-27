@@ -83,6 +83,54 @@ public class PackageVisitor extends CtAbstractVisitor {
     }
   }
 
+  public void fullAnalysis() {
+    MutableGraph<Node> graph = GraphBuilder.directed().build();
+    Map<CtPackage, Feature> featureByPackage = new HashMap<>();
+    Map<String, CtPackage> languagePackageByQName = new HashMap<>();
+
+    for (Feature feature : language.getLanguageFeature()) {
+      Collection<CtPackage> packages =
+          feature.getJavaPackage().getElements(new TypeFilter<CtPackage>(CtPackage.class));
+      packages.stream().forEach(v -> featureByPackage.put(v, feature));
+      packages.stream().forEach(v -> languagePackageByQName.put(v.getQualifiedName(), v));
+    }
+    Set<Node> simulatorPackageNodes = new HashSet<>();
+    Set<EndpointPair<Node>> edges = new HashSet<>();
+    for (CtPackage packag : model.getAllElements(CtPackage.class)) {
+      for (CtType<?> type : packag.getTypes()) {
+        type.getReferencedTypes();
+        simulatorPackageNodes.add(new Node(packag));
+        type.getReferencedTypes().stream().filter(v -> v.getPackage() != null)
+            .map(v -> languagePackageByQName.get(v.getPackage().getQualifiedName()))
+            .filter(Objects::nonNull).filter(v -> featureByPackage.get(v) != null)
+            .forEach(v -> edges
+                .add(EndpointPair.ordered(new Node(v, featureByPackage.get(v)), new Node(packag))));
+      }
+    }
+
+    simulatorPackageNodes.forEach(graph::addNode);
+    // method adds missing nodes of modular language.
+    edges.forEach(graph::putEdge);
+
+    Collection<Node> result =
+        graph.nodes().stream().filter(v -> graph.outDegree(v) > 1).collect(Collectors.toList());
+    if (result.isEmpty()) {
+      report =
+          new Report("Feature Scatter Analyze", "Es wurde kein feature scatter gefunden.", false);
+    } else {
+      Collection<String> formattedDescriptions = new ArrayList<>();
+      for (Node node : result) {
+        String scatter = "Das Sprachfeature %s wird von den Komponenten %s genutzt \n";
+        formattedDescriptions.add(String.format(scatter, node.packag.getQualifiedName(),
+            graph.successors(node).stream().map(v -> v.packag.getQualifiedName().toString())
+                .collect(Collectors.joining(", "))));
+      }
+
+      report = new Report("Feature Scatter Analyzer", String.format(
+          "Es wurden %d feature scatter  gefunden. Die feature scatter sind:\n%s",
+          result.size(), formattedDescriptions.toString()), true);
+    }   
+  }
 
   static class Node {
     private Feature feature;

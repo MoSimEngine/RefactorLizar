@@ -24,5 +24,5 @@ jobs:
     - name: Test with gradle
       run: gradle deploy
     - name: run tests
-      run:  ./refactorlizar-1.0-SNAPSHOT/bin/core mPCM_build mSimuLizar
+      run:  ./refactorlizar-1.0-SNAPSHOT/bin/core refactorlizar-1.0-SNAPSHOT mPCM_build mSimuLizar
         
