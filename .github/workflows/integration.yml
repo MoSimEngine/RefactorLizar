@@ -23,6 +23,12 @@ jobs:
       with:
           token: ${{ secrets.ACCESS_TOKEN }}
           submodules: true
+    - uses: oleksiyrudenko/gha-git-credentials@v2-latest
+      with:
+          token: ${{ secrets.ACCESS_TOKEN }}
+    - name: submodules
+      run: git submodule update --init
+
     - name: ls
       run: cd .. && ls
     - name: Set up JDK 11
