@@ -16,7 +16,6 @@ jobs:
       with:
           token: ${{ secrets.ACCESS_TOKEN }}
           submodules: true
-          path: ${GITHUB_WORKSPACE}
     - name: ls
       run: ls
     - name: Set up JDK 11
