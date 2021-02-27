@@ -12,6 +12,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: ls
+      run: ls
+    - uses: actions/checkout@v2
+      with:
+          token: ${{ secrets.ACCESS_TOKEN }}
+    - name: ls
+      run: ls
     - uses: actions/checkout@v2
       with:
           token: ${{ secrets.ACCESS_TOKEN }}
