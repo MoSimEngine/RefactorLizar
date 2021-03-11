@@ -11,3 +11,5 @@ include(':assembly')
 include(':analyzer-api')
 include(':core')
 include(':model')
+include(':public-api')
+
