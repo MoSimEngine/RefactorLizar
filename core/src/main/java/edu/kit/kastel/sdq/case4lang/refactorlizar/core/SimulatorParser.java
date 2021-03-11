@@ -12,7 +12,7 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Bundle;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
 import spoon.reflect.declaration.CtPackage;
 
-public class LanguageParser {
+public class SimulatorParser {
 private static final FluentLogger logger = FluentLogger.forEnclosingClass();
   
   public Collection<Feature> parseLanguage(String path) {
@@ -21,7 +21,7 @@ private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     Map<String, CtPackage> packageByQName = convertPackagesToMap(javaPackages);
     Collection<Feature> languageFeatures = new ArrayList<>();
     for (Bundle bundle : bundles) {
-      CtPackage bundlePackage = packageByQName.get(bundle.getSimpleName());
+      CtPackage bundlePackage = packageByQName.get(bundle.getName());
       if (bundlePackage == null) {
         logger.atWarning().log("ignoring bundle %s", bundle);
         continue;
@@ -40,7 +40,7 @@ private static final FluentLogger logger = FluentLogger.forEnclosingClass();
   private Map<String, CtPackage> convertPackagesToMap(Collection<CtPackage> javaPackages) {
     // we dont need a merge function here, because we have 0 duplicates
     return javaPackages.stream()
-        .collect(toMap(CtPackage::getSimpleName, v -> v, (v, w) -> v, HashMap::new));
+        .collect(toMap(CtPackage::getQualifiedName, v -> v, (v, w) -> v, HashMap::new));
   }
 
 }

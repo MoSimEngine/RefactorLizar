@@ -2,11 +2,13 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
+
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.featurescatter.PackageVisitor;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
