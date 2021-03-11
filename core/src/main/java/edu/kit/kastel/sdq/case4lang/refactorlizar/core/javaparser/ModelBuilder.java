@@ -23,6 +23,7 @@ public class ModelBuilder {
     env.setComplianceLevel(11);
     env.setOutputType(OutputType.NO_OUTPUT);
     env.setNoClasspath(true);
+    env.setShouldCompile(false);
     launcher.addInputResource(path);
     model = launcher.buildModel();
     logger.atInfo().log("finished building model for path %s, with model size: %d, in %d packages",
