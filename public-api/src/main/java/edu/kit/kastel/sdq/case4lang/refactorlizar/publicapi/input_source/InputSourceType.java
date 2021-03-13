@@ -4,7 +4,34 @@ import java.util.List;
 
 public class InputSourceType {
 
-  private InputSourceTypeId identifier;
-  private String description;
-  private List<AvailableProperty> availableProperties;
+  private final InputSourceTypeId identifier;
+  private final String description;
+  private final List<AvailableParameter> availableParameters;
+
+  private InputSourceType(InputSourceTypeId identifier, String description,
+      List<AvailableParameter> availableParameters) {
+
+    this.identifier = identifier;
+    this.description = description;
+    this.availableParameters = availableParameters;
+  }
+
+  public static InputSourceType fileSystem() {
+
+    return new InputSourceType( //
+        InputSourceTypeId.fileSystem(), //
+        "Use local file system as input source.", //
+        AvailableParameter.fileSystem() //
+    );
+  }
+
+  public static List<InputSourceType> all() {
+    return List.of(fileSystem());
+  }
+
+  public static boolean supports(InputSourceTypeId inputSourceTypeId) {
+    return all() //
+        .stream() //
+        .anyMatch(inputSourceType -> inputSourceType.identifier.equals(inputSourceTypeId));
+  }
 }

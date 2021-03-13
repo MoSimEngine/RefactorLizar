@@ -1,9 +1,17 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.input_source;
 
-import java.util.Properties;
+import java.util.Map;
 
 public class InputSource {
 
   protected InputSourceTypeId inputSourceTypeId;
-  protected Properties properties;
+  protected Map<String, String> parameters;
+
+  public InputSourceTypeId getInputSourceTypeId() {
+    return inputSourceTypeId;
+  }
+
+  public Map<String, String> getParameters() {
+    return parameters;
+  }
 }

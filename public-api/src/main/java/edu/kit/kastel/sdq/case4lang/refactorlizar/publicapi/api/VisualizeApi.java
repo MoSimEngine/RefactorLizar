@@ -1,4 +1,4 @@
-package edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.apis;
+package edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.api;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.class_view.ClassId;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.class_view.ClassView;
