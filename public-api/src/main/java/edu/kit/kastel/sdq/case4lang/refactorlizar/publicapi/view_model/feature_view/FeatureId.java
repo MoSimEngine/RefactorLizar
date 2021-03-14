@@ -4,11 +4,15 @@ public class FeatureId {
 
   private final String name;
 
-  public FeatureId(String name) {
+  private FeatureId(String name) {
     this.name = name;
   }
 
   public String getName() {
     return name;
+  }
+
+  public static FeatureId of(String name) {
+    return new FeatureId(name);
   }
 }

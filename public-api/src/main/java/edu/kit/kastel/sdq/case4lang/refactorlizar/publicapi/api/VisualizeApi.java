@@ -1,5 +1,7 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.api;
 
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter.FeatureViewAdapter;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.class_view.ClassId;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.class_view.ClassView;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.component_view.ComponentView;
@@ -11,20 +13,29 @@ import javax.annotation.Nonnull;
 
 public class VisualizeApi {
 
+  private ModularLanguage modularLanguage;
+  private final FeatureViewAdapter featureViewAdapter;
+
+  public VisualizeApi(ModularLanguage modularLanguage) {
+
+    this.modularLanguage = modularLanguage;
+    featureViewAdapter = new FeatureViewAdapter(modularLanguage);
+  }
+
   @Nonnull public FeatureView provideFeatureView() {
-   throw new NotImplementedException();
+    return featureViewAdapter.provideFeatureView();
   }
 
   @Nonnull public ComponentView provideComponentView() {
-   throw new NotImplementedException();
+    throw new NotImplementedException();
   }
 
   @Nonnull public FeatureComponentView provideFeatureComponentView() {
-   throw new NotImplementedException();
+    throw new NotImplementedException();
   }
 
   @Nonnull public ClassView provideClassView(ClassId classId) {
-   throw new NotImplementedException();
+    throw new NotImplementedException();
   }
 
 }

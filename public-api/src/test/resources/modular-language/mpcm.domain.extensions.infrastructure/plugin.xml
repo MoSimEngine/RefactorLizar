@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated infrastructure -->
+      <package
+            uri="mpcm.domain.extensions.infrastructure.repository"
+            class="infrastructure.repository.RepositoryPackage"
+            genModel="model/infrastructure.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated infrastructure -->
+      <package
+            uri="mpcm.domain.extensions.infrastructure.seff"
+            class="infrastructure.seff.SeffPackage"
+            genModel="model/infrastructure.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated infrastructure -->
+      <package
+            uri="mpcm.domain.extensions.infrastructure.composition"
+            class="infrastructure.composition.CompositionPackage"
+            genModel="model/infrastructure.genmodel"/>
+   </extension>
+
+</plugin>

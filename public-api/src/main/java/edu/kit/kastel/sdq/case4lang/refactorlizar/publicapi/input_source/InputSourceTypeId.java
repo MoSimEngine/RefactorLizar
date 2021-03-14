@@ -29,10 +29,7 @@ public class InputSourceTypeId {
       return false;
     }
 
-    // typecast o to Complex so that we can compare data members
     InputSourceTypeId otherInputSourceTypeId = (InputSourceTypeId) other;
-
-    // Compare the data members and return accordingly
     return name.equals(otherInputSourceTypeId.name);
   }
 }

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/mpcm.domain.softwarerepository/src" modelPluginID="mpcm.domain.softwarerepository"
+    modelName="Softwarerepository" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="5.0" copyrightFields="false"
+    usedGenPackages="../../mpcm.paradigm.base/model/base.genmodel#//base ../../de.uka.ipd.sdq.identifier/model/identifier.genmodel#//identifier ../../de.uka.ipd.sdq.probfunction/model/ProbabilityFunction.genmodel#//probfunction ../../mpcm.paradigm.repository/model/repository.genmodel#//repository ../../de.uka.ipd.sdq.stoex/model/stoex.genmodel#//stoex ../../de.uka.ipd.sdq.units/model/Units.genmodel#//units ../../mpcm.paradigm.variables/model/variables.genmodel#//variables"
+    importOrganizing="true">
+  <foreignModel>softwarerepository.ecore</foreignModel>
+  <genPackages prefix="Softwarerepository" disposableProviderFactory="true" ecorePackage="softwarerepository.ecore#/">
+    <genClasses ecoreClass="softwarerepository.ecore#//Softwarerepository">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute softwarerepository.ecore#//Softwarerepository/repositoryDescription"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference softwarerepository.ecore#//Softwarerepository/components__Repository"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference softwarerepository.ecore#//Softwarerepository/interfaces__Repository"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference softwarerepository.ecore#//Softwarerepository/dataTypes__Repository"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference softwarerepository.ecore#//Softwarerepository/exceptionTypes"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference softwarerepository.ecore#//Softwarerepository/exceptionOccurences"/>
+    </genClasses>
+    <genClasses ecoreClass="softwarerepository.ecore#//ExceptionType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute softwarerepository.ecore#//ExceptionType/exceptionName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute softwarerepository.ecore#//ExceptionType/exceptionMessage"/>
+    </genClasses>
+    <genClasses ecoreClass="softwarerepository.ecore#//ExceptionOccurence">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference softwarerepository.ecore#//ExceptionOccurence/type"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference softwarerepository.ecore#//ExceptionOccurence/owner"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="softwarerepository.ecore#//ImplementationComponentType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference softwarerepository.ecore#//ImplementationComponentType/componentParameterUsage_ImplementationComponentType"/>
+      <genOperations ecoreOperation="softwarerepository.ecore#//ImplementationComponentType/RequiredInterfacesHaveToConformToCompleteType">
+        <genParameters ecoreParameter="softwarerepository.ecore#//ImplementationComponentType/RequiredInterfacesHaveToConformToCompleteType/diagnostics"/>
+        <genParameters ecoreParameter="softwarerepository.ecore#//ImplementationComponentType/RequiredInterfacesHaveToConformToCompleteType/context"/>
+      </genOperations>
+      <genOperations ecoreOperation="softwarerepository.ecore#//ImplementationComponentType/providedInterfacesHaveToConformToCompleteType">
+        <genParameters ecoreParameter="softwarerepository.ecore#//ImplementationComponentType/providedInterfacesHaveToConformToCompleteType/diagnostics"/>
+        <genParameters ecoreParameter="softwarerepository.ecore#//ImplementationComponentType/providedInterfacesHaveToConformToCompleteType/context"/>
+      </genOperations>
+      <genOperations ecoreOperation="softwarerepository.ecore#//ImplementationComponentType/ProvidedInterfaceHaveToConformToComponentType">
+        <genParameters ecoreParameter="softwarerepository.ecore#//ImplementationComponentType/ProvidedInterfaceHaveToConformToComponentType/diagnostics"/>
+        <genParameters ecoreParameter="softwarerepository.ecore#//ImplementationComponentType/ProvidedInterfaceHaveToConformToComponentType/context"/>
+      </genOperations>
+      <genOperations ecoreOperation="softwarerepository.ecore#//ImplementationComponentType/ProvideSameOrMoreInterfacesAsCompleteComponentType">
+        <genParameters ecoreParameter="softwarerepository.ecore#//ImplementationComponentType/ProvideSameOrMoreInterfacesAsCompleteComponentType/diagnostics"/>
+        <genParameters ecoreParameter="softwarerepository.ecore#//ImplementationComponentType/ProvideSameOrMoreInterfacesAsCompleteComponentType/context"/>
+      </genOperations>
+      <genOperations ecoreOperation="softwarerepository.ecore#//ImplementationComponentType/RequireSameOrFewerInterfacesAsCompleteComponentType">
+        <genParameters ecoreParameter="softwarerepository.ecore#//ImplementationComponentType/RequireSameOrFewerInterfacesAsCompleteComponentType/diagnostics"/>
+        <genParameters ecoreParameter="softwarerepository.ecore#//ImplementationComponentType/RequireSameOrFewerInterfacesAsCompleteComponentType/context"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="softwarerepository.ecore#//BasicComponent">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference softwarerepository.ecore#//BasicComponent/serviceEffectSpecifications__BasicComponent"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference softwarerepository.ecore#//BasicComponent/passiveResource_BasicComponent"/>
+      <genOperations ecoreOperation="softwarerepository.ecore#//BasicComponent/NoSeffTypeUsedTwice">
+        <genParameters ecoreParameter="softwarerepository.ecore#//BasicComponent/NoSeffTypeUsedTwice/diagnostics"/>
+        <genParameters ecoreParameter="softwarerepository.ecore#//BasicComponent/NoSeffTypeUsedTwice/context"/>
+      </genOperations>
+    </genClasses>
+    <genClasses image="false" ecoreClass="softwarerepository.ecore#//ServiceEffectSpecification">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute softwarerepository.ecore#//ServiceEffectSpecification/seffTypeID"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference softwarerepository.ecore#//ServiceEffectSpecification/describedService__SEFF"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference softwarerepository.ecore#//ServiceEffectSpecification/basicComponent_ServiceEffectSpecification"/>
+      <genOperations ecoreOperation="softwarerepository.ecore#//ServiceEffectSpecification/ReferencedSignatureMustBelongToInterfaceReferencedByProvidedRole">
+        <genParameters ecoreParameter="softwarerepository.ecore#//ServiceEffectSpecification/ReferencedSignatureMustBelongToInterfaceReferencedByProvidedRole/diagnostics"/>
+        <genParameters ecoreParameter="softwarerepository.ecore#//ServiceEffectSpecification/ReferencedSignatureMustBelongToInterfaceReferencedByProvidedRole/context"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="softwarerepository.ecore#//PassiveResource">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference softwarerepository.ecore#//PassiveResource/capacity_PassiveResource"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference softwarerepository.ecore#//PassiveResource/basicComponent_PassiveResource"/>
+    </genClasses>
+    <genClasses ecoreClass="softwarerepository.ecore#//OperationInterface">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference softwarerepository.ecore#//OperationInterface/signatures__OperationInterface"/>
+      <genOperations ecoreOperation="softwarerepository.ecore#//OperationInterface/SignaturesHaveToBeUniqueForAnInterface">
+        <genParameters ecoreParameter="softwarerepository.ecore#//OperationInterface/SignaturesHaveToBeUniqueForAnInterface/diagnostics"/>
+        <genParameters ecoreParameter="softwarerepository.ecore#//OperationInterface/SignaturesHaveToBeUniqueForAnInterface/context"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="softwarerepository.ecore#//OperationSignature">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference softwarerepository.ecore#//OperationSignature/interface__OperationSignature"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference softwarerepository.ecore#//OperationSignature/parameters__OperationSignature"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference softwarerepository.ecore#//OperationSignature/returnType__OperationSignature"/>
+      <genOperations ecoreOperation="softwarerepository.ecore#//OperationSignature/ParameterNamesHaveToBeUniqueForASignature">
+        <genParameters ecoreParameter="softwarerepository.ecore#//OperationSignature/ParameterNamesHaveToBeUniqueForASignature/diagnostics"/>
+        <genParameters ecoreParameter="softwarerepository.ecore#//OperationSignature/ParameterNamesHaveToBeUniqueForASignature/context"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="softwarerepository.ecore#//OperationProvidedRole">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference softwarerepository.ecore#//OperationProvidedRole/providedInterface__OperationProvidedRole"/>
+    </genClasses>
+    <genClasses ecoreClass="softwarerepository.ecore#//OperationRequiredRole">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference softwarerepository.ecore#//OperationRequiredRole/requiredInterface__OperationRequiredRole"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

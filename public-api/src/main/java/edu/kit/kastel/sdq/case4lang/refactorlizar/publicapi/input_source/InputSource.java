@@ -7,6 +7,11 @@ public class InputSource {
   protected InputSourceTypeId inputSourceTypeId;
   protected Map<String, String> parameters;
 
+  public InputSource(InputSourceTypeId inputSourceTypeId, Map<String, String> parameters) {
+    this.inputSourceTypeId = inputSourceTypeId;
+    this.parameters = parameters;
+  }
+
   public InputSourceTypeId getInputSourceTypeId() {
     return inputSourceTypeId;
   }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/mpcm.quality.performanceannotations/src" modelPluginID="mpcm.quality.performanceannotations"
+    modelName="Performanceannotations" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="5.0" copyrightFields="false"
+    usedGenPackages="../../mpcm.paradigm.annotations/model/annotations.genmodel#//annotations ../../mpcm.paradigm.base/model/base.genmodel#//base ../../mpcm.paradigm.composition/model/composition.genmodel#//composition ../../de.uka.ipd.sdq.identifier/model/identifier.genmodel#//identifier ../../de.uka.ipd.sdq.probfunction/model/ProbabilityFunction.genmodel#//probfunction ../../mpcm.paradigm.repository/model/repository.genmodel#//repository ../../de.uka.ipd.sdq.stoex/model/stoex.genmodel#//stoex ../../de.uka.ipd.sdq.units/model/Units.genmodel#//units ../../mpcm.paradigm.variables/model/variables.genmodel#//variables"
+    importOrganizing="true">
+  <foreignModel>performanceannotations.ecore</foreignModel>
+  <genPackages prefix="Performanceannotations" disposableProviderFactory="true" ecorePackage="performanceannotations.ecore#/">
+    <genClasses image="false" ecoreClass="performanceannotations.ecore#//ServiceExecutionTime">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference performanceannotations.ecore#//ServiceExecutionTime/specification_SpecifiedExecutionTime"/>
+    </genClasses>
+    <genClasses ecoreClass="performanceannotations.ecore#//SystemServiceExecutionTime">
+      <genOperations ecoreOperation="performanceannotations.ecore#//SystemServiceExecutionTime/SystemSpecifiedExecutionTimeMustReferenceRequiredRoleOfASystem">
+        <genParameters ecoreParameter="performanceannotations.ecore#//SystemServiceExecutionTime/SystemSpecifiedExecutionTimeMustReferenceRequiredRoleOfASystem/diagnostics"/>
+        <genParameters ecoreParameter="performanceannotations.ecore#//SystemServiceExecutionTime/SystemSpecifiedExecutionTimeMustReferenceRequiredRoleOfASystem/context"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="performanceannotations.ecore#//ComponentServiceExecutionTime">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference performanceannotations.ecore#//ComponentServiceExecutionTime/assemblyContext_ComponentSpecifiedExecutionTime"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

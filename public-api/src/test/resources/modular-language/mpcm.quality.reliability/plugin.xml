@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated reliability -->
+      <package
+            uri="mpcm.quality.reliability"
+            class="reliability.ReliabilityPackage"
+            genModel="model/reliability.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated reliability -->
+      <package
+            uri="mpcm.quality.reliability.seff"
+            class="reliability.seff.SeffPackage"
+            genModel="model/reliability.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated reliability -->
+      <package
+            uri="mpcm.quality.reliability.repository"
+            class="reliability.repository.RepositoryPackage"
+            genModel="model/reliability.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated reliability -->
+      <package
+            uri="mpcm.quality.reliability.failuretypes"
+            class="reliability.failuretypes.FailuretypesPackage"
+            genModel="model/reliability.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated reliability -->
+      <package
+            uri="mpcm.quality.reliability.resourceenvironment"
+            class="reliability.resources.ResourcesPackage"
+            genModel="model/reliability.genmodel"/>
+   </extension>
+
+</plugin>

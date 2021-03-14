@@ -5,4 +5,5 @@ task deploy() {
   dependsOn "dependency-direction:copyJar"
   dependsOn "feature-scatter:copyJar"
   dependsOn "language-blob:copyJar"
+  dependsOn "public-api:copyJar"
 }

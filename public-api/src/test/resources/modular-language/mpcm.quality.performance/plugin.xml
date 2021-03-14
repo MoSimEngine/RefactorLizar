@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated performance -->
+      <package
+            uri="mpcm.quality.performance.seff"
+            class="performance.seff.SeffPackage"
+            genModel="model/performance.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated performance -->
+      <package
+            uri="mpcm.quality.performance.resources"
+            class="performance.resources.ResourcesPackage"
+            genModel="model/performance.genmodel"/>
+   </extension>
+
+</plugin>

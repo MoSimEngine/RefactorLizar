@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/mpcm.quality.reliabilityannotations/src" modelPluginID="mpcm.quality.reliabilityannotations"
+    modelName="Reliabilityannotations" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="5.0" copyrightFields="false"
+    usedGenPackages="../../mpcm.paradigm.annotations/model/annotations.genmodel#//annotations ../../mpcm.paradigm.base/model/base.genmodel#//base ../../mpcm.domain.behaviourseff/model/behaviourseff.genmodel#//behaviourseff ../../mpcm.domain.environment/model/environment.genmodel#//environment ../../de.uka.ipd.sdq.identifier/model/identifier.genmodel#//identifier ../../de.uka.ipd.sdq.probfunction/model/ProbabilityFunction.genmodel#//probfunction ../../mpcm.quality.reliability/model/reliability.genmodel#//reliability ../../mpcm.paradigm.repository/model/repository.genmodel#//repository ../../mpcm.domain.environment.resources/model/resources.genmodel#//resources ../../mpcm.paradigm.behaviour.seff/model/seff.genmodel#//seff ../../mpcm.domain.softwarerepository/model/softwarerepository.genmodel#//softwarerepository ../../de.uka.ipd.sdq.stoex/model/stoex.genmodel#//stoex ../../de.uka.ipd.sdq.units/model/Units.genmodel#//units ../../mpcm.paradigm.variables/model/variables.genmodel#//variables"
+    importOrganizing="true">
+  <foreignModel>reliabilityannotations.ecore</foreignModel>
+  <genPackages prefix="Reliabilityannotations" disposableProviderFactory="true" ecorePackage="reliabilityannotations.ecore#/">
+    <genClasses ecoreClass="reliabilityannotations.ecore#//ServiceReliabilityAnnotation">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference reliabilityannotations.ecore#//ServiceReliabilityAnnotation/externalFailureOccurrenceDescriptions__SpecifiedReliabilityAnnotation"/>
+      <genOperations ecoreOperation="reliabilityannotations.ecore#//ServiceReliabilityAnnotation/SpecifiedReliabilityAnnotationMustReferenceRequiredRoleOfASystem">
+        <genParameters ecoreParameter="reliabilityannotations.ecore#//ServiceReliabilityAnnotation/SpecifiedReliabilityAnnotationMustReferenceRequiredRoleOfASystem/diagnostics"/>
+        <genParameters ecoreParameter="reliabilityannotations.ecore#//ServiceReliabilityAnnotation/SpecifiedReliabilityAnnotationMustReferenceRequiredRoleOfASystem/context"/>
+      </genOperations>
+      <genOperations ecoreOperation="reliabilityannotations.ecore#//ServiceReliabilityAnnotation/SumOfReliabilityAnnotationFailureProbabilitiesMustNotExceed1">
+        <genParameters ecoreParameter="reliabilityannotations.ecore#//ServiceReliabilityAnnotation/SumOfReliabilityAnnotationFailureProbabilitiesMustNotExceed1/diagnostics"/>
+        <genParameters ecoreParameter="reliabilityannotations.ecore#//ServiceReliabilityAnnotation/SumOfReliabilityAnnotationFailureProbabilitiesMustNotExceed1/context"/>
+      </genOperations>
+      <genOperations ecoreOperation="reliabilityannotations.ecore#//ServiceReliabilityAnnotation/MultipleExternalOccurrenceDescriptionsPerFailureTypeNotAllowed">
+        <genParameters ecoreParameter="reliabilityannotations.ecore#//ServiceReliabilityAnnotation/MultipleExternalOccurrenceDescriptionsPerFailureTypeNotAllowed/diagnostics"/>
+        <genParameters ecoreParameter="reliabilityannotations.ecore#//ServiceReliabilityAnnotation/MultipleExternalOccurrenceDescriptionsPerFailureTypeNotAllowed/context"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="reliabilityannotations.ecore#//ExternalFailureOccurrenceDescription">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference reliabilityannotations.ecore#//ExternalFailureOccurrenceDescription/specifiedReliabilityAnnotation__ExternalFailureOccurrenceDescription"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference reliabilityannotations.ecore#//ExternalFailureOccurrenceDescription/failureType__ExternalFailureOccurrenceDescription"/>
+      <genOperations ecoreOperation="reliabilityannotations.ecore#//ExternalFailureOccurrenceDescription/NoResourceTimeoutFailureAllowedForExternalFailureOccurrenceDescription">
+        <genParameters ecoreParameter="reliabilityannotations.ecore#//ExternalFailureOccurrenceDescription/NoResourceTimeoutFailureAllowedForExternalFailureOccurrenceDescription/diagnostics"/>
+        <genParameters ecoreParameter="reliabilityannotations.ecore#//ExternalFailureOccurrenceDescription/NoResourceTimeoutFailureAllowedForExternalFailureOccurrenceDescription/context"/>
+      </genOperations>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

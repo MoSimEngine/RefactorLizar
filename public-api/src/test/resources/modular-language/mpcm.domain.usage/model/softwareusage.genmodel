@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/mpcm.domain.softwareusage/src" modelPluginID="mpcm.domain.softwareusage"
+    modelName="Softwareusage" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="5.0" copyrightFields="false"
+    usedGenPackages="../../mpcm.paradigm.base/model/base.genmodel#//base ../../mpcm.paradigm.composition/model/composition.genmodel#//composition ../../de.uka.ipd.sdq.identifier/model/identifier.genmodel#//identifier ../../de.uka.ipd.sdq.probfunction/model/ProbabilityFunction.genmodel#//probfunction ../../mpcm.paradigm.repository/model/repository.genmodel#//repository ../../mpcm.domain.softwarerepository/model/softwarerepository.genmodel#//softwarerepository ../../de.uka.ipd.sdq.stoex/model/stoex.genmodel#//stoex ../../de.uka.ipd.sdq.units/model/Units.genmodel#//units ../../mpcm.paradigm.behaviour.usage/model/usage.genmodel#//usage ../../mpcm.paradigm.variables/model/variables.genmodel#//variables"
+    importOrganizing="true">
+  <foreignModel>softwareusage.ecore</foreignModel>
+  <genPackages prefix="Softwareusage" disposableProviderFactory="true" ecorePackage="softwareusage.ecore#/">
+    <genClasses ecoreClass="softwareusage.ecore#//UsageModel">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference softwareusage.ecore#//UsageModel/usageScenario_UsageModel"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference softwareusage.ecore#//UsageModel/userData_UsageModel"/>
+    </genClasses>
+    <genClasses ecoreClass="softwareusage.ecore#//UserData">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference softwareusage.ecore#//UserData/assemblyContext_userData"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference softwareusage.ecore#//UserData/usageModel_UserData"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference softwareusage.ecore#//UserData/userDataParameterUsages_UserData"/>
+    </genClasses>
+    <genClasses ecoreClass="softwareusage.ecore#//UsageScenario">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference softwareusage.ecore#//UsageScenario/usageModel_UsageScenario"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference softwareusage.ecore#//UsageScenario/scenarioBehaviour_UsageScenario"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference softwareusage.ecore#//UsageScenario/workload_UsageScenario"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="softwareusage.ecore#//Workload">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference softwareusage.ecore#//Workload/usageScenario_Workload"/>
+    </genClasses>
+    <genClasses ecoreClass="softwareusage.ecore#//OpenWorkload">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference softwareusage.ecore#//OpenWorkload/interArrivalTime_OpenWorkload"/>
+      <genOperations ecoreOperation="softwareusage.ecore#//OpenWorkload/InterArrivalTimeInOpenWorkloadNeedsToBeSpecified">
+        <genParameters ecoreParameter="softwareusage.ecore#//OpenWorkload/InterArrivalTimeInOpenWorkloadNeedsToBeSpecified/diagnostics"/>
+        <genParameters ecoreParameter="softwareusage.ecore#//OpenWorkload/InterArrivalTimeInOpenWorkloadNeedsToBeSpecified/context"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="softwareusage.ecore#//ClosedWorkload">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute softwareusage.ecore#//ClosedWorkload/population"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference softwareusage.ecore#//ClosedWorkload/thinkTime_ClosedWorkload"/>
+      <genOperations ecoreOperation="softwareusage.ecore#//ClosedWorkload/PopulationInClosedWorkloadNeedsToBeSpecified">
+        <genParameters ecoreParameter="softwareusage.ecore#//ClosedWorkload/PopulationInClosedWorkloadNeedsToBeSpecified/diagnostics"/>
+        <genParameters ecoreParameter="softwareusage.ecore#//ClosedWorkload/PopulationInClosedWorkloadNeedsToBeSpecified/context"/>
+      </genOperations>
+      <genOperations ecoreOperation="softwareusage.ecore#//ClosedWorkload/ThinkTimeInClosedWorkloadNeedsToBeSpecified">
+        <genParameters ecoreParameter="softwareusage.ecore#//ClosedWorkload/ThinkTimeInClosedWorkloadNeedsToBeSpecified/diagnostics"/>
+        <genParameters ecoreParameter="softwareusage.ecore#//ClosedWorkload/ThinkTimeInClosedWorkloadNeedsToBeSpecified/context"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="softwareusage.ecore#//EntryLevelSystemCall">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference softwareusage.ecore#//EntryLevelSystemCall/providedRole_EntryLevelSystemCall"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference softwareusage.ecore#//EntryLevelSystemCall/operationSignature__EntryLevelSystemCall"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference softwareusage.ecore#//EntryLevelSystemCall/outputParameterUsages_EntryLevelSystemCall"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute softwareusage.ecore#//EntryLevelSystemCall/priority"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference softwareusage.ecore#//EntryLevelSystemCall/inputParameterUsages_EntryLevelSystemCall"/>
+      <genOperations ecoreOperation="softwareusage.ecore#//EntryLevelSystemCall/EntryLevelSystemCallMustReferenceProvidedRoleOfASystem">
+        <genParameters ecoreParameter="softwareusage.ecore#//EntryLevelSystemCall/EntryLevelSystemCallMustReferenceProvidedRoleOfASystem/diagnostics"/>
+        <genParameters ecoreParameter="softwareusage.ecore#//EntryLevelSystemCall/EntryLevelSystemCallMustReferenceProvidedRoleOfASystem/context"/>
+      </genOperations>
+      <genOperations ecoreOperation="softwareusage.ecore#//EntryLevelSystemCall/EntryLevelSystemCallSignatureMustMatchItsProvidedRole">
+        <genParameters ecoreParameter="softwareusage.ecore#//EntryLevelSystemCall/EntryLevelSystemCallSignatureMustMatchItsProvidedRole/diagnostics"/>
+        <genParameters ecoreParameter="softwareusage.ecore#//EntryLevelSystemCall/EntryLevelSystemCallSignatureMustMatchItsProvidedRole/context"/>
+      </genOperations>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

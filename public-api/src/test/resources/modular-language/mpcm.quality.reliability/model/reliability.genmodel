@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/mpcm.quality.reliability/src" modelPluginID="mpcm.quality.reliability"
+    modelName="Reliability" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="5.0" copyrightFields="false"
+    usedGenPackages="../../mpcm.paradigm.base/model/base.genmodel#//base ../../mpcm.domain.behaviourseff/model/behaviourseff.genmodel#//behaviourseff ../../mpcm.domain.environment/model/environment.genmodel#//environment ../../de.uka.ipd.sdq.identifier/model/identifier.genmodel#//identifier ../../de.uka.ipd.sdq.probfunction/model/ProbabilityFunction.genmodel#//probfunction ../../mpcm.paradigm.repository/model/repository.genmodel#//repository ../../mpcm.domain.environment.resources/model/resources.genmodel#//resources ../../mpcm.paradigm.behaviour.seff/model/seff.genmodel#//seff ../../mpcm.domain.softwarerepository/model/softwarerepository.genmodel#//softwarerepository ../../de.uka.ipd.sdq.stoex/model/stoex.genmodel#//stoex ../../de.uka.ipd.sdq.units/model/Units.genmodel#//units ../../mpcm.paradigm.variables/model/variables.genmodel#//variables"
+    importOrganizing="true">
+  <foreignModel>reliability.ecore</foreignModel>
+  <genPackages prefix="Reliability" disposableProviderFactory="true" ecorePackage="reliability.ecore#/">
+    <genClasses image="false" ecoreClass="reliability.ecore#//FailureOccurrenceDescription">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute reliability.ecore#//FailureOccurrenceDescription/failureProbability"/>
+      <genOperations ecoreOperation="reliability.ecore#//FailureOccurrenceDescription/EnsureValidFailureProbabilityRange">
+        <genParameters ecoreParameter="reliability.ecore#//FailureOccurrenceDescription/EnsureValidFailureProbabilityRange/diagnostics"/>
+        <genParameters ecoreParameter="reliability.ecore#//FailureOccurrenceDescription/EnsureValidFailureProbabilityRange/context"/>
+      </genOperations>
+    </genClasses>
+    <nestedGenPackages prefix="Seff" disposableProviderFactory="true" ecorePackage="reliability.ecore#//seff">
+      <genClasses ecoreClass="reliability.ecore#//seff/InternalFailureOccurrenceDescription">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference reliability.ecore#//seff/InternalFailureOccurrenceDescription/internalAction__InternalFailureOccurrenceDescription"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference reliability.ecore#//seff/InternalFailureOccurrenceDescription/softwareInducedFailureType__InternalFailureOccurrenceDescription"/>
+        <genOperations ecoreOperation="reliability.ecore#//seff/InternalFailureOccurrenceDescription/NoResourceTimeoutFailureAllowedForInternalFailureOccurrenceDescription">
+          <genParameters ecoreParameter="reliability.ecore#//seff/InternalFailureOccurrenceDescription/NoResourceTimeoutFailureAllowedForInternalFailureOccurrenceDescription/diagnostics"/>
+          <genParameters ecoreParameter="reliability.ecore#//seff/InternalFailureOccurrenceDescription/NoResourceTimeoutFailureAllowedForInternalFailureOccurrenceDescription/context"/>
+        </genOperations>
+      </genClasses>
+      <genClasses ecoreClass="reliability.ecore#//seff/RecoveryAction">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference reliability.ecore#//seff/RecoveryAction/primaryBehaviour__RecoveryAction"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference reliability.ecore#//seff/RecoveryAction/recoveryActionBehaviours__RecoveryAction"/>
+        <genOperations ecoreOperation="reliability.ecore#//seff/RecoveryAction/PrimaryBehaviourOfRecoveryActionMustBeSet">
+          <genParameters ecoreParameter="reliability.ecore#//seff/RecoveryAction/PrimaryBehaviourOfRecoveryActionMustBeSet/diagnostics"/>
+          <genParameters ecoreParameter="reliability.ecore#//seff/RecoveryAction/PrimaryBehaviourOfRecoveryActionMustBeSet/context"/>
+        </genOperations>
+      </genClasses>
+      <genClasses ecoreClass="reliability.ecore#//seff/RecoveryActionBehaviour">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference reliability.ecore#//seff/RecoveryActionBehaviour/failureHandlingAlternatives__RecoveryActionBehaviour"/>
+        <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference reliability.ecore#//seff/RecoveryActionBehaviour/recoveryAction__RecoveryActionBehaviour"/>
+        <genOperations ecoreOperation="reliability.ecore#//seff/RecoveryActionBehaviour/RecoveryActionBehaviourHasOnlyOnePredecessor">
+          <genParameters ecoreParameter="reliability.ecore#//seff/RecoveryActionBehaviour/RecoveryActionBehaviourHasOnlyOnePredecessor/diagnostics"/>
+          <genParameters ecoreParameter="reliability.ecore#//seff/RecoveryActionBehaviour/RecoveryActionBehaviourHasOnlyOnePredecessor/context"/>
+        </genOperations>
+        <genOperations ecoreOperation="reliability.ecore#//seff/RecoveryActionBehaviour/RecoveryActionBehaviourIsNotSuccessorOfItself">
+          <genParameters ecoreParameter="reliability.ecore#//seff/RecoveryActionBehaviour/RecoveryActionBehaviourIsNotSuccessorOfItself/diagnostics"/>
+          <genParameters ecoreParameter="reliability.ecore#//seff/RecoveryActionBehaviour/RecoveryActionBehaviourIsNotSuccessorOfItself/context"/>
+        </genOperations>
+        <genOperations ecoreOperation="reliability.ecore#//seff/RecoveryActionBehaviour/SuccessorsOfRecoveryActionBehaviourHandleDisjointFailureTypes">
+          <genParameters ecoreParameter="reliability.ecore#//seff/RecoveryActionBehaviour/SuccessorsOfRecoveryActionBehaviourHandleDisjointFailureTypes/diagnostics"/>
+          <genParameters ecoreParameter="reliability.ecore#//seff/RecoveryActionBehaviour/SuccessorsOfRecoveryActionBehaviourHandleDisjointFailureTypes/context"/>
+        </genOperations>
+      </genClasses>
+      <genClasses image="false" ecoreClass="reliability.ecore#//seff/FailureHandlingEntity">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference reliability.ecore#//seff/FailureHandlingEntity/failureTypes_FailureHandlingEntity"/>
+      </genClasses>
+      <genClasses ecoreClass="reliability.ecore#//seff/FailureHandlingExternalCallAction">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference reliability.ecore#//seff/FailureHandlingExternalCallAction/owner"/>
+      </genClasses>
+      <genClasses ecoreClass="reliability.ecore#//seff/AcquireActionTimeout">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference reliability.ecore#//seff/AcquireActionTimeout/owner"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute reliability.ecore#//seff/AcquireActionTimeout/timeoutValue"/>
+      </genClasses>
+    </nestedGenPackages>
+    <nestedGenPackages prefix="Repository" disposableProviderFactory="true" ecorePackage="reliability.ecore#//repository">
+      <genClasses ecoreClass="reliability.ecore#//repository/ReliabilityContainer">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference reliability.ecore#//repository/ReliabilityContainer/failureDeclarations"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference reliability.ecore#//repository/ReliabilityContainer/failureHandlingExternalCallActions"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference reliability.ecore#//repository/ReliabilityContainer/internalFailureOccurenceDescriptions"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference reliability.ecore#//repository/ReliabilityContainer/acquireActionTimeout"/>
+      </genClasses>
+      <genClasses ecoreClass="reliability.ecore#//repository/FailureDeclaration">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference reliability.ecore#//repository/FailureDeclaration/types"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference reliability.ecore#//repository/FailureDeclaration/owner"/>
+      </genClasses>
+    </nestedGenPackages>
+    <nestedGenPackages prefix="Failuretypes" disposableProviderFactory="true" ecorePackage="reliability.ecore#//failuretypes">
+      <genClasses ecoreClass="reliability.ecore#//failuretypes/FailureTypesRoot">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference reliability.ecore#//failuretypes/FailureTypesRoot/failureTypes"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="reliability.ecore#//failuretypes/FailureType"/>
+      <genClasses ecoreClass="reliability.ecore#//failuretypes/NetworkInducedFailureType">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference reliability.ecore#//failuretypes/NetworkInducedFailureType/communicationLinkResourceType__NetworkInducedFailureType"/>
+        <genOperations ecoreOperation="reliability.ecore#//failuretypes/NetworkInducedFailureType/NetworkInducedFailureTypeHasCommunicationLinkResourceType">
+          <genParameters ecoreParameter="reliability.ecore#//failuretypes/NetworkInducedFailureType/NetworkInducedFailureTypeHasCommunicationLinkResourceType/diagnostics"/>
+          <genParameters ecoreParameter="reliability.ecore#//failuretypes/NetworkInducedFailureType/NetworkInducedFailureTypeHasCommunicationLinkResourceType/context"/>
+        </genOperations>
+      </genClasses>
+      <genClasses ecoreClass="reliability.ecore#//failuretypes/HardwareInducedFailureType">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference reliability.ecore#//failuretypes/HardwareInducedFailureType/processingResourceType__HardwareInducedFailureType"/>
+        <genOperations ecoreOperation="reliability.ecore#//failuretypes/HardwareInducedFailureType/HardwareInducedFailureTypeHasProcessingResourceType">
+          <genParameters ecoreParameter="reliability.ecore#//failuretypes/HardwareInducedFailureType/HardwareInducedFailureTypeHasProcessingResourceType/diagnostics"/>
+          <genParameters ecoreParameter="reliability.ecore#//failuretypes/HardwareInducedFailureType/HardwareInducedFailureTypeHasProcessingResourceType/context"/>
+        </genOperations>
+      </genClasses>
+      <genClasses ecoreClass="reliability.ecore#//failuretypes/SoftwareInducedFailureType">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference reliability.ecore#//failuretypes/SoftwareInducedFailureType/internalFailureOccurrenceDescriptions__SoftwareInducedFailureType"/>
+      </genClasses>
+      <genClasses ecoreClass="reliability.ecore#//failuretypes/ResourceTimeoutFailureType">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference reliability.ecore#//failuretypes/ResourceTimeoutFailureType/passiveResource__ResourceTimeoutFailureType"/>
+      </genClasses>
+    </nestedGenPackages>
+    <nestedGenPackages prefix="Resources" disposableProviderFactory="true" ecorePackage="reliability.ecore#//resources">
+      <genClasses ecoreClass="reliability.ecore#//resources/ReliabilityResourceRoot">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference reliability.ecore#//resources/ReliabilityResourceRoot/processingResourceReliabilitySpecification"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference reliability.ecore#//resources/ReliabilityResourceRoot/communicationLinkResourceReliabilitySpecifications"/>
+      </genClasses>
+      <genClasses ecoreClass="reliability.ecore#//resources/ProcessingResourceReliabilitySpecification">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute reliability.ecore#//resources/ProcessingResourceReliabilitySpecification/MTTR"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute reliability.ecore#//resources/ProcessingResourceReliabilitySpecification/MTTF"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference reliability.ecore#//resources/ProcessingResourceReliabilitySpecification/owner"/>
+      </genClasses>
+      <genClasses ecoreClass="reliability.ecore#//resources/CommunicationLinkResourceReliabilitySpecification">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute reliability.ecore#//resources/CommunicationLinkResourceReliabilitySpecification/failureProbability"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference reliability.ecore#//resources/CommunicationLinkResourceReliabilitySpecification/owner"/>
+      </genClasses>
+    </nestedGenPackages>
+  </genPackages>
+</genmodel:GenModel>

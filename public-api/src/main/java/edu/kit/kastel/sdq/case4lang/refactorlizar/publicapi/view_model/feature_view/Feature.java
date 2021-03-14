@@ -4,7 +4,11 @@ public class Feature {
 
   private final FeatureId identifier;
 
-  public Feature(FeatureId identifier) {
+  private Feature(FeatureId identifier) {
     this.identifier = identifier;
+  }
+
+  public static Feature of(FeatureId featureId) {
+    return new Feature(featureId);
   }
 }

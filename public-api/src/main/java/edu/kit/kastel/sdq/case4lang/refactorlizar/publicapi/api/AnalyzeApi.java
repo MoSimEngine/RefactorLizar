@@ -9,8 +9,6 @@ import org.apache.commons.lang3.NotImplementedException;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-import static edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.core.RefatorLizar.ANALYZER_PATH;
-
 public class AnalyzeApi {
 
   private static final String DEPENDENCY_CYCLE_ANALYZER_ID = "DependencyCycleAnalyzer";
@@ -65,7 +63,7 @@ public class AnalyzeApi {
   private void checkThatAnalyzerIsAvailable(String analyzerId) {
 
     boolean available = IAnalyzer //
-        .getAllAnalyzer(ANALYZER_PATH) //
+        .getAllAnalyzer() //
         .stream() //
         .anyMatch(iAnalyzer -> iAnalyzer.getName().equals(analyzerId));
 

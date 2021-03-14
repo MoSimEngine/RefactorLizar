@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/mpcm.domain.extensions.infrastructure/src" modelPluginID="mpcm.domain.extensions.infrastructure"
+    modelName="Infrastructure" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="5.0" copyrightFields="false"
+    usedGenPackages="../../mpcm.paradigm.base/model/base.genmodel#//base ../../mpcm.domain.behaviourseff/model/behaviourseff.genmodel#//behaviourseff ../../mpcm.paradigm.composition/model/composition.genmodel#//composition ../../de.uka.ipd.sdq.identifier/model/identifier.genmodel#//identifier ../../de.uka.ipd.sdq.probfunction/model/ProbabilityFunction.genmodel#//probfunction ../../mpcm.paradigm.repository/model/repository.genmodel#//repository ../../mpcm.paradigm.behaviour.seff/model/seff.genmodel#//seff ../../mpcm.domain.softwarerepository/model/softwarerepository.genmodel#//softwarerepository ../../de.uka.ipd.sdq.stoex/model/stoex.genmodel#//stoex ../../de.uka.ipd.sdq.units/model/Units.genmodel#//units ../../mpcm.paradigm.variables/model/variables.genmodel#//variables"
+    importOrganizing="true">
+  <foreignModel>infrastructure.ecore</foreignModel>
+  <genPackages prefix="Infrastructure" disposableProviderFactory="true" ecorePackage="infrastructure.ecore#/">
+    <nestedGenPackages prefix="Repository" disposableProviderFactory="true" ecorePackage="infrastructure.ecore#//repository">
+      <genClasses ecoreClass="infrastructure.ecore#//repository/InfrastructureRepositoryRoot">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference infrastructure.ecore#//repository/InfrastructureRepositoryRoot/infrastructurecomponent"/>
+      </genClasses>
+      <genClasses ecoreClass="infrastructure.ecore#//repository/InfrastructureComponent">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference infrastructure.ecore#//repository/InfrastructureComponent/owner"/>
+      </genClasses>
+      <genClasses ecoreClass="infrastructure.ecore#//repository/InfrastructureInterface">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference infrastructure.ecore#//repository/InfrastructureInterface/infrastructureSignatures__InfrastructureInterface"/>
+      </genClasses>
+      <genClasses ecoreClass="infrastructure.ecore#//repository/InfrastructureSignature">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference infrastructure.ecore#//repository/InfrastructureSignature/parameters__InfrastructureSignature"/>
+        <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference infrastructure.ecore#//repository/InfrastructureSignature/infrastructureInterface__InfrastructureSignature"/>
+      </genClasses>
+      <genClasses ecoreClass="infrastructure.ecore#//repository/InfrastructureProvidedRole">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference infrastructure.ecore#//repository/InfrastructureProvidedRole/providedInterface__InfrastructureProvidedRole"/>
+      </genClasses>
+      <genClasses ecoreClass="infrastructure.ecore#//repository/InfrastructureRequiredRole">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference infrastructure.ecore#//repository/InfrastructureRequiredRole/requiredInterface__InfrastructureRequiredRole"/>
+      </genClasses>
+    </nestedGenPackages>
+    <nestedGenPackages prefix="Seff" disposableProviderFactory="true" ecorePackage="infrastructure.ecore#//seff">
+      <genClasses ecoreClass="infrastructure.ecore#//seff/InfrastructureSEFFRoot">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference infrastructure.ecore#//seff/InfrastructureSEFFRoot/infrastructurecall"/>
+      </genClasses>
+      <genClasses ecoreClass="infrastructure.ecore#//seff/InfrastructureCall">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference infrastructure.ecore#//seff/InfrastructureCall/signature__InfrastructureCall"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference infrastructure.ecore#//seff/InfrastructureCall/numberOfCalls__InfrastructureCall"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference infrastructure.ecore#//seff/InfrastructureCall/action__InfrastructureCall"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference infrastructure.ecore#//seff/InfrastructureCall/requiredRole__InfrastructureCall"/>
+        <genOperations ecoreOperation="infrastructure.ecore#//seff/InfrastructureCall/SignatureMustBelongToUsedRequiredRole">
+          <genParameters ecoreParameter="infrastructure.ecore#//seff/InfrastructureCall/SignatureMustBelongToUsedRequiredRole/diagnostics"/>
+          <genParameters ecoreParameter="infrastructure.ecore#//seff/InfrastructureCall/SignatureMustBelongToUsedRequiredRole/context"/>
+        </genOperations>
+        <genOperations ecoreOperation="infrastructure.ecore#//seff/InfrastructureCall/ReferencedRequiredRoleMustBeRequiredByComponent">
+          <genParameters ecoreParameter="infrastructure.ecore#//seff/InfrastructureCall/ReferencedRequiredRoleMustBeRequiredByComponent/diagnostics"/>
+          <genParameters ecoreParameter="infrastructure.ecore#//seff/InfrastructureCall/ReferencedRequiredRoleMustBeRequiredByComponent/context"/>
+        </genOperations>
+        <genOperations ecoreOperation="infrastructure.ecore#//seff/InfrastructureCall/SignatureRoleCombinationMustBeUniqueWithinAbstractInternalControlFlowAction">
+          <genParameters ecoreParameter="infrastructure.ecore#//seff/InfrastructureCall/SignatureRoleCombinationMustBeUniqueWithinAbstractInternalControlFlowAction/diagnostics"/>
+          <genParameters ecoreParameter="infrastructure.ecore#//seff/InfrastructureCall/SignatureRoleCombinationMustBeUniqueWithinAbstractInternalControlFlowAction/context"/>
+        </genOperations>
+      </genClasses>
+    </nestedGenPackages>
+    <nestedGenPackages prefix="Composition" disposableProviderFactory="true" ecorePackage="infrastructure.ecore#//composition">
+      <genClasses ecoreClass="infrastructure.ecore#//composition/AssemblyInfrastructureConnector">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference infrastructure.ecore#//composition/AssemblyInfrastructureConnector/providedRole__AssemblyInfrastructureConnector"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference infrastructure.ecore#//composition/AssemblyInfrastructureConnector/requiredRole__AssemblyInfrastructureConnector"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference infrastructure.ecore#//composition/AssemblyInfrastructureConnector/providingAssemblyContext__AssemblyInfrastructureConnector"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference infrastructure.ecore#//composition/AssemblyInfrastructureConnector/requiringAssemblyContext__AssemblyInfrastructureConnector"/>
+      </genClasses>
+      <genClasses ecoreClass="infrastructure.ecore#//composition/ProvidedInfrastructureDelegationConnector">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference infrastructure.ecore#//composition/ProvidedInfrastructureDelegationConnector/innerProvidedRole__ProvidedInfrastructureDelegationConnector"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference infrastructure.ecore#//composition/ProvidedInfrastructureDelegationConnector/outerProvidedRole__ProvidedInfrastructureDelegationConnector"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference infrastructure.ecore#//composition/ProvidedInfrastructureDelegationConnector/assemblyContext__ProvidedInfrastructureDelegationConnector"/>
+      </genClasses>
+      <genClasses ecoreClass="infrastructure.ecore#//composition/RequiredInfrastructureDelegationConnector">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference infrastructure.ecore#//composition/RequiredInfrastructureDelegationConnector/innerRequiredRole__RequiredInfrastructureDelegationConnector"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference infrastructure.ecore#//composition/RequiredInfrastructureDelegationConnector/outerRequiredRole__RequiredInfrastructureDelegationConnector"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference infrastructure.ecore#//composition/RequiredInfrastructureDelegationConnector/assemblyContext__RequiredInfrastructureDelegationConnector"/>
+      </genClasses>
+    </nestedGenPackages>
+  </genPackages>
+</genmodel:GenModel>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated resourceinterfaces -->
+      <package
+            uri="mpcm.domain.extensions.resourceinterfaces.repository"
+            class="resourceinterfaces.repository.RepositoryPackage"
+            genModel="model/resourceinterfaces.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated resourceinterfaces -->
+      <package
+            uri="mpcm.domain.extensions.resourceinterfaces.seff"
+            class="resourceinterfaces.seff.SeffPackage"
+            genModel="model/resourceinterfaces.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated resourceinterfaces -->
+      <package
+            uri="mpcm.domain.extensions.resourceinterfaces.composition"
+            class="resourceinterfaces.composition.CompositionPackage"
+            genModel="model/resourceinterfaces.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated resourceinterfaces -->
+      <package
+            uri="mpcm.domain.extensions.resourceinterfaces.resourcetype"
+            class="resourceinterfaces.resourcetype.ResourcetypePackage"
+            genModel="model/resourceinterfaces.genmodel"/>
+   </extension>
+
+</plugin>

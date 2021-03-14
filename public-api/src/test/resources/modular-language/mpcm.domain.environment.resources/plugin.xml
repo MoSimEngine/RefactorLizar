@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated resources -->
+      <package
+            uri="mpcm.domain.environment.resources"
+            class="resources.ResourcesPackage"
+            genModel="model/resources.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated resources -->
+      <package
+            uri="mpcm.domain.environment.resources.resourcetype"
+            class="resources.resourcetype.ResourcetypePackage"
+            genModel="model/resources.genmodel"/>
+   </extension>
+
+</plugin>

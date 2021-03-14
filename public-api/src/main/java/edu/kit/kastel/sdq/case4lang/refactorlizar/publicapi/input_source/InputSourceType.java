@@ -4,6 +4,7 @@ import java.util.List;
 
 public class InputSourceType {
 
+
   private final InputSourceTypeId identifier;
   private final String description;
   private final List<AvailableParameter> availableParameters;
@@ -16,7 +17,11 @@ public class InputSourceType {
     this.availableParameters = availableParameters;
   }
 
-  public static InputSourceType fileSystem() {
+  public static List<InputSourceType> all() {
+    return List.of(fileSystem());
+  }
+
+  private static InputSourceType fileSystem() {
 
     return new InputSourceType( //
         InputSourceTypeId.fileSystem(), //
@@ -25,13 +30,21 @@ public class InputSourceType {
     );
   }
 
-  public static List<InputSourceType> all() {
-    return List.of(fileSystem());
-  }
-
   public static boolean supports(InputSourceTypeId inputSourceTypeId) {
     return all() //
         .stream() //
         .anyMatch(inputSourceType -> inputSourceType.identifier.equals(inputSourceTypeId));
+  }
+
+  public InputSourceTypeId getIdentifier() {
+    return identifier;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public List<AvailableParameter> getAvailableParameters() {
+    return availableParameters;
   }
 }
