@@ -71,7 +71,7 @@ public class RefactorLizar {
   }
 
   @Nonnull public VisualizeApi visualizeApi() {
-    return new VisualizeApi(modularLanguage);
+    return new VisualizeApi(modularLanguage, simulatorModel);
   }
 
 }

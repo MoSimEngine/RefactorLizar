@@ -12,7 +12,7 @@ public class FeatureViewTest extends BaseTest {
 
     FeatureView featureView = refactorLizar.visualizeApi().provideFeatureView();
 
-    assertEquals(23, featureView.getFeatures().size());
-    assertEquals(109, featureView.getFeatureToFeatureRelations().size());
+    assertEquals(2, featureView.getFeatures().size());
+    assertEquals(1, featureView.getFeatureToFeatureRelations().size());
   }
 }

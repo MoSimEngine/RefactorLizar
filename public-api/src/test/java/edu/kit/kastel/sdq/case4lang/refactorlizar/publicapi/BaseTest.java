@@ -50,7 +50,7 @@ public abstract class BaseTest {
       InputSourceTypeId inputSourceTypeId) {
 
     Map<String, String> inputSourceTypeParameters =
-        Map.of("path", determinePathInResourcesFolder("simulator"));
+        Map.of("path", determinePathInResourcesFolder("test-case-small/simulator"));
 
     return new InputSourceSimulator(inputSourceTypeId, inputSourceTypeParameters);
   }
@@ -59,7 +59,7 @@ public abstract class BaseTest {
       InputSourceTypeId inputSourceTypeId) {
 
     Map<String, String> inputSourceTypeParameters =
-        Map.of("path", determinePathInResourcesFolder("modular-language"));
+        Map.of("path", determinePathInResourcesFolder("test-case-small/modular-language"));
 
     return new InputSourceModularLanguage(inputSourceTypeId, inputSourceTypeParameters);
   }

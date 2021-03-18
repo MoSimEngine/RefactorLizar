@@ -1,5 +1,7 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.component_view;
 
+import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.input_source.InputSourceTypeId;
+
 public class ComponentId {
 
   private final String name;
@@ -8,7 +10,25 @@ public class ComponentId {
     this.name = name;
   }
 
+  public static ComponentId of(String name) {
+    return new ComponentId(name);
+  }
+
   public String getName() {
     return name;
+  }
+
+  @Override public boolean equals(Object other) {
+
+    if (other == this) {
+      return true;
+    }
+
+    if (!(other instanceof ComponentId)) {
+      return false;
+    }
+
+    ComponentId otherComponentId = (ComponentId) other;
+    return name.equals(otherComponentId.name);
   }
 }
