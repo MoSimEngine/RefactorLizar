@@ -7,3 +7,15 @@ task deploy() {
   dependsOn "language-blob:copyJar"
   dependsOn "public-api:copyJar"
 }
+
+repositories{
+  mavenLocal()
+}
+
+allprojects {
+  apply plugin: 'java'
+  apply plugin: 'maven'
+
+  group = 'edu.kit.kastel.dsis.mosim'
+  version = '0.0.1-SNAPSHOT'
+}
