@@ -1,3 +1,8 @@
+
+plugins {
+  id "com.github.johnrengelman.shadow" version "6.1.0"
+  id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions'
+}
 task deploy() {
   dependsOn "core:distZip"
   dependsOn "core:unzip"
@@ -7,3 +12,28 @@ task deploy() {
   dependsOn "language-blob:copyJar"
   dependsOn "public-api:copyJar"
 }
+
+
+dependencies {
+        implementation project(":model")
+        implementation project (":core")
+        implementation project(':feature-scatter')
+        implementation project(':dependency-cycle')
+        implementation project(':dependency-direction')
+        implementation project(':language-blob')
+}
+jar {
+  manifest {
+    attributes(
+      'Main-Class': 'edu.kit.kastel.sdq.case4lang.refactorlizar.core.RefactorLizar'
+    )
+  }
+}
+repositories {
+    mavenLocal()
+}
+
+shadowJar {
+  mergeServiceFiles()
+}
+defaultTasks "deploy", "shadowJar"
