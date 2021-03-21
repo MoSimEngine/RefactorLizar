@@ -1,13 +1,21 @@
-package edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi;
+package edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.visualize;
 
+import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.BaseTest;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.core.RefactorLizar;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.component_view.ComponentView;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.feature_view.FeatureView;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ComponentViewTest extends BaseTest {
 
+  private static RefactorLizar refactorLizar;
+
+  @BeforeAll public static void beforeAll() {
+    refactorLizar = provideRefactorLizar("component-view");
+  }
 
   @Test public void test() {
 
