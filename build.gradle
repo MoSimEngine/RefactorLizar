@@ -21,7 +21,7 @@ allprojects {
 spotless {
 	java {
 		target "**/*.java"
-		targetExclude "**/test/resources/**"
+		targetExclude "**/test/resources/**", "**/build/**"
 		trimTrailingWhitespace()
 		removeUnusedImports()
 		googleJavaFormat().aosp()
