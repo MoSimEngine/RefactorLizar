@@ -1,9 +1,46 @@
+plugins {
+	id "com.diffplug.spotless" version "5.11.0"
+}
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+	gradlePluginPortal()
+	jcenter()
+	maven {
+		url = uri('https://repo.maven.apache.org/maven2/')
+	}
+}
+
+
+
+
+allprojects {
+	apply plugin: 'com.diffplug.spotless'
+}
+spotless {
+	java {
+		target "**/*.java"
+		targetExclude "**/test/resources/**"
+		trimTrailingWhitespace()
+		removeUnusedImports()
+		googleJavaFormat().aosp()
+	}
+	groovy {
+		target "**/*.gradle"
+		// Use the default version and Groovy-Eclipse default configuration
+		greclipse()
+	}
+}
+
+
+
 task deploy() {
-  dependsOn "core:distZip"
-  dependsOn "core:unzip"
-  dependsOn "dependency-cycle:copyJar"
-  dependsOn "dependency-direction:copyJar"
-  dependsOn "feature-scatter:copyJar"
-  dependsOn "language-blob:copyJar"
-  dependsOn "public-api:copyJar"
+	dependsOn "core:distZip"
+	dependsOn "core:unzip"
+	dependsOn "dependency-cycle:copyJar"
+	dependsOn "dependency-direction:copyJar"
+	dependsOn "feature-scatter:copyJar"
+	dependsOn "language-blob:copyJar"
+	dependsOn "public-api:copyJar"
 }

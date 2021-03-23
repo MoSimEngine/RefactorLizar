@@ -92,536 +92,445 @@ import spoon.reflect.visitor.CtVisitor;
 
 public class ElementVisitor implements CtVisitor {
 
-  private boolean result = false;
-
-  public boolean canVisit() {
-   return result;
- }
-
-
-   @Override
-  public <A extends Annotation> void visitCtAnnotation(CtAnnotation<A> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtAnnotationFieldAccess(CtAnnotationFieldAccess<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtAnnotationMethod(CtAnnotationMethod<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <A extends Annotation> void visitCtAnnotationType(CtAnnotationType<A> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtAnonymousExecutable(CtAnonymousExecutable arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtArrayRead(CtArrayRead<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtArrayTypeReference(CtArrayTypeReference<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtArrayWrite(CtArrayWrite<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtAssert(CtAssert<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T, A extends T> void visitCtAssignment(CtAssignment<T, A> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtBinaryOperator(CtBinaryOperator<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <R> void visitCtBlock(CtBlock<R> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtBreak(CtBreak arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <S> void visitCtCase(CtCase<S> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtCatch(CtCatch arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtCatchVariable(CtCatchVariable<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtCatchVariableReference(CtCatchVariableReference<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtClass(CtClass<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtCodeSnippetExpression(CtCodeSnippetExpression<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtCodeSnippetStatement(CtCodeSnippetStatement arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtComment(CtComment arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtCompilationUnit(CtCompilationUnit arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtConditional(CtConditional<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtConstructor(CtConstructor<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtConstructorCall(CtConstructorCall<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtContinue(CtContinue arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtDo(CtDo arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T extends Enum<?>> void visitCtEnum(CtEnum<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtEnumValue(CtEnumValue<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtExecutableReference(CtExecutableReference<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T, E extends CtExpression<?>> void visitCtExecutableReferenceExpression(
-      CtExecutableReferenceExpression<T, E> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtField(CtField<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtFieldRead(CtFieldRead<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtFieldReference(CtFieldReference<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtFieldWrite(CtFieldWrite<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtFor(CtFor arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtForEach(CtForEach arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtIf(CtIf arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtImport(CtImport arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtInterface(CtInterface<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtIntersectionTypeReference(CtIntersectionTypeReference<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtInvocation(CtInvocation<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtJavaDoc(CtJavaDoc arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtJavaDocTag(CtJavaDocTag arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtLambda(CtLambda<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtLiteral(CtLiteral<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtLocalVariable(CtLocalVariable<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtLocalVariableReference(CtLocalVariableReference<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtMethod(CtMethod<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtModule(CtModule arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtModuleReference(CtModuleReference arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtModuleRequirement(CtModuleRequirement arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtNewArray(CtNewArray<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtNewClass(CtNewClass<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T, A extends T> void visitCtOperatorAssignment(CtOperatorAssignment<T, A> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtPackage(CtPackage arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtPackageDeclaration(CtPackageDeclaration arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtPackageExport(CtPackageExport arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtPackageReference(CtPackageReference arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtParameter(CtParameter<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtParameterReference(CtParameterReference<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtProvidedService(CtProvidedService arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <R> void visitCtReturn(CtReturn<R> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <R> void visitCtStatementList(CtStatementList arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtSuperAccess(CtSuperAccess<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <S> void visitCtSwitch(CtSwitch<S> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T, S> void visitCtSwitchExpression(CtSwitchExpression<T, S> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtSynchronized(CtSynchronized arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtTextBlock(CtTextBlock arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtThisAccess(CtThisAccess<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtThrow(CtThrow arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtTry(CtTry arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtTryWithResource(CtTryWithResource arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtTypeAccess(CtTypeAccess<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtTypeMemberWildcardImportReference(CtTypeMemberWildcardImportReference arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtTypeParameter(CtTypeParameter arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtTypeParameterReference(CtTypeParameterReference arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtTypeReference(CtTypeReference<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtUnaryOperator(CtUnaryOperator<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtUnboundVariableReference(CtUnboundVariableReference<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtUsedService(CtUsedService arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtVariableRead(CtVariableRead<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public <T> void visitCtVariableWrite(CtVariableWrite<T> arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtWhile(CtWhile arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtWildcardReference(CtWildcardReference arg0) {
-    result = false;
-
-  }
-
-  @Override
-  public void visitCtYieldStatement(CtYieldStatement arg0) {
-    result = false;
-
-  }
-
-
-  /**
-   * @param result the result to set
-   */
-  public void setResult(boolean result) {
-    this.result = result;
-  }
-
+    private boolean result = false;
+
+    public boolean canVisit() {
+        return result;
+    }
+
+    @Override
+    public <A extends Annotation> void visitCtAnnotation(CtAnnotation<A> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtAnnotationFieldAccess(CtAnnotationFieldAccess<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtAnnotationMethod(CtAnnotationMethod<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <A extends Annotation> void visitCtAnnotationType(CtAnnotationType<A> arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtAnonymousExecutable(CtAnonymousExecutable arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtArrayRead(CtArrayRead<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtArrayTypeReference(CtArrayTypeReference<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtArrayWrite(CtArrayWrite<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtAssert(CtAssert<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T, A extends T> void visitCtAssignment(CtAssignment<T, A> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtBinaryOperator(CtBinaryOperator<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <R> void visitCtBlock(CtBlock<R> arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtBreak(CtBreak arg0) {
+        result = false;
+    }
+
+    @Override
+    public <S> void visitCtCase(CtCase<S> arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtCatch(CtCatch arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtCatchVariable(CtCatchVariable<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtCatchVariableReference(CtCatchVariableReference<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtClass(CtClass<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtCodeSnippetExpression(CtCodeSnippetExpression<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtCodeSnippetStatement(CtCodeSnippetStatement arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtComment(CtComment arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtCompilationUnit(CtCompilationUnit arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtConditional(CtConditional<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtConstructor(CtConstructor<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtConstructorCall(CtConstructorCall<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtContinue(CtContinue arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtDo(CtDo arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T extends Enum<?>> void visitCtEnum(CtEnum<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtEnumValue(CtEnumValue<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtExecutableReference(CtExecutableReference<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T, E extends CtExpression<?>> void visitCtExecutableReferenceExpression(
+            CtExecutableReferenceExpression<T, E> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtField(CtField<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtFieldRead(CtFieldRead<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtFieldReference(CtFieldReference<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtFieldWrite(CtFieldWrite<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtFor(CtFor arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtForEach(CtForEach arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtIf(CtIf arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtImport(CtImport arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtInterface(CtInterface<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtIntersectionTypeReference(CtIntersectionTypeReference<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtInvocation(CtInvocation<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtJavaDoc(CtJavaDoc arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtJavaDocTag(CtJavaDocTag arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtLambda(CtLambda<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtLiteral(CtLiteral<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtLocalVariable(CtLocalVariable<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtLocalVariableReference(CtLocalVariableReference<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtMethod(CtMethod<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtModule(CtModule arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtModuleReference(CtModuleReference arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtModuleRequirement(CtModuleRequirement arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtNewArray(CtNewArray<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtNewClass(CtNewClass<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T, A extends T> void visitCtOperatorAssignment(CtOperatorAssignment<T, A> arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtPackage(CtPackage arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtPackageDeclaration(CtPackageDeclaration arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtPackageExport(CtPackageExport arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtPackageReference(CtPackageReference arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtParameter(CtParameter<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtParameterReference(CtParameterReference<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtProvidedService(CtProvidedService arg0) {
+        result = false;
+    }
+
+    @Override
+    public <R> void visitCtReturn(CtReturn<R> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <R> void visitCtStatementList(CtStatementList arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtSuperAccess(CtSuperAccess<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <S> void visitCtSwitch(CtSwitch<S> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T, S> void visitCtSwitchExpression(CtSwitchExpression<T, S> arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtSynchronized(CtSynchronized arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtTextBlock(CtTextBlock arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtThisAccess(CtThisAccess<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtThrow(CtThrow arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtTry(CtTry arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtTryWithResource(CtTryWithResource arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtTypeAccess(CtTypeAccess<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtTypeMemberWildcardImportReference(CtTypeMemberWildcardImportReference arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtTypeParameter(CtTypeParameter arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtTypeParameterReference(CtTypeParameterReference arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtTypeReference(CtTypeReference<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtUnaryOperator(CtUnaryOperator<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtUnboundVariableReference(CtUnboundVariableReference<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtUsedService(CtUsedService arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtVariableRead(CtVariableRead<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public <T> void visitCtVariableWrite(CtVariableWrite<T> arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtWhile(CtWhile arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtWildcardReference(CtWildcardReference arg0) {
+        result = false;
+    }
+
+    @Override
+    public void visitCtYieldStatement(CtYieldStatement arg0) {
+        result = false;
+    }
+
+    /** @param result the result to set */
+    public void setResult(boolean result) {
+        this.result = result;
+    }
 }

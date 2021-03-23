@@ -12,58 +12,56 @@ import spoon.reflect.declaration.CtPackage;
 @AutoService(IAnalyzer.class)
 public class LanguageBlobAnalyzer implements IAnalyzer {
 
-  private ModularLanguage language;
-  private SimulatorModel model;
+    private ModularLanguage language;
+    private SimulatorModel model;
 
-  public LanguageBlobAnalyzer() {
+    public LanguageBlobAnalyzer() {}
 
-  }
+    @Override
+    public Report analyze(CtElement element) {
+        PackageVisitor visitor = new PackageVisitor(language);
+        element.accept(visitor);
+        return visitor.getReport();
+    }
 
-  @Override
-  public Report analyze(CtElement element) {
-    PackageVisitor visitor = new PackageVisitor(language);
-    element.accept(visitor);
-    return visitor.getReport();
-  }
+    @Override
+    public void init(ModularLanguage language, SimulatorModel simulatorAST) {
+        this.language = language;
+        this.model = simulatorAST;
+    }
 
-  @Override
-  public void init(ModularLanguage language, SimulatorModel simulatorAST) {
-    this.language = language;
-    this.model = simulatorAST;
-  }
+    @Override
+    public String getDescription() {
+        return "";
+    }
 
-  @Override
-  public String getDescription() {
-    return "";
-  }
+    @Override
+    public String getName() {
+        return "LanguageBlobAnalyzer";
+    }
 
-  @Override
-  public String getName() {
-    return "LanguageBlobAnalyzer";
-  }
+    @Override
+    public boolean canAnalyze(CtElement element) {
+        ElementVisitor visitor =
+                new ElementVisitor() {
+                    @Override
+                    public void visitCtPackage(CtPackage arg0) {
+                        this.setResult(true);
+                    }
+                };
+        element.accept(visitor);
+        return visitor.canVisit();
+    }
 
-  @Override
-  public boolean canAnalyze(CtElement element) {
-    ElementVisitor visitor = new ElementVisitor() {
-      @Override
-      public void visitCtPackage(CtPackage arg0) {
-        this.setResult(true);
-      }
-    };
-    element.accept(visitor);
-    return visitor.canVisit();
-  }
+    @Override
+    public Report fullAnalysis() {
+        PackageVisitor visitor = new PackageVisitor(language);
+        visitor.analyzeFullModel(model);
+        return visitor.getReport();
+    }
 
-  @Override
-  public Report fullAnalysis() {
-    PackageVisitor visitor = new PackageVisitor(language);
-    visitor.analyzeFullModel(model);
-    return visitor.getReport(); 
-  }
-
-  @Override
-  public boolean supportsFullAnalysis() {
-    return true;
-  }
-  
+    @Override
+    public boolean supportsFullAnalysis() {
+        return true;
+    }
 }

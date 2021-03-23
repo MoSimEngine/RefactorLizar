@@ -6,7 +6,7 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.feature_v
 
 public class FeatureToComponentRelation extends Relation<FeatureId, ComponentId> {
 
-  public FeatureToComponentRelation(FeatureId origin, ComponentId target) {
-    super(origin, target);
-  }
+    public FeatureToComponentRelation(FeatureId origin, ComponentId target) {
+        super(origin, target);
+    }
 }

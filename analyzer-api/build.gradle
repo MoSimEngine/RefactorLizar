@@ -3,11 +3,11 @@
  */
 
 plugins {
-    id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions'
+	id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions'
 }
 
 dependencies {
-    implementation project(':model')
+	implementation project(':model')
 }
 
 description = 'analyzer-api'

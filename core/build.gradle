@@ -3,34 +3,40 @@
  */
 
 plugins {
-    id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions'
-    id "application"
-    id 'org.beryx.runtime' version '1.12.2'
+	id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions'
+	id "application"
+	id 'org.beryx.runtime' version '1.12.2'
 }
 
 dependencies {
-    implementation project(':model')
-    implementation project(':analyzer-api')
+	implementation project(':model')
+	implementation project(':analyzer-api')
 }
 application {
-    mainClass = 'edu.kit.kastel.sdq.case4lang.refactorlizar.core.RefactorLizar'
+	mainClass = 'edu.kit.kastel.sdq.case4lang.refactorlizar.core.RefactorLizar'
 }
 description = 'core'
 jar {
-  manifest {
-    attributes(
-      'Main-Class': 'edu.kit.kastel.sdq.case4lang.refactorlizar.core.RefactorLizar'
-    )
-  }
+	manifest {
+		attributes(
+				'Main-Class': 'edu.kit.kastel.sdq.case4lang.refactorlizar.core.RefactorLizar'
+				)
+	}
 }
 runtime {
-    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+	options = [
+		'--strip-debug',
+		'--compress',
+		'2',
+		'--no-header-files',
+		'--no-man-pages'
+	]
 }
 
 task unzip(type: Copy) {
-    def zipFile = file('build/distributions/refactorlizar-1.0-SNAPSHOT.zip')
-    def outputDir = file("${rootDir}")
- 
-    from zipTree(zipFile)
-    into outputDir
+	def zipFile = file('build/distributions/refactorlizar-1.0-SNAPSHOT.zip')
+	def outputDir = file("${rootDir}")
+
+	from zipTree(zipFile)
+	into outputDir
 }

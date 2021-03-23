@@ -4,7 +4,8 @@ import java.util.Map;
 
 public class InputSourceSimulator extends InputSource {
 
-  public InputSourceSimulator(InputSourceTypeId inputSourceTypeId, Map<String, String> parameters) {
-    super(inputSourceTypeId, parameters);
-  }
+    public InputSourceSimulator(
+            InputSourceTypeId inputSourceTypeId, Map<String, String> parameters) {
+        super(inputSourceTypeId, parameters);
+    }
 }

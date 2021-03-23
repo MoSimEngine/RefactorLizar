@@ -9,35 +9,37 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.class_vie
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.component_view.ComponentView;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.feature_component_view.FeatureComponentView;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.feature_view.FeatureView;
-import org.apache.commons.lang3.NotImplementedException;
-
 import javax.annotation.Nonnull;
+import org.apache.commons.lang3.NotImplementedException;
 
 public class VisualizeApi {
 
-  private final FeatureViewAdapter featureViewAdapter;
-  private final ComponentViewAdapter componentViewAdapter;
+    private final FeatureViewAdapter featureViewAdapter;
+    private final ComponentViewAdapter componentViewAdapter;
 
-  public VisualizeApi(ModularLanguage modularLanguage, SimulatorModel simulatorModel) {
+    public VisualizeApi(ModularLanguage modularLanguage, SimulatorModel simulatorModel) {
 
-    featureViewAdapter = new FeatureViewAdapter(modularLanguage);
-    componentViewAdapter = new ComponentViewAdapter(simulatorModel);
-  }
+        featureViewAdapter = new FeatureViewAdapter(modularLanguage);
+        componentViewAdapter = new ComponentViewAdapter(simulatorModel);
+    }
 
-  @Nonnull public FeatureView provideFeatureView() {
-    return featureViewAdapter.provideFeatureView();
-  }
+    @Nonnull
+    public FeatureView provideFeatureView() {
+        return featureViewAdapter.provideFeatureView();
+    }
 
-  @Nonnull public ComponentView provideComponentView() {
-    return componentViewAdapter.provideComponentView();
-  }
+    @Nonnull
+    public ComponentView provideComponentView() {
+        return componentViewAdapter.provideComponentView();
+    }
 
-  @Nonnull public FeatureComponentView provideFeatureComponentView() {
-    throw new NotImplementedException();
-  }
+    @Nonnull
+    public FeatureComponentView provideFeatureComponentView() {
+        throw new NotImplementedException();
+    }
 
-  @Nonnull public ClassView provideClassView(ClassId classId) {
-    throw new NotImplementedException();
-  }
-
+    @Nonnull
+    public ClassView provideClassView(ClassId classId) {
+        throw new NotImplementedException();
+    }
 }
