@@ -4,19 +4,19 @@ import java.util.Map;
 
 public class InputSource {
 
-  protected InputSourceTypeId inputSourceTypeId;
-  protected Map<String, String> parameters;
+    protected InputSourceTypeId inputSourceTypeId;
+    protected Map<String, String> parameters;
 
-  public InputSource(InputSourceTypeId inputSourceTypeId, Map<String, String> parameters) {
-    this.inputSourceTypeId = inputSourceTypeId;
-    this.parameters = parameters;
-  }
+    public InputSource(InputSourceTypeId inputSourceTypeId, Map<String, String> parameters) {
+        this.inputSourceTypeId = inputSourceTypeId;
+        this.parameters = parameters;
+    }
 
-  public InputSourceTypeId getInputSourceTypeId() {
-    return inputSourceTypeId;
-  }
+    public InputSourceTypeId getInputSourceTypeId() {
+        return inputSourceTypeId;
+    }
 
-  public Map<String, String> getParameters() {
-    return parameters;
-  }
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
 }

@@ -4,7 +4,7 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.common.Re
 
 public class ClassToClassRelation extends Relation<ClassId, ClassId> {
 
-  public ClassToClassRelation(ClassId origin, ClassId target) {
-    super(origin, target);
-  }
+    public ClassToClassRelation(ClassId origin, ClassId target) {
+        super(origin, target);
+    }
 }

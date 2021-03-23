@@ -3,15 +3,14 @@
  */
 
 plugins {
-    id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions'
-    id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions-analyzer'
-
+	id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions'
+	id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions-analyzer'
 }
 
 dependencies {
-    implementation project(':analyzer-api')
-    implementation project(':model')
-    implementation 'com.google.guava:guava:30.1.1-jre'
+	implementation project(':analyzer-api')
+	implementation project(':model')
+	implementation 'com.google.guava:guava:30.1-jre'
 }
 
 description = 'dependency-direction'

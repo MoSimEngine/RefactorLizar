@@ -5,29 +5,23 @@ import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.visitor.filter.TypeFilter;
 
-/**
- * SimulatorModel
- */
+/** SimulatorModel */
 public class SimulatorModel {
 
-  private Collection<Feature> languageFeatures;
+    private Collection<Feature> languageFeatures;
 
-  public <T extends CtElement> Collection<T> getAllElements(Class<? extends T> clazz) {
-    return languageFeatures.stream().flatMap(v -> v.getJavaPackage().getElements(new TypeFilter<>(clazz)).stream()).collect(Collectors.toList());
-  } 
-  /**
-   * @return the bundles
-   */
-  public Collection<Feature> getLanguageFeature() {
-    return languageFeatures;
-  }
+    public <T extends CtElement> Collection<T> getAllElements(Class<? extends T> clazz) {
+        return languageFeatures.stream()
+                .flatMap(v -> v.getJavaPackage().getElements(new TypeFilter<>(clazz)).stream())
+                .collect(Collectors.toList());
+    }
+    /** @return the bundles */
+    public Collection<Feature> getLanguageFeature() {
+        return languageFeatures;
+    }
 
-
-
-  /**
-   * @param languageFeatures
-   */
-  public SimulatorModel(Collection<Feature> languageFeatures) {
-    this.languageFeatures = languageFeatures;
-  }
+    /** @param languageFeatures */
+    public SimulatorModel(Collection<Feature> languageFeatures) {
+        this.languageFeatures = languageFeatures;
+    }
 }

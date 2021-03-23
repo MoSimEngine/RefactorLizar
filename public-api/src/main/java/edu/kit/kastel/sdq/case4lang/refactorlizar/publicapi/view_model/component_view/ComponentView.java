@@ -4,20 +4,21 @@ import java.util.List;
 
 public class ComponentView {
 
-  private final List<Component> components;
-  private final List<ComponentToComponentRelation> componentToComponentRelations;
+    private final List<Component> components;
+    private final List<ComponentToComponentRelation> componentToComponentRelations;
 
-  public ComponentView(List<Component> components,
-      List<ComponentToComponentRelation> componentToComponentRelations) {
-    this.components = components;
-    this.componentToComponentRelations = componentToComponentRelations;
-  }
+    public ComponentView(
+            List<Component> components,
+            List<ComponentToComponentRelation> componentToComponentRelations) {
+        this.components = components;
+        this.componentToComponentRelations = componentToComponentRelations;
+    }
 
-  public List<ComponentToComponentRelation> getComponentToComponentRelations() {
-    return componentToComponentRelations;
-  }
+    public List<ComponentToComponentRelation> getComponentToComponentRelations() {
+        return componentToComponentRelations;
+    }
 
-  public List<Component> getComponents() {
-    return components;
-  }
+    public List<Component> getComponents() {
+        return components;
+    }
 }
