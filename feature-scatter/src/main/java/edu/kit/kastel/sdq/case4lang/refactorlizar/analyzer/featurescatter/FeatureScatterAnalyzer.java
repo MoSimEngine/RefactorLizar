@@ -4,6 +4,7 @@ import com.google.auto.service.AutoService;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.ElementVisitor;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.IAnalyzer;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.SearchLevels;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import spoon.reflect.declaration.CtElement;
@@ -57,6 +58,13 @@ public class FeatureScatterAnalyzer implements IAnalyzer {
     public Report fullAnalysis() {
         PackageVisitor visitor = new PackageVisitor(language, model);
         visitor.fullAnalysis();
+        return visitor.getReport();
+    }
+
+    @Override
+    public Report fullAnalysis(SearchLevels level) {
+        PackageVisitor visitor = new PackageVisitor(language, model);
+        visitor.fullAnalysis(level);
         return visitor.getReport();
     }
 

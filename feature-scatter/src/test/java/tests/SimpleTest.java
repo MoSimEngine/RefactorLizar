@@ -3,7 +3,10 @@ package tests;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.SearchLevels;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.featurescatter.PackageVisitor;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.core.LanguageParser;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.core.SimulatorParser;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
@@ -67,5 +70,19 @@ public class SimpleTest {
         assertNotNull(visitor.getReport());
         assertTrue(visitor.getReport().isSmellFound());
         System.out.println(visitor.getReport().toString());
+    }
+
+    @Test
+    public void classLevelReport() {
+        ModularLanguage lang =
+                new ModularLanguage(
+                        new LanguageParser().parseLanguage("src/test/resources/modular-language"));
+        SimulatorModel model =
+                new SimulatorModel(
+                        new SimulatorParser().parseLanguage("src/test/resources/simulator"));
+        PackageVisitor visitor = new PackageVisitor(lang, model);
+        visitor.fullAnalysis(SearchLevels.TYPE);
+        System.out.println(visitor.getReport().toString());
+        int a = 3;
     }
 }
