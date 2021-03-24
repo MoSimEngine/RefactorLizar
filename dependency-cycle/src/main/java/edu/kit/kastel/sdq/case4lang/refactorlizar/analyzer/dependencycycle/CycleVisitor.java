@@ -10,15 +10,7 @@ import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import java.util.ArrayDeque;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtPackage;
@@ -44,6 +36,16 @@ public class CycleVisitor extends CtAbstractVisitor {
         if (cycles.isEmpty()) {
             return new Report("Dependency Cycle Analysis", "No cycle found.", false);
         }
+
+        Collection<List<String>> cyclesForReport =
+                cycles.stream()
+                        .map(
+                                v ->
+                                        v.stream()
+                                                .map(CtType::getQualifiedName)
+                                                .collect(Collectors.toList()))
+                        .collect(Collectors.toList());
+
         return new Report(
                 "Dependency Cycle Analysis",
                 String.format(
@@ -56,7 +58,8 @@ public class CycleVisitor extends CtAbstractVisitor {
                                                         .map(CtType::getQualifiedName)
                                                         .collect(Collectors.joining(" -> ")))
                                 .collect(Collectors.joining("\n"))),
-                true);
+                true,
+                cyclesForReport);
     }
 
     /**

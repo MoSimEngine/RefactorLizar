@@ -2,6 +2,7 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 public class Report {
 
@@ -9,6 +10,7 @@ public class Report {
     private String description;
     private Collection<Solution> solutions;
     private boolean smellFound;
+    private Collection<List<String>> cycles;
 
     public Report(String text, String description, boolean smellFound) {
         this.text = text;
@@ -17,15 +19,23 @@ public class Report {
         this.smellFound = smellFound;
     }
 
-    /** @return the solutions */
+    public Report(
+            String text, String description, boolean smellFound, Collection<List<String>> cycles) {
+        this.text = text;
+        this.description = description;
+        solutions = Collections.emptyList();
+        this.smellFound = smellFound;
+        this.cycles = cycles;
+    }
+
     public Collection<Solution> getSolutions() {
         return solutions;
     }
-    /** @return the description */
+
     public String getDescription() {
         return description;
     }
-    /** @return the text */
+
     public String getText() {
         return text;
     }
@@ -33,16 +43,14 @@ public class Report {
     public void addSolution(Solution solution) {
         solutions.add(solution);
     }
-    /** @return the smellFound */
+
     public boolean isSmellFound() {
         return smellFound;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#toString()
-     */
+    public Collection<List<String>> getCycles() {
+        return cycles;
+    }
 
     @Override
     public String toString() {

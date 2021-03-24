@@ -1,6 +1,9 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.api;
 
+import static edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter.DependencyCycleOnComponentLevelAdapter.DEPENDENCY_CYCLE_ANALYZER_ID;
+
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.IAnalyzer;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter.DependencyCycleOnComponentLevelAdapter;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.analyze_model.DependencyCyclesOnClassLevel;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.analyze_model.DependencyCyclesOnComponentLevel;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.analyze_model.FeatureScattering;
@@ -15,16 +18,22 @@ import org.apache.commons.lang3.NotImplementedException;
 
 public class AnalyzeApi {
 
-    private static final String DEPENDENCY_CYCLE_ANALYZER_ID = "DependencyCycleAnalyzer";
     private static final String FEATURE_SCATTERING_ANALYZER_ID = "FeatureScatterAnalyzer";
     private static final String LANGUAGE_BLOB_ANALYZER_ID = "LanguageBlobAnalyzer";
     private static final String LAYER_BREACH_ANALYZER_ID = "LayerBreachAnalyzer";
+
+    private final DependencyCycleOnComponentLevelAdapter dependencyCycleOnComponentLevelAdapter;
+
+    public AnalyzeApi(
+            DependencyCycleOnComponentLevelAdapter dependencyCycleOnComponentLevelAdapter) {
+        this.dependencyCycleOnComponentLevelAdapter = dependencyCycleOnComponentLevelAdapter;
+    }
 
     @Nonnull
     public DependencyCyclesOnComponentLevel detectDependencyCyclesOnComponentLevel() {
 
         checkThatAnalyzerIsAvailable(DEPENDENCY_CYCLE_ANALYZER_ID);
-        throw new NotImplementedException();
+        return dependencyCycleOnComponentLevelAdapter.analyze();
     }
 
     @Nonnull
