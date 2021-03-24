@@ -9,7 +9,7 @@ import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.JavaSourceCodeCache;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,8 +27,8 @@ import spoon.reflect.visitor.CtAbstractVisitor;
 
 public class CycleVisitor extends CtAbstractVisitor {
 
-    public Report fullAnalysis(SimulatorModel model) {
-        Collection<CtPackage> packages = model.getAllElements(CtPackage.class);
+    public Report fullAnalysis(JavaSourceCodeCache javaSourceCodeCache) {
+        Collection<CtPackage> packages = javaSourceCodeCache.getAllPackagesForSimulatorFeatures();
         MutableGraph<CtType<?>> graph = GraphBuilder.directed().build();
         for (CtPackage ctPackage : packages) {
             for (CtType<?> type : ctPackage.getTypes()) {

@@ -1,5 +1,6 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api;
 
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.JavaSourceCodeCache;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.io.IOException;
@@ -53,7 +54,10 @@ public interface IAnalyzer {
 
     Report analyze(CtElement element);
 
-    void init(ModularLanguage language, SimulatorModel simulatorAST);
+    void init(
+            JavaSourceCodeCache javaSourceCodeCache,
+            ModularLanguage language,
+            SimulatorModel simulatorAST);
 
     String getDescription();
 

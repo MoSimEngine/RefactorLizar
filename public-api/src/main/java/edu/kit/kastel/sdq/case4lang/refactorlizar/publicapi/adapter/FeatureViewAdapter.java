@@ -19,12 +19,12 @@ public class FeatureViewAdapter {
     public FeatureView provideFeatureView() {
 
         List<Feature> features =
-                modularLanguage.getLanguageFeature().stream()
+                modularLanguage.getLanguageFeatures().stream()
                         .map(this::convert)
                         .collect(Collectors.toList());
 
         List<FeatureToFeatureRelation> featureToFeatureRelations =
-                modularLanguage.getLanguageFeature().stream()
+                modularLanguage.getLanguageFeatures().stream()
                         .flatMap(feature -> findEdges(feature).stream())
                         .collect(Collectors.toList());
 
@@ -32,7 +32,7 @@ public class FeatureViewAdapter {
     }
 
     private List<FeatureToFeatureRelation> findEdges(
-            edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature input) {
+            edu.kit.kastel.sdq.case4lang.refactorlizar.model.LanguageFeature input) {
 
         FeatureId self = FeatureId.of(input.getBundle().getName());
 
@@ -44,7 +44,8 @@ public class FeatureViewAdapter {
                 .collect(Collectors.toList());
     }
 
-    private Feature convert(edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature input) {
+    private Feature convert(
+            edu.kit.kastel.sdq.case4lang.refactorlizar.model.LanguageFeature input) {
 
         FeatureId featureId = FeatureId.of(input.getBundle().getName());
         return Feature.of(featureId);

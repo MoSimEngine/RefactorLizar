@@ -26,7 +26,7 @@ public class ComponentViewAdapter {
     public ComponentView provideComponentView() {
 
         List<CtPackage> ctPackagesTopLevel =
-                simulatorModel.getAllElements(CtPackage.class).stream()
+                simulatorModel.getSimulatorComponents()getAllElements(CtPackage.class).stream()
                         .filter(
                                 ctPackage ->
                                         ctPackage.getParent() != null

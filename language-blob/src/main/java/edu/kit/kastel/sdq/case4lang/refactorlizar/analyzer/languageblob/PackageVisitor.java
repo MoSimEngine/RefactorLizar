@@ -4,7 +4,8 @@ import com.google.common.graph.EndpointPair;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.JavaSourceCodeCache;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.LanguageFeature;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.ArrayList;
@@ -20,21 +21,22 @@ import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.reference.CtPackageReference;
 import spoon.reflect.visitor.CtAbstractVisitor;
-import spoon.reflect.visitor.filter.TypeFilter;
 
 public class PackageVisitor extends CtAbstractVisitor {
 
+    private final JavaSourceCodeCache javaSourceCodeCache;
     private ModularLanguage language;
     private Report report;
 
-    public PackageVisitor(ModularLanguage language) {
+    public PackageVisitor(JavaSourceCodeCache javaSourceCodeCache, ModularLanguage language) {
+        this.javaSourceCodeCache = javaSourceCodeCache;
         this.language = language;
     }
 
     @Override
     public void visitCtPackage(CtPackage ctPackage) {
         MutableGraph<Node> graph = GraphBuilder.directed().build();
-        Map<String, Feature> featureByPackage = generateFeatureByPackageQName();
+        Map<String, LanguageFeature> featureByPackage = generateFeatureByPackageQName();
         Set<Node> simulatorPackageNodes = new HashSet<>();
         Set<EndpointPair<Node>> edges = new HashSet<>();
         for (CtType<?> type : ctPackage.getTypes()) {
@@ -102,10 +104,10 @@ public class PackageVisitor extends CtAbstractVisitor {
     }
 
     static class Node {
-        private Feature feature;
+        private LanguageFeature feature;
         private CtPackageReference packag;
 
-        public Node(CtPackageReference packag, Feature feature) {
+        public Node(CtPackageReference packag, LanguageFeature feature) {
             this.feature = feature;
             this.packag = packag;
         }
@@ -147,11 +149,11 @@ public class PackageVisitor extends CtAbstractVisitor {
 
     public void analyzeFullModel(SimulatorModel model) {
         MutableGraph<Node> graph = GraphBuilder.directed().build();
-        Map<String, Feature> featureByPackage = generateFeatureByPackageQName();
+        Map<String, LanguageFeature> featureByPackage = generateFeatureByPackageQName();
 
         Set<Node> simulatorPackageNodes = new HashSet<>();
         Set<EndpointPair<Node>> edges = new HashSet<>();
-        for (CtPackage ctPackage : model.getAllElements(CtPackage.class)) {
+        for (CtPackage ctPackage : javaSourceCodeCache.getAllPackagesForSimulatorFeatures()) {
             for (CtType<?> type : ctPackage.getTypes()) {
                 simulatorPackageNodes.add(new Node(ctPackage.getReference()));
                 Set<CtPackageReference> packagesOfReferencedTypes =
@@ -180,12 +182,12 @@ public class PackageVisitor extends CtAbstractVisitor {
         generateReport(graph, result);
     }
 
-    private Map<String, Feature> generateFeatureByPackageQName() {
-        Map<String, Feature> featureByPackage = new HashMap<>();
-        for (Feature feature : language.getLanguageFeature()) {
+    private Map<String, LanguageFeature> generateFeatureByPackageQName() {
+        Map<String, LanguageFeature> featureByPackage = new HashMap<>();
+        for (LanguageFeature feature : language.getLanguageFeatures()) {
             Collection<CtPackage> packages =
-                    feature.getJavaPackage()
-                            .getElements(new TypeFilter<CtPackage>(CtPackage.class));
+                    javaSourceCodeCache.getAllPackagesForLanguageFeature(
+                            feature.getBundle().getName());
             packages.stream().forEach(v -> featureByPackage.put(v.getQualifiedName(), feature));
         }
         return featureByPackage;

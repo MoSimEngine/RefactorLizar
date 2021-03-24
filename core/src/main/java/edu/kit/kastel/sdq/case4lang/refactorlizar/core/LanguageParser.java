@@ -6,7 +6,8 @@ import com.google.common.flogger.FluentLogger;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.core.javaparser.ModelBuilder;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.core.pluginparser.BundleParser;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Bundle;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.LanguageFeature;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,20 +17,22 @@ import spoon.reflect.declaration.CtPackage;
 public class LanguageParser {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
-    public Collection<Feature> parseLanguage(String path) {
+    public ModularLanguage parseLanguage(String path) {
         Collection<CtPackage> javaPackages = buildJavaPackages(path);
         Collection<Bundle> bundles = new BundleParser().analyzeManifests(path);
         Map<String, CtPackage> packageByQName = convertPackagesToMap(javaPackages);
-        Collection<Feature> languageFeatures = new ArrayList<>();
+        Collection<LanguageFeature> languageFeatures = new ArrayList<>();
+
         for (Bundle bundle : bundles) {
             CtPackage bundlePackage = packageByQName.get(bundle.getSimpleName());
             if (bundlePackage == null) {
                 logger.atWarning().log("ignoring bundle %s", bundle);
                 continue;
             }
-            languageFeatures.add(new Feature(bundlePackage, bundle));
+            languageFeatures.add(new LanguageFeature(bundle, null));
         }
-        return languageFeatures;
+
+        return new ModularLanguage(languageFeatures);
     }
 
     private Collection<CtPackage> buildJavaPackages(String path) {

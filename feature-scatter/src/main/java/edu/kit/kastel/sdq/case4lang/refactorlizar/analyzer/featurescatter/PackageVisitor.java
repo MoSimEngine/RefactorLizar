@@ -4,7 +4,8 @@ import com.google.common.graph.EndpointPair;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.JavaSourceCodeCache;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.LanguageFeature;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.ArrayList;
@@ -18,15 +19,19 @@ import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.visitor.CtAbstractVisitor;
-import spoon.reflect.visitor.filter.TypeFilter;
 
 public class PackageVisitor extends CtAbstractVisitor {
 
+    private final JavaSourceCodeCache javaSourceCodeCache;
     private ModularLanguage language;
     private Report report;
     private SimulatorModel model;
 
-    public PackageVisitor(ModularLanguage language, SimulatorModel model) {
+    public PackageVisitor(
+            JavaSourceCodeCache javaSourceCodeCache,
+            ModularLanguage language,
+            SimulatorModel model) {
+        this.javaSourceCodeCache = javaSourceCodeCache;
         this.language = language;
         this.model = model;
     }
@@ -34,19 +39,19 @@ public class PackageVisitor extends CtAbstractVisitor {
     @Override
     public void visitCtPackage(CtPackage ctPackage) {
         MutableGraph<Node> graph = GraphBuilder.directed().build();
-        Map<CtPackage, Feature> featureByPackage = new HashMap<>();
+        Map<CtPackage, LanguageFeature> featureByPackage = new HashMap<>();
         Map<String, CtPackage> languagePackageByQName = new HashMap<>();
 
-        for (Feature feature : language.getLanguageFeature()) {
+        for (LanguageFeature languageFeature : language.getLanguageFeatures()) {
             Collection<CtPackage> packages =
-                    feature.getJavaPackage()
-                            .getElements(new TypeFilter<CtPackage>(CtPackage.class));
-            packages.stream().forEach(v -> featureByPackage.put(v, feature));
+                    javaSourceCodeCache.getAllPackagesForLanguageFeature(
+                            languageFeature.getBundle().getName());
+            packages.stream().forEach(v -> featureByPackage.put(v, languageFeature));
             packages.stream().forEach(v -> languagePackageByQName.put(v.getQualifiedName(), v));
         }
         Set<Node> simulatorPackageNodes = new HashSet<>();
         Set<EndpointPair<Node>> edges = new HashSet<>();
-        for (CtPackage packag : model.getAllElements(CtPackage.class)) {
+        for (CtPackage packag : javaSourceCodeCache.getAllPackagesForSimulatorFeatures()) {
             for (CtType<?> type : packag.getTypes()) {
                 type.getReferencedTypes();
                 simulatorPackageNodes.add(new Node(packag));
@@ -75,7 +80,7 @@ public class PackageVisitor extends CtAbstractVisitor {
         result.removeIf(
                 v ->
                         graph.successors(v).stream()
-                                .noneMatch(javaPackage -> javaPackage.packag.equals(ctPackage)));
+                                .noneMatch(javaPackage -> javaPackage.ctPackage.equals(ctPackage)));
         if (result.isEmpty()) {
             report =
                     new Report(
@@ -89,9 +94,9 @@ public class PackageVisitor extends CtAbstractVisitor {
                 formattedDescriptions.add(
                         String.format(
                                 scatter,
-                                node.packag.getQualifiedName(),
+                                node.ctPackage.getQualifiedName(),
                                 graph.successors(node).stream()
-                                        .map(v -> v.packag.getQualifiedName().toString())
+                                        .map(v -> v.ctPackage.getQualifiedName().toString())
                                         .collect(Collectors.joining(", "))));
             }
 
@@ -109,19 +114,19 @@ public class PackageVisitor extends CtAbstractVisitor {
 
     public void fullAnalysis() {
         MutableGraph<Node> graph = GraphBuilder.directed().build();
-        Map<CtPackage, Feature> featureByPackage = new HashMap<>();
+        Map<CtPackage, LanguageFeature> featureByPackage = new HashMap<>();
         Map<String, CtPackage> languagePackageByQName = new HashMap<>();
 
-        for (Feature feature : language.getLanguageFeature()) {
+        for (LanguageFeature feature : language.getLanguageFeatures()) {
             Collection<CtPackage> packages =
-                    feature.getJavaPackage()
-                            .getElements(new TypeFilter<CtPackage>(CtPackage.class));
+                    javaSourceCodeCache.getAllPackagesForLanguageFeature(
+                            feature.getBundle().getName());
             packages.stream().forEach(v -> featureByPackage.put(v, feature));
             packages.stream().forEach(v -> languagePackageByQName.put(v.getQualifiedName(), v));
         }
         Set<Node> simulatorPackageNodes = new HashSet<>();
         Set<EndpointPair<Node>> edges = new HashSet<>();
-        for (CtPackage packag : model.getAllElements(CtPackage.class)) {
+        for (CtPackage packag : javaSourceCodeCache.getAllPackagesForSimulatorFeatures()) {
             for (CtType<?> type : packag.getTypes()) {
                 type.getReferencedTypes();
                 simulatorPackageNodes.add(new Node(packag));
@@ -160,9 +165,9 @@ public class PackageVisitor extends CtAbstractVisitor {
                 formattedDescriptions.add(
                         String.format(
                                 scatter,
-                                node.packag.getQualifiedName(),
+                                node.ctPackage.getQualifiedName(),
                                 graph.successors(node).stream()
-                                        .map(v -> v.packag.getQualifiedName().toString())
+                                        .map(v -> v.ctPackage.getQualifiedName().toString())
                                         .collect(Collectors.joining(", "))));
             }
 
@@ -177,16 +182,16 @@ public class PackageVisitor extends CtAbstractVisitor {
     }
 
     static class Node {
-        private Feature feature;
-        private CtPackage packag;
+        private LanguageFeature feature;
+        private final CtPackage ctPackage;
 
-        public Node(CtPackage packag, Feature feature) {
+        public Node(CtPackage ctPackage, LanguageFeature feature) {
             this.feature = feature;
-            this.packag = packag;
+            this.ctPackage = ctPackage;
         }
 
-        public Node(CtPackage packag) {
-            this.packag = packag;
+        public Node(CtPackage ctPackage) {
+            this.ctPackage = ctPackage;
         }
 
         /*
@@ -197,7 +202,7 @@ public class PackageVisitor extends CtAbstractVisitor {
 
         @Override
         public int hashCode() {
-            return Objects.hash(feature, packag);
+            return Objects.hash(feature, ctPackage);
         }
 
         /*
@@ -211,7 +216,8 @@ public class PackageVisitor extends CtAbstractVisitor {
             if (this == obj) return true;
             if (!(obj instanceof Node)) return false;
             Node other = (Node) obj;
-            return Objects.equals(feature, other.feature) && Objects.equals(packag, other.packag);
+            return Objects.equals(feature, other.feature)
+                    && Objects.equals(ctPackage, other.ctPackage);
         }
     }
 

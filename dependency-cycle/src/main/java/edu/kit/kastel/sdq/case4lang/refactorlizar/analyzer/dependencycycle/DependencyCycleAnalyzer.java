@@ -4,6 +4,7 @@ import com.google.auto.service.AutoService;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.ElementVisitor;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.IAnalyzer;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.JavaSourceCodeCache;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import spoon.reflect.declaration.CtElement;
@@ -12,6 +13,7 @@ import spoon.reflect.declaration.CtPackage;
 @AutoService(IAnalyzer.class)
 public class DependencyCycleAnalyzer implements IAnalyzer {
 
+    private JavaSourceCodeCache javaSourceCodeCache;
     private ModularLanguage language;
     private SimulatorModel model;
 
@@ -24,7 +26,11 @@ public class DependencyCycleAnalyzer implements IAnalyzer {
     }
 
     @Override
-    public void init(ModularLanguage language, SimulatorModel simulatorAST) {
+    public void init(
+            JavaSourceCodeCache javaSourceCodeCache,
+            ModularLanguage language,
+            SimulatorModel simulatorAST) {
+        this.javaSourceCodeCache = javaSourceCodeCache;
         this.language = language;
         this.model = simulatorAST;
     }
@@ -55,7 +61,7 @@ public class DependencyCycleAnalyzer implements IAnalyzer {
 
     @Override
     public Report fullAnalysis() {
-        return new CycleVisitor().fullAnalysis(model);
+        return new CycleVisitor().fullAnalysis(javaSourceCodeCache);
     }
 
     @Override
