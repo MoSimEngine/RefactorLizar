@@ -1,19 +1,16 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter;
 
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorComponent;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.component_view.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.component_view.ComponentId;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.component_view.ComponentToComponentRelation;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.component_view.ComponentView;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import spoon.reflect.declaration.CtPackage;
-import spoon.reflect.declaration.CtType;
-import spoon.reflect.reference.CtTypeReference;
 
 public class ComponentViewAdapter {
 
@@ -25,60 +22,33 @@ public class ComponentViewAdapter {
 
     public ComponentView provideComponentView() {
 
-        List<CtPackage> ctPackagesTopLevel =
-                simulatorModel.getAllElements(CtPackage.class).stream()
-                        .filter(
-                                ctPackage ->
-                                        ctPackage.getParent() != null
-                                                || !ctPackage.isUnnamedPackage())
-                        .collect(Collectors.toList());
+        Collection<SimulatorComponent> simulatorComponents =
+                simulatorModel.getSimulatorComponents();
 
         List<Component> components =
-                ctPackagesTopLevel.stream().map(this::convert).collect(Collectors.toList());
+                simulatorComponents.stream().map(this::convert).collect(Collectors.toList());
 
-        List<ComponentToComponentRelation> componentToComponentRelations =
-                simulatorModel.getAllElements(CtPackage.class).stream()
-                        .flatMap(ctPackage -> findEdges(ctPackage, ctPackagesTopLevel).stream())
-                        .collect(Collectors.toList());
+        List<ComponentToComponentRelation> componentToComponentRelations = new ArrayList<>();
+
+        for (CtPackage ctPackage : simulatorModel.getAllElements(CtPackage.class)) {
+
+            simulatorModel.findEdges(ctPackage).stream()
+                    .map(target -> buildEdge(ctPackage.getQualifiedName(), target))
+                    .forEach(componentToComponentRelations::add);
+        }
 
         return new ComponentView(components, componentToComponentRelations);
     }
 
-    private Set<ComponentToComponentRelation> findEdges(
-            CtPackage ctPackage, List<CtPackage> ctPackagesTopLevel) {
+    private ComponentToComponentRelation buildEdge(String origin, String target) {
 
-        ComponentId self = ComponentId.of(ctPackage.getQualifiedName());
-
-        Stream<? extends CtType<?>> referencedTypes =
-                ctPackage.getReferencedTypes().stream()
-                        .map(CtTypeReference::getDeclaration)
-                        .filter(Objects::nonNull);
-
-        Set<ComponentToComponentRelation> result = new HashSet<>();
-
-        referencedTypes.forEach(
-                referencedType ->
-                        ctPackagesTopLevel.stream()
-                                .filter(referencedType::hasParent)
-                                .map(
-                                        ctPackageTopLevel ->
-                                                ComponentToComponentRelation.of(
-                                                        self,
-                                                        ComponentId.of(
-                                                                ctPackageTopLevel
-                                                                        .getQualifiedName())))
-                                // TODO: This should be done by the backend.
-                                .filter(c -> !c.getTarget().equals(c.getOrigin()))
-                                .forEach(result::add));
-
-        return result;
+        return ComponentToComponentRelation.of(ComponentId.of(origin), ComponentId.of(target));
     }
 
-    private Component convert(CtPackage ctPackage) {
+    private Component convert(SimulatorComponent simulatorComponent) {
 
-        ComponentId componentId = ComponentId.of(ctPackage.getQualifiedName());
-
-        // TODO: Add layer information.
-        return Component.of(componentId, ctPackage.getSimpleName(), "todo");
+        ComponentId componentId = ComponentId.of(simulatorComponent.getFqn());
+        return Component.of(
+                componentId, simulatorComponent.getName(), simulatorComponent.getLayer());
     }
 }

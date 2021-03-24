@@ -59,7 +59,8 @@ public abstract class BaseTest {
         Map<String, String> inputSourceTypeParameters =
                 Map.of(
                         "path",
-                        determinePathInResourcesFolder("test-resources/" + testCase + "/simulator"));
+                        determinePathInResourcesFolder(
+                                "test-resources/" + testCase + "/simulator"));
 
         return new InputSourceSimulator(inputSourceTypeId, inputSourceTypeParameters);
     }
