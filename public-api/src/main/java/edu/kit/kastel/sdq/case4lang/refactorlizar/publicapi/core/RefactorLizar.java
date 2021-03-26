@@ -75,7 +75,7 @@ public class RefactorLizar {
 
     @Nonnull
     public AnalyzeApi analyzeApi() {
-        return null;
+        return new AnalyzeApi();
     }
 
     @Nonnull

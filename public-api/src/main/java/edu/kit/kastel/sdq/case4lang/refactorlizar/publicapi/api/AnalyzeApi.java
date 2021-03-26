@@ -1,89 +1,86 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.api;
 
-import static edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter.DependencyCycleOnComponentLevelAdapter.DEPENDENCY_CYCLE_ANALYZER_ID;
-
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.IAnalyzer;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter.DependencyCycleOnComponentLevelAdapter;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.analyze_model.DependencyCyclesOnClassLevel;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.analyze_model.DependencyCyclesOnComponentLevel;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.analyze_model.FeatureScattering;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.analyze_model.LanguageBlobsOnClassLevel;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.analyze_model.LanguageBlobsOnComponentLevel;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.analyze_model.LayerBreach;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter.*;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.analyze_model.*;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.exception.AnalyzerNotFoundException;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.component_view.ComponentId;
-import java.util.List;
+
 import javax.annotation.Nonnull;
-import org.apache.commons.lang3.NotImplementedException;
+import java.util.List;
+
+import static edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter.DependencyCyclesOnClassLevelAdapter.DEPENDENCY_CYCLE_ON_CLASS_LEVEL_ANALYZER_ID;
+import static edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter.DependencyCyclesOnComponentLevelAdapter.DEPENDENCY_CYCLE_ON_COMPONENT_LEVEL_ANALYZER_ID;
+import static edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter.FeatureScatteringAdapter.FEATURE_SCATTERING_ANALYZER_ID;
+import static edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter.LanguageBlobsOnClassLevelAdapter.LANGUAGE_BLOB_ON_CLASS_LEVEL_ANALYZER_ID;
+import static edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter.LanguageBlobsOnComponentLevelAdapter.LANGUAGE_BLOB_ON_COMPONENT_LEVEL_ANALYZER_ID;
+import static edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter.LayerBreachesAdapter.LAYER_BREACH_ANALYZER_ID;
 
 public class AnalyzeApi {
 
-    private static final String FEATURE_SCATTERING_ANALYZER_ID = "FeatureScatterAnalyzer";
-    private static final String LANGUAGE_BLOB_ANALYZER_ID = "LanguageBlobAnalyzer";
-    private static final String LAYER_BREACH_ANALYZER_ID = "LayerBreachAnalyzer";
+    private final DependencyCyclesOnComponentLevelAdapter dependencyCycleOnComponentLevelAdapter;
+    private final DependencyCyclesOnClassLevelAdapter dependencyCycleOnClassLevelAdapter;
+    private final FeatureScatteringAdapter featureScatteringAdapter;
+    private final LayerBreachesAdapter layerBreachesAdapter;
+    private final LanguageBlobsOnClassLevelAdapter languageBlobsOnClassLevelAdapter;
+    private final LanguageBlobsOnComponentLevelAdapter languageBlobsOnComponentLevelAdapter;
 
-    private final DependencyCycleOnComponentLevelAdapter dependencyCycleOnComponentLevelAdapter;
+    public AnalyzeApi() {
 
-    public AnalyzeApi(
-            DependencyCycleOnComponentLevelAdapter dependencyCycleOnComponentLevelAdapter) {
-        this.dependencyCycleOnComponentLevelAdapter = dependencyCycleOnComponentLevelAdapter;
+        this.dependencyCycleOnComponentLevelAdapter = new DependencyCyclesOnComponentLevelAdapter();
+        this.dependencyCycleOnClassLevelAdapter = new DependencyCyclesOnClassLevelAdapter();
+        this.featureScatteringAdapter = new FeatureScatteringAdapter();
+        this.layerBreachesAdapter = new LayerBreachesAdapter();
+        this.languageBlobsOnClassLevelAdapter = new LanguageBlobsOnClassLevelAdapter();
+        this.languageBlobsOnComponentLevelAdapter = new LanguageBlobsOnComponentLevelAdapter();
     }
 
     @Nonnull
     public DependencyCyclesOnComponentLevel detectDependencyCyclesOnComponentLevel() {
 
-        checkThatAnalyzerIsAvailable(DEPENDENCY_CYCLE_ANALYZER_ID);
+        checkThatAnalyzerIsAvailable(DEPENDENCY_CYCLE_ON_COMPONENT_LEVEL_ANALYZER_ID);
         return dependencyCycleOnComponentLevelAdapter.analyze();
     }
 
     @Nonnull
     public DependencyCyclesOnClassLevel detectDependencyCyclesOnClassLevel() {
 
-        checkThatAnalyzerIsAvailable(DEPENDENCY_CYCLE_ANALYZER_ID);
-        throw new NotImplementedException();
+        checkThatAnalyzerIsAvailable(DEPENDENCY_CYCLE_ON_CLASS_LEVEL_ANALYZER_ID);
+        return dependencyCycleOnClassLevelAdapter.analyze();
     }
 
-    @Nonnull
-    public DependencyCyclesOnClassLevel detectDependencyCyclesOnClassLevel(
-            ComponentId componentId) {
-
-        checkThatAnalyzerIsAvailable(DEPENDENCY_CYCLE_ANALYZER_ID);
-        throw new NotImplementedException();
-    }
 
     @Nonnull
     public List<FeatureScattering> detectFeatureScattering() {
 
         checkThatAnalyzerIsAvailable(FEATURE_SCATTERING_ANALYZER_ID);
-        throw new NotImplementedException();
+        return featureScatteringAdapter.analyze();
     }
 
     @Nonnull
     public LanguageBlobsOnComponentLevel detectLanguageBlobsOnComponentLevel() {
 
-        checkThatAnalyzerIsAvailable(LANGUAGE_BLOB_ANALYZER_ID);
-        throw new NotImplementedException();
+        checkThatAnalyzerIsAvailable(LANGUAGE_BLOB_ON_COMPONENT_LEVEL_ANALYZER_ID);
+        return languageBlobsOnComponentLevelAdapter.analyze();
     }
 
     @Nonnull
     public LanguageBlobsOnClassLevel detectLanguageBlobsOnClassLevel() {
 
-        checkThatAnalyzerIsAvailable(LANGUAGE_BLOB_ANALYZER_ID);
-        throw new NotImplementedException();
+        checkThatAnalyzerIsAvailable(LANGUAGE_BLOB_ON_CLASS_LEVEL_ANALYZER_ID);
+        return languageBlobsOnClassLevelAdapter.analyze();
     }
 
     @Nonnull
     public List<LayerBreach> detectLayerBreaches() {
 
         checkThatAnalyzerIsAvailable(LAYER_BREACH_ANALYZER_ID);
-        throw new NotImplementedException();
+        return layerBreachesAdapter.analyze();
     }
 
     private void checkThatAnalyzerIsAvailable(String analyzerId) {
 
-        boolean available =
-                IAnalyzer.getAllAnalyzer().stream()
-                        .anyMatch(iAnalyzer -> iAnalyzer.getName().equals(analyzerId));
+        boolean available = IAnalyzer.getAllAnalyzer().stream()
+                .anyMatch(iAnalyzer -> iAnalyzer.getName().equals(analyzerId));
 
         if (!available) {
             throw new AnalyzerNotFoundException(analyzerId);

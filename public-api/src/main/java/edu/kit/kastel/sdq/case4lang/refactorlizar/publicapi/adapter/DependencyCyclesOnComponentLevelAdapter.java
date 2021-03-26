@@ -8,14 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DependencyCycleOnComponentLevelAdapter extends AnalyzeAdapter {
+public class DependencyCyclesOnComponentLevelAdapter extends AnalyzeAdapter {
 
-    public static final String DEPENDENCY_CYCLE_ANALYZER_ID = "DependencyCycleAnalyzer";
+    public static final String DEPENDENCY_CYCLE_ON_COMPONENT_LEVEL_ANALYZER_ID = "DependencyCycleAnalyzer";
 
     // TODO@MW: Is the analysis you provided on class or component level?
     public DependencyCyclesOnComponentLevel analyze() {
 
-        Report report = loadAnalyzer(DEPENDENCY_CYCLE_ANALYZER_ID).fullAnalysis();
+        Report report = loadAnalyzer(DEPENDENCY_CYCLE_ON_COMPONENT_LEVEL_ANALYZER_ID).fullAnalysis();
 
         List<DependencyCycle<ComponentId>> dependencyCycles = new ArrayList<>();
 
