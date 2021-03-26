@@ -1,8 +1,6 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Report {
 
@@ -11,6 +9,7 @@ public class Report {
     private Collection<Solution> solutions;
     private boolean smellFound;
     private Collection<List<String>> cycles;
+    private Map<String, Set<String>> featureScatterings = Collections.emptyMap();
 
     public Report(String text, String description, boolean smellFound) {
         this.text = text;
@@ -26,6 +25,14 @@ public class Report {
         solutions = Collections.emptyList();
         this.smellFound = smellFound;
         this.cycles = cycles;
+    }
+
+    public Map<String, Set<String>> getFeatureScatterings() {
+        return featureScatterings;
+    }
+
+    public void setFeatureScatterings(Map<String, Set<String>> featureScatterings) {
+        this.featureScatterings = featureScatterings;
     }
 
     public Collection<Solution> getSolutions() {

@@ -18,10 +18,8 @@ import javax.annotation.Nonnull;
 
 public class RefactorLizar {
 
-    public static final String ANALYZER_PATH = ".";
-
-    private ModularLanguage modularLanguage;
-    private SimulatorModel simulatorModel;
+    private final ModularLanguage modularLanguage;
+    private final SimulatorModel simulatorModel;
 
     private RefactorLizar(ModularLanguage modularLanguage, SimulatorModel simulatorModel) {
 
@@ -75,7 +73,7 @@ public class RefactorLizar {
 
     @Nonnull
     public AnalyzeApi analyzeApi() {
-        return new AnalyzeApi();
+        return new AnalyzeApi(modularLanguage, simulatorModel);
     }
 
     @Nonnull

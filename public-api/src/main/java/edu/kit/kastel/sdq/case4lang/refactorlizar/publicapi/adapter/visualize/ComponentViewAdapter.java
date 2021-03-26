@@ -1,4 +1,4 @@
-package edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter;
+package edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter.visualize;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorComponent;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;

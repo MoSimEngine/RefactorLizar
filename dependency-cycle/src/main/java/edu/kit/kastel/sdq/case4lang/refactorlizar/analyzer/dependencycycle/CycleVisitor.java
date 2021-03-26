@@ -33,8 +33,9 @@ public class CycleVisitor extends CtAbstractVisitor {
         Graph<Set<CtType<?>>> result = findStronglyConnectedComponents(graph);
         Collection<Set<CtType<?>>> cycles =
                 result.nodes().stream().filter(v -> v.size() > 1).collect(Collectors.toList());
+
         if (cycles.isEmpty()) {
-            return new Report("Dependency Cycle Analysis", "No cycle found.", false);
+            return new Report("Dependency Cycle Analysis", "No cycle found.", false, Collections.emptyList());
         }
 
         Collection<List<String>> cyclesForReport =

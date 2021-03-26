@@ -83,6 +83,7 @@ public class PackageVisitor extends CtAbstractVisitor {
                             "Es wurde kein feature scatter gefunden.",
                             false);
         } else {
+
             Collection<String> formattedDescriptions = new ArrayList<>();
             for (Node node : result) {
                 String scatter = "Das Sprachfeature %s wird von den Komponenten %s genutzt \n";
@@ -91,7 +92,7 @@ public class PackageVisitor extends CtAbstractVisitor {
                                 scatter,
                                 node.packag.getQualifiedName(),
                                 graph.successors(node).stream()
-                                        .map(v -> v.packag.getQualifiedName().toString())
+                                        .map(v -> v.packag.getQualifiedName())
                                         .collect(Collectors.joining(", "))));
             }
 
@@ -104,6 +105,19 @@ public class PackageVisitor extends CtAbstractVisitor {
                                     ctPackage.getQualifiedName(),
                                     formattedDescriptions.toString()),
                             true);
+
+
+            Map<String, Set<String>> featureScatterings = new HashMap<>();
+            for (Node node : result) {
+
+                featureScatterings.put(node.packag.getQualifiedName(),
+                        graph.successors(node).stream()
+                                .map(v -> v.packag.getQualifiedName())
+                                .collect(Collectors.toSet()));
+
+            }
+
+            report.setFeatureScatterings(featureScatterings);
         }
     }
 
@@ -123,7 +137,6 @@ public class PackageVisitor extends CtAbstractVisitor {
         Set<EndpointPair<Node>> edges = new HashSet<>();
         for (CtPackage packag : model.getAllElements(CtPackage.class)) {
             for (CtType<?> type : packag.getTypes()) {
-                type.getReferencedTypes();
                 simulatorPackageNodes.add(new Node(packag));
                 type.getReferencedTypes().stream()
                         .filter(v -> v.getPackage() != null)
@@ -173,6 +186,18 @@ public class PackageVisitor extends CtAbstractVisitor {
                                     "Es wurden %d feature scatter  gefunden. Die feature scatter sind:\n%s",
                                     result.size(), formattedDescriptions.toString()),
                             true);
+
+            Map<String, Set<String>> featureScatterings = new HashMap<>();
+            for (Node node : result) {
+
+                featureScatterings.put(node.packag.getQualifiedName(),
+                        graph.successors(node).stream()
+                                .map(v -> v.packag.getQualifiedName())
+                                .collect(Collectors.toSet()));
+
+            }
+
+            report.setFeatureScatterings(featureScatterings);
         }
     }
 

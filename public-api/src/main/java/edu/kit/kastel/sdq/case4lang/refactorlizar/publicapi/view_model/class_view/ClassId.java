@@ -4,11 +4,15 @@ public class ClassId {
 
     private final String fqn;
 
-    public ClassId(String fqn) {
+    private ClassId(String fqn) {
         this.fqn = fqn;
     }
 
     public String getFqn() {
         return fqn;
+    }
+
+    public static ClassId of(String fqn) {
+        return new ClassId(fqn);
     }
 }
