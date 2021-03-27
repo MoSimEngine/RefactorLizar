@@ -8,7 +8,8 @@ public class LanguageBlobsOnClassLevelAdapter extends AnalyzeAdapter {
 
     public static final String LANGUAGE_BLOB_ON_CLASS_LEVEL_ANALYZER_ID = "LanguageBlobAnalyzer";
 
-    public LanguageBlobsOnClassLevelAdapter(ModularLanguage modularLanguage, SimulatorModel simulatorModel) {
+    public LanguageBlobsOnClassLevelAdapter(
+            ModularLanguage modularLanguage, SimulatorModel simulatorModel) {
         super(modularLanguage, simulatorModel);
     }
 

@@ -9,7 +9,8 @@ public class LanguageBlobsOnComponentLevelAdapter extends AnalyzeAdapter {
     public static final String LANGUAGE_BLOB_ON_COMPONENT_LEVEL_ANALYZER_ID =
             "LanguageBlobAnalyzer";
 
-    public LanguageBlobsOnComponentLevelAdapter(ModularLanguage modularLanguage, SimulatorModel simulatorModel) {
+    public LanguageBlobsOnComponentLevelAdapter(
+            ModularLanguage modularLanguage, SimulatorModel simulatorModel) {
         super(modularLanguage, simulatorModel);
     }
 
