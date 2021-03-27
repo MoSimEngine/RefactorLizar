@@ -12,4 +12,4 @@ include(':analyzer-api')
 include(':core')
 include(':model')
 include(':public-api')
-
+include(":commons-analyzer")

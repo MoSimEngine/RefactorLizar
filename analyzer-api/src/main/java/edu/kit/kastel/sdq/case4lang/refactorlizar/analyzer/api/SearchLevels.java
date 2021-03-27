@@ -10,8 +10,8 @@ import java.util.Arrays;
 public enum SearchLevels {
     COMPONENT("component"),
     PACKAGE("package"),
-    TYPE("type"),
-    TYPE_MEMBER("type_member");
+    TYPE("type");
+    // TYPE_MEMBER("type_member");
 
     private String levelName;
 
