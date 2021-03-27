@@ -27,12 +27,17 @@ public class AnalyzeApi {
 
     public AnalyzeApi(ModularLanguage modularLanguage, SimulatorModel simulatorModel) {
 
-        this.dependencyCycleOnComponentLevelAdapter = new DependencyCyclesOnComponentLevelAdapter(modularLanguage, simulatorModel);
-        this.dependencyCycleOnClassLevelAdapter = new DependencyCyclesOnClassLevelAdapter(modularLanguage, simulatorModel);
-        this.featureScatteringAdapter = new FeatureScatteringAdapter(modularLanguage, simulatorModel);
+        this.dependencyCycleOnComponentLevelAdapter =
+                new DependencyCyclesOnComponentLevelAdapter(modularLanguage, simulatorModel);
+        this.dependencyCycleOnClassLevelAdapter =
+                new DependencyCyclesOnClassLevelAdapter(modularLanguage, simulatorModel);
+        this.featureScatteringAdapter =
+                new FeatureScatteringAdapter(modularLanguage, simulatorModel);
         this.layerBreachesAdapter = new LayerBreachesAdapter(modularLanguage, simulatorModel);
-        this.languageBlobsOnClassLevelAdapter = new LanguageBlobsOnClassLevelAdapter(modularLanguage, simulatorModel);
-        this.languageBlobsOnComponentLevelAdapter = new LanguageBlobsOnComponentLevelAdapter(modularLanguage, simulatorModel);
+        this.languageBlobsOnClassLevelAdapter =
+                new LanguageBlobsOnClassLevelAdapter(modularLanguage, simulatorModel);
+        this.languageBlobsOnComponentLevelAdapter =
+                new LanguageBlobsOnComponentLevelAdapter(modularLanguage, simulatorModel);
     }
 
     @Nonnull

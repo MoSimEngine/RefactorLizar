@@ -10,7 +10,8 @@ public class DependencyCyclesOnComponentLevelAdapter extends AnalyzeAdapter {
     public static final String DEPENDENCY_CYCLE_ON_COMPONENT_LEVEL_ANALYZER_ID =
             "DependencyCycleAnalyzer";
 
-    public DependencyCyclesOnComponentLevelAdapter(ModularLanguage modularLanguage, SimulatorModel simulatorModel) {
+    public DependencyCyclesOnComponentLevelAdapter(
+            ModularLanguage modularLanguage, SimulatorModel simulatorModel) {
         super(modularLanguage, simulatorModel);
     }
 

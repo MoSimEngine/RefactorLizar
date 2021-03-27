@@ -106,15 +106,14 @@ public class PackageVisitor extends CtAbstractVisitor {
                                     formattedDescriptions.toString()),
                             true);
 
-
             Map<String, Set<String>> featureScatterings = new HashMap<>();
             for (Node node : result) {
 
-                featureScatterings.put(node.packag.getQualifiedName(),
+                featureScatterings.put(
+                        node.packag.getQualifiedName(),
                         graph.successors(node).stream()
                                 .map(v -> v.packag.getQualifiedName())
                                 .collect(Collectors.toSet()));
-
             }
 
             report.setFeatureScatterings(featureScatterings);
@@ -190,11 +189,11 @@ public class PackageVisitor extends CtAbstractVisitor {
             Map<String, Set<String>> featureScatterings = new HashMap<>();
             for (Node node : result) {
 
-                featureScatterings.put(node.packag.getQualifiedName(),
+                featureScatterings.put(
+                        node.packag.getQualifiedName(),
                         graph.successors(node).stream()
                                 .map(v -> v.packag.getQualifiedName())
                                 .collect(Collectors.toSet()));
-
             }
 
             report.setFeatureScatterings(featureScatterings);
