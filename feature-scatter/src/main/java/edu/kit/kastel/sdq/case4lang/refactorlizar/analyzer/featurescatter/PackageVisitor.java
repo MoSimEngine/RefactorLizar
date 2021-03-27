@@ -219,7 +219,7 @@ public class PackageVisitor extends CtAbstractVisitor {
                 createPackageLevelReport();
                 return getReport();
             default:
-                return null;
+                throw new IllegalArgumentException("level not found");
         }
     }
 
