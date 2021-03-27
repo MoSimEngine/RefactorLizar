@@ -1,4 +1,4 @@
-package edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter;
+package edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter.visualize;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.feature_view.Feature;
