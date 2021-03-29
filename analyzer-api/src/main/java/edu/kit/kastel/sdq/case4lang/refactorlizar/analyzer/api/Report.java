@@ -18,6 +18,7 @@ public class Report {
         this.smellFound = smellFound;
     }
 
+
     public Report(
             String text, String description, boolean smellFound, Collection<List<String>> cycles) {
         this.text = text;

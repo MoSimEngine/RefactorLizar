@@ -90,7 +90,7 @@ public class CycleVisitor extends CtAbstractVisitor {
                 createComponentLevelReport();
                 return getReport();
             case TYPE:
-                createClassLevelReport();
+                createTypeLevelReport();
                 return getReport();
             case PACKAGE:
                 createPackageLevelReport();
@@ -101,19 +101,93 @@ public class CycleVisitor extends CtAbstractVisitor {
     }
 
     private void createPackageLevelReport() {
-        List<Cycle> cycles =
-        findDependencyCycles();
+        List<Cycle> cycles = findDependencyCycles();
+        if (cycles.isEmpty()) {
+           report = new Report("Dependency Cycle Analysis", "No cycle found.", false, Collections.emptyList());
+        }
+         StringBuilder builder = new StringBuilder();
+        for (Cycle cycle : cycles) {
+            builder.append(
+                String.format(
+                        "%d Cycles found.\n%s",
+                        cycles.size(),cycle.getCycle()
+                        .stream()
+                        .map(v -> v.getSource().getPackage().getQualifiedName() + " -> " + v.getTarget().getPackage().getQualifiedName() + "\n" + "with the following classes:\n" 
+                        + generateClassString(v))
+                        .collect(Collectors.joining("\n"))));                        
+        }
+        report = new Report(
+            "Dependency Cycle Analysis",
+            String.format(
+                    "%d Cycles found.\n%s",
+                    cycles.size(),
+                    builder.toString()),                     
+            true);
     }
 
-    private void createClassLevelReport() {
-        List<Cycle> cycles =
-        findDependencyCycles();
-        int a = 3;
+    private String generateClassString(DependencyEdge<CtType<?>> v) {
+        return v.getValue().stream().map(member -> member.getMember().getTopLevelType().getQualifiedName()).distinct().collect(Collectors.joining("\n"));
+    }
+    private void createTypeLevelReport() {
+        List<Cycle> cycles = findDependencyCycles();
+        if (cycles.isEmpty()) {
+           report = new Report("Dependency Cycle Analysis", "No cycle found.", false, Collections.emptyList());
+        }
+        StringBuilder builder = new StringBuilder();
+        for (Cycle cycle : cycles) {
+            builder.append(
+                String.format(
+                        "%d Cycles found.\n%s",
+                        cycles.size(),cycle.getCycle()
+                        .stream()
+                        .map(v -> v.getSource().getQualifiedName() + " -> " + v.getTarget().getQualifiedName() + "\n" + "with the following members:" 
+                        + generateTypeMemberString(v))
+                        .collect(Collectors.joining("\n"))));                        
+        }
+        report = new Report(
+            "Dependency Cycle Analysis",
+            String.format(
+                    "%d Cycles found.\n%s",
+                    cycles.size(),
+                    builder.toString()),                     
+            true);
+    }
+    private String generateTypeMemberString(DependencyEdge<CtType<?>> v) {
+        return v.getValue().stream().map(member -> member.getMember().getPath().toString()).collect(Collectors.joining("\n"));
     }
 
     private void createComponentLevelReport() {
+        List<Cycle> cycles = findDependencyCycles();
+        if (cycles.isEmpty()) {
+           report = new Report("Dependency Cycle Analysis", "No cycle found.", false, Collections.emptyList());
+        }
+         StringBuilder builder = new StringBuilder();
+        for (Cycle cycle : cycles) {
+            builder.append(
+                String.format(
+                        "%d Cycles found.\n%s",
+                        cycles.size(),cycle.getCycle()
+                        .stream()
+                        .map(v -> getTopLevelPackageName(v.getSource().getPackage()) + " -> " + getTopLevelPackageName(v.getSource().getPackage()) + "\n" + "with the following classes:\n" 
+                        + generateClassString(v))
+                        .collect(Collectors.joining("\n"))));                        
+        }
+        report = new Report(
+            "Dependency Cycle Analysis",
+            String.format(
+                    "%d Cycles found.\n%s",
+                    cycles.size(),
+                    builder.toString()),                     
+            true);
     }
 
+    private String getTopLevelPackageName(CtPackage packag) {
+        CtPackage currentPackage = packag;
+        while(packag.getParent(CtPackage.class) != null && !packag.getParent(CtPackage.class).isUnnamedPackage()){
+            currentPackage = packag.getParent(CtPackage.class);
+        }
+        return currentPackage.getQualifiedName();
+    }
     private  List<Cycle> findDependencyCycles() {
         MutableNetwork<CtType<?>, EdgeValue> graph =
                 DependencyGraphSupplier.getDependencyGraph(language, model);
