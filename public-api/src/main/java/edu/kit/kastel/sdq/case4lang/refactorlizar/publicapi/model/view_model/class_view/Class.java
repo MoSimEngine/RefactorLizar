@@ -4,8 +4,12 @@ public class Class {
 
     private final ClassId identifier;
 
-    public Class(ClassId identifier) {
+    private Class(ClassId identifier) {
         this.identifier = identifier;
+    }
+
+    public static Class of(ClassId classId) {
+        return new Class(classId);
     }
 
     public ClassId getIdentifier() {
