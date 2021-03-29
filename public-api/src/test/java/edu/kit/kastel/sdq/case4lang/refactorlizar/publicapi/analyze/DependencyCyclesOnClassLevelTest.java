@@ -3,8 +3,8 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.analyze;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.BaseTest;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.analyze_model.DependencyCyclesOnClassLevel;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.core.RefactorLizar;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.analyze_model.DependencyCyclesOnClassLevel;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

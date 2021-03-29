@@ -11,8 +11,8 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.IAnalyzer;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter.analyze.*;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.analyze_model.*;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.exception.AnalyzerNotFoundException;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.analyze_model.*;
 import java.util.List;
 import javax.annotation.Nonnull;
 

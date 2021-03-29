@@ -2,10 +2,10 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter.visualize;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorComponent;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.component_view.Component;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.component_view.ComponentId;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.component_view.ComponentToComponentRelation;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.component_view.ComponentView;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.view_model.component_view.Component;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.view_model.component_view.ComponentId;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.view_model.component_view.ComponentToComponentRelation;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.view_model.component_view.ComponentView;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

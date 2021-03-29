@@ -2,7 +2,7 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter.analyze;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.analyze_model.DependencyCyclesOnComponentLevel;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.analyze_model.DependencyCyclesOnComponentLevel;
 import org.apache.commons.lang3.NotImplementedException;
 
 public class DependencyCyclesOnComponentLevelAdapter extends AnalyzeAdapter {
