@@ -1,24 +1,45 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.dependencycycle;
 
-import com.google.common.collect.AbstractIterator;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Queue;
+import java.util.Set;
+import java.util.stream.Collectors;
 import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableList;
-import com.google.common.graph.ElementOrder;
+import com.google.common.graph.EndpointPair;
 import com.google.common.graph.Graph;
 import com.google.common.graph.GraphBuilder;
-import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
+import com.google.common.graph.MutableNetwork;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.SearchLevels;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.DependencyEdge;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.DependencyGraphSupplier;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.EdgeValue;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.algorithm.CycleDetection;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.visitor.CtAbstractVisitor;
 
 public class CycleVisitor extends CtAbstractVisitor {
 
+    private ModularLanguage language;
+    private SimulatorModel model;
+    private Report report;
+
+    public CycleVisitor() {
+
+    }
+    public CycleVisitor(ModularLanguage language, SimulatorModel model) {
+        this.language = language;
+        this.model = model;
+    }
     public Report fullAnalysis(SimulatorModel model) {
         Collection<CtPackage> packages = model.getAllElements(CtPackage.class);
         MutableGraph<CtType<?>> graph = GraphBuilder.directed().build();
@@ -30,7 +51,7 @@ public class CycleVisitor extends CtAbstractVisitor {
                         .forEach(v -> graph.putEdge(type, v.getDeclaration()));
             }
         }
-        Graph<Set<CtType<?>>> result = findStronglyConnectedComponents(graph);
+        Graph<Set<CtType<?>>> result = CycleDetection.findStronglyConnectedComponents(graph);
         Collection<Set<CtType<?>>> cycles =
                 result.nodes().stream().filter(v -> v.size() > 1).collect(Collectors.toList());
 
@@ -63,157 +84,97 @@ public class CycleVisitor extends CtAbstractVisitor {
                 cyclesForReport);
     }
 
-    /**
-     * Guarantees: the graph will be directed and forest-like without self loops.
-     *
-     * @param graph
-     * @return the SCC graph. each node contains all the nodes in the CC of the original graph
-     */
-    public static <T> Graph<Set<T>> findStronglyConnectedComponents(Graph<T> graph) {
-        if (graph.nodes().isEmpty()) {
-            throw new IllegalArgumentException("Can't find components in an empty graph");
-        }
-        final MutableGraph<Set<T>> result =
-                GraphBuilder.directed()
-                        .allowsSelfLoops(false)
-                        .nodeOrder(ElementOrder.insertion())
-                        .build();
-        // Kosaraju's algorithm
-
-        final Map<T, Set<T>> ccStore = new HashMap<>(graph.nodes().size());
-        // Step 1
-        final ImmutableList<T> topologicalOrder =
-                traverse(graph).postOrderTraversal(graph.nodes()).toList().reverse();
-        // Step 2
-        final Graph<T> transposeGraph = Graphs.transpose(graph);
-        // Step 3
-        for (T node : topologicalOrder) {
-            if (ccStore.keySet().contains(node)) {
-                continue;
-            }
-            final Set<T> connectedComponent = new HashSet<>();
-            final Set<T> hitExistingNodes = new HashSet<>();
-
-            traverse(transposeGraph)
-                    .postOrderTraversal(
-                            Collections.singleton(node), ccStore.keySet(), hitExistingNodes::add)
-                    .forEach(connectedComponent::add);
-
-            result.addNode(connectedComponent);
-            hitExistingNodes.forEach(
-                    n -> {
-                        // We encounterd a connection between connected components
-                        Set<T> existingCC = ccStore.get(n);
-                        result.putEdge(existingCC, connectedComponent);
-                    });
-            connectedComponent.forEach(
-                    n -> {
-                        ccStore.put(n, connectedComponent);
-                    });
-        }
-
-        return result;
-    }
-
-    public static <T> GraphTraverser<T> traverse(Graph<T> graph) {
-        return new GraphTraverser<>(graph);
-    }
-
-    static class GraphTraverser<T> {
-        private static final class PostOrderNode<T> {
-            public final T root;
-            public final Iterator<T> childIterator;
-
-            public PostOrderNode(T root, Iterator<T> childIterator) {
-                this.root = Objects.requireNonNull(root);
-                this.childIterator = Objects.requireNonNull(childIterator);
-            }
-        }
-
-        private final class PostOrderIterator extends AbstractIterator<T> {
-            private final ArrayDeque<PostOrderNode<T>> stack = new ArrayDeque<>();
-            private final Iterator<T> rootNodes;
-            private final Set<T> visitedSet;
-            private final Set<T> ignoredSet;
-            private final Consumer<T> ignoreNodeEncountered;
-
-            public PostOrderIterator(
-                    Collection<T> roots, Set<T> ignoredNodes, Consumer<T> ignoreNodeMet) {
-                this.rootNodes = roots.iterator();
-                this.visitedSet = new HashSet<>(graph.nodes().size());
-                this.ignoredSet = ignoredNodes;
-                this.ignoreNodeEncountered = ignoreNodeMet;
-            }
-
-            @Override
-            protected T computeNext() {
-                while (stack.isEmpty() && rootNodes.hasNext()) {
-                    pushNodeIfUnvisited(rootNodes.next());
-                }
-                while (!stack.isEmpty()) {
-                    PostOrderNode<T> top = stack.getLast();
-                    if (top.childIterator.hasNext()) {
-                        T child = top.childIterator.next();
-                        pushNodeIfUnvisited(child);
-                    } else {
-                        stack.removeLast();
-                        return top.root;
-                    }
-                }
-                return endOfData();
-            }
-
-            private void pushNodeIfUnvisited(T t) {
-                if (ignoredSet.contains(t)) {
-                    if (ignoreNodeEncountered != null) {
-                        ignoreNodeEncountered.accept(t);
-                    }
-                    return;
-                }
-                if (!visitedSet.add(t)) {
-                    return;
-                }
-                stack.addLast(expand(t));
-            }
-
-            private PostOrderNode<T> expand(T t) {
-                return new PostOrderNode<T>(t, graph.successors(t).iterator());
-            }
-        }
-
-        private final Graph<T> graph;
-
-        public GraphTraverser(Graph<T> graph) {
-            this.graph = Objects.requireNonNull(graph);
-        }
-
-        public FluentIterable<T> postOrderTraversal() {
-            return postOrderTraversal(graph.nodes());
-        }
-
-        public FluentIterable<T> postOrderTraversal(Collection<T> rootNodes) {
-            return postOrderTraversal(rootNodes, Collections.emptySet(), null);
-        }
-
-        /**
-         * Does post order traversal of the (directed) graph. When a node in ignoredNodes is
-         * encountered, ignoreNodeMet is called
-         *
-         * @param rootNodes the nodes to start traversal at
-         * @param ignoredNodes nodes that will be ignored, i.e. not recursively traversed
-         * @param ignoredNodeMet might be null for no callback
-         * @return
-         */
-        public FluentIterable<T> postOrderTraversal(
-                Collection<T> rootNodes, Set<T> ignoredNodes, Consumer<T> ignoredNodeMet) {
-            return new FluentIterable<T>() {
-                @Override
-                public Iterator<T> iterator() {
-                    return new PostOrderIterator(rootNodes, ignoredNodes, ignoredNodeMet);
-                }
-            };
+    public Report fullAnalysis(SearchLevels level) {
+        switch (level) {
+            case COMPONENT:
+                createComponentLevelReport();
+                return getReport();
+            case TYPE:
+                createClassLevelReport();
+                return getReport();
+            case PACKAGE:
+                createPackageLevelReport();
+                return getReport();
+            default:
+                throw new IllegalArgumentException("level not found");
         }
     }
-    // from
-    // https://codereview.stackexchange.com/questions/172907/strongly-connected-component-finding-based-on-the-guava-graph-library-with-kosar
+
+    private void createPackageLevelReport() {
+        List<Cycle> cycles =
+        findDependencyCycles();
+    }
+
+    private void createClassLevelReport() {
+        List<Cycle> cycles =
+        findDependencyCycles();
+        int a = 3;
+    }
+
+    private void createComponentLevelReport() {
+    }
+
+    private  List<Cycle> findDependencyCycles() {
+        MutableNetwork<CtType<?>, EdgeValue> graph =
+                DependencyGraphSupplier.getDependencyGraph(language, model);
+        removeNonSimulatorNodes(graph);
+        MutableGraph<CtType<?>> copy = GraphBuilder.directed().build();
+        graph.asGraph().edges().forEach(copy::putEdge);
+        removeNonSimulatorEdges(copy);
+        removeNonSimulatorNodes(copy);
+        Graph<Set<CtType<?>>> cycles = CycleDetection.findStronglyConnectedComponents(copy);
+        return cycles.nodes().stream().filter(v -> v.size() > 1).map(LinkedList::new).map(v -> {
+            Cycle cycle = new Cycle();
+            CtType<?> firstElement = v.peekFirst();
+            Queue<CtType<?>> types = v;
+            
+            while(!types.isEmpty()) {
+                // edges are reverse created, because our dependency edges are from target to source
+                if(types.size()>1) {
+                    CtType<?> currentElement = types.poll();
+                cycle.addEdge(new DependencyEdge<>(types.peek(),currentElement,  graph.edgesConnecting(currentElement, types.peek())));
+                }
+                else {
+                    CtType<?> currentElement = types.poll();
+                    cycle.addEdge(new DependencyEdge<>(firstElement,currentElement,  graph.edgesConnecting(currentElement, firstElement)));
+                }
+            }
+            return cycle;
+        }).collect(Collectors.toList());
+    }
+
+    private void removeNonSimulatorEdges(MutableGraph<CtType<?>> graph) {
+    graph.edges().stream()
+        .filter(v -> isJavaType(v.nodeU()) || isVoidType(v.nodeU()) || !isSimulatorType(v.nodeU()))
+        .filter(v -> isJavaType(v.nodeV()) || isVoidType(v.nodeV()) || !isSimulatorType(v.nodeV()))
+        .collect(Collectors.toList())
+        .forEach(graph::removeEdge);
+    }
+    private void removeNonSimulatorNodes(MutableGraph<CtType<?>> graph) {
+        graph.nodes().stream()
+                .filter(v -> isJavaType(v) || isVoidType(v) || !isSimulatorType(v))
+                .collect(Collectors.toList())
+                .forEach(graph::removeNode);
+    }
+    private void removeNonSimulatorNodes(MutableNetwork<CtType<?>, EdgeValue> graph) {
+        graph.nodes().stream()
+                .filter(v -> isJavaType(v) || isVoidType(v) || !isSimulatorType(v))
+                .collect(Collectors.toList())
+                .forEach(graph::removeNode);
+    }
+
+
+    private boolean isSimulatorType(CtType<?> source) {
+        return source.hasParent(model.getUnnamedPackage());
+    }
+    private boolean isVoidType(CtType<?> v) {
+        return v.getQualifiedName().equals("void");
+    }
+
+    private boolean isJavaType(CtType<?> v) {
+        return v.getQualifiedName().startsWith("java");
+    }
+    public Report getReport() {
+        return this.report;
+    }
 }
