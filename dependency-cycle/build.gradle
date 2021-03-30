@@ -10,11 +10,10 @@ plugins {
 dependencies {
 	implementation project(':analyzer-api')
 	implementation project(':model')
-	implementation 'com.google.guava:guava:30.1-jre'
 }
 
 test {
 	useJUnitPlatform()
 }
 
-description = 'dependency-cycle'
+description = project.dependencyCycleAnalyzer

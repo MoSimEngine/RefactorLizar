@@ -14,6 +14,7 @@ dependencies {
 }
 application {
 	mainClass = 'edu.kit.kastel.sdq.case4lang.refactorlizar.core.RefactorLizar'
+	mainClassName 'edu.kit.kastel.sdq.case4lang.refactorlizar.core.RefactorLizar'
 }
 description = 'core'
 jar {
@@ -23,6 +24,8 @@ jar {
 				)
 	}
 }
+
+
 runtime {
 	options = [
 		'--strip-debug',
