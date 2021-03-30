@@ -6,7 +6,6 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.view_model.cla
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.view_model.class_view.ClassToClassRelation;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.view_model.class_view.ClassView;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.view_model.component_view.ComponentId;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,24 +20,24 @@ public class ClassViewAdapter {
     public ClassView provideClassView(ComponentId componentId) {
 
         List<Class> classes = determineClasses(componentId);
-        List<ClassToClassRelation> classToClassRelations = determineClassToClassRelations(componentId);
+        List<ClassToClassRelation> classToClassRelations =
+                determineClassToClassRelations(componentId);
 
         return new ClassView(componentId, classes, classToClassRelations);
     }
 
     private List<ClassToClassRelation> determineClassToClassRelations(ComponentId componentId) {
-        return simulatorModel
-                .getClassToClassRelations(componentId.getName())
-                .stream()
-                .map(classRelation ->
-                        ClassToClassRelation.of(ClassId.of(classRelation.getOrigin()), ClassId.of(classRelation.getTarget()))
-                )
+        return simulatorModel.getClassToClassRelations(componentId.getName()).stream()
+                .map(
+                        classRelation ->
+                                ClassToClassRelation.of(
+                                        ClassId.of(classRelation.getOrigin()),
+                                        ClassId.of(classRelation.getTarget())))
                 .collect(Collectors.toList());
     }
 
     private List<Class> determineClasses(ComponentId componentId) {
-        return simulatorModel.getClassesForSimulatorComponent(componentId.getName())
-                .stream()
+        return simulatorModel.getClassesForSimulatorComponent(componentId.getName()).stream()
                 .map(this::convert)
                 .collect(Collectors.toList());
     }

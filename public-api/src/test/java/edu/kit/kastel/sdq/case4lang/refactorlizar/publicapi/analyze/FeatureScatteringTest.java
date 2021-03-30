@@ -1,12 +1,13 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.analyze;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import java.util.List;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.BaseTest;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.core.RefactorLizar;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.analyze_model.FeatureScattering;
+import java.util.List;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class FeatureScatteringTest extends BaseTest {
 
