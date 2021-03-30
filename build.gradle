@@ -59,6 +59,6 @@ shadowJar {
 	mergeServiceFiles()
 }
 tasks.withType(JavaCompile).configureEach {
-    options.fork = true
+	options.fork = true
 }
 defaultTasks "shadowJar"
