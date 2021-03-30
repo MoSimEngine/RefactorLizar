@@ -222,8 +222,8 @@ public class CycleVisitor extends CtAbstractVisitor {
 
     private String getTopLevelPackageName(CtPackage packag) {
         CtPackage currentPackage = packag;
-        while (packag.getParent(CtPackage.class) != null
-                && !packag.getParent(CtPackage.class).isUnnamedPackage()) {
+        while (currentPackage.getParent(CtPackage.class) != null
+                && !currentPackage.getParent(CtPackage.class).isUnnamedPackage()) {
             currentPackage = packag.getParent(CtPackage.class);
         }
         return currentPackage.getQualifiedName();
