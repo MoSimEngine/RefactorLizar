@@ -19,6 +19,7 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -244,7 +245,7 @@ public class CycleVisitor extends CtAbstractVisitor {
                         v -> {
                             Cycle cycle = new Cycle();
                             CtType<?> firstElement = v.peekFirst();
-                            Queue<CtType<?>> types = v;
+                            LinkedList<CtType<?>> types = v;
                             while (!types.isEmpty()) {
                                 // edges are reverse created, because our dependency edges are from
                                 // target to source
