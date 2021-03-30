@@ -1,10 +1,10 @@
 plugins {
-    id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions'
+	id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions'
 }
 
 dependencies {
-  implementation project(':model')
-  implementation project(':commons-refactoring')
+	implementation project(':model')
+	implementation project(':commons-refactoring')
 }
 
 description = 'class-split'

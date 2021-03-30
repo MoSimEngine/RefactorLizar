@@ -5,14 +5,14 @@ import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtInterface;
 
 public class TypeCreation {
-  
-  private TypeCreation() {
 
-  }
-  public static CtClass<?> classOfQualifiedName(CtElement factorySource,String qName) {
-    return factorySource.getFactory().Class().create(qName);
-  }
-  public static CtInterface<?> interfaceOfQualifiedName(CtElement factorySource, String qName) {
-    return factorySource.getFactory().Interface().create(qName);
-  }
+    private TypeCreation() {}
+
+    public static CtClass<?> classOfQualifiedName(CtElement factorySource, String qName) {
+        return factorySource.getFactory().Class().create(qName);
+    }
+
+    public static CtInterface<?> interfaceOfQualifiedName(CtElement factorySource, String qName) {
+        return factorySource.getFactory().Interface().create(qName);
+    }
 }
