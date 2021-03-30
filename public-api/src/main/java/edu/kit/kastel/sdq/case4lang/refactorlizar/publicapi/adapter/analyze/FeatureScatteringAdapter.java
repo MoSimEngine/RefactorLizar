@@ -1,13 +1,13 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter.analyze;
 
-import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.analyze_model.FeatureScattering;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.analyze_model.FeatureScattering;
 
 public class FeatureScatteringAdapter extends AnalyzeAdapter {
 
