@@ -108,6 +108,18 @@ public class PackageVisitor extends CtAbstractVisitor {
                                     "Es wurden %d language blobs gefunden. Die blobs sind:\n%s",
                                     result.size(), formattedDescriptions.toString()),
                             true);
+
+            Map<String, Set<String>> languageBlobs = new HashMap<>();
+            for (Node node : result) {
+
+                languageBlobs.put(
+                        node.packag.getQualifiedName(),
+                        graph.predecessors(node).stream()
+                                .map(v -> v.feature.getBundle().getName())
+                                .collect(Collectors.toSet()));
+            }
+
+            report.setLanguageBlobs(languageBlobs);
         }
     }
 

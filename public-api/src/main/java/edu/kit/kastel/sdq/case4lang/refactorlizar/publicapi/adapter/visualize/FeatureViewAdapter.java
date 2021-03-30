@@ -1,10 +1,10 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter.visualize;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.feature_view.Feature;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.feature_view.FeatureId;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.feature_view.FeatureToFeatureRelation;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.view_model.feature_view.FeatureView;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.view_model.feature_view.Feature;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.view_model.feature_view.FeatureId;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.view_model.feature_view.FeatureToFeatureRelation;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.view_model.feature_view.FeatureView;
 import java.util.List;
 import java.util.stream.Collectors;
 

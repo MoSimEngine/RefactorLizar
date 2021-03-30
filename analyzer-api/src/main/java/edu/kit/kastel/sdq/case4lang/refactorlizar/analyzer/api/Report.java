@@ -1,6 +1,10 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class Report {
 
@@ -10,6 +14,7 @@ public class Report {
     private boolean smellFound;
     private Collection<List<String>> cycles;
     private Map<String, Set<String>> featureScatterings = Collections.emptyMap();
+    private Map<String, Set<String>> languageBlobs = Collections.emptyMap();
 
     public Report(String text, String description, boolean smellFound) {
         this.text = text;
@@ -26,6 +31,14 @@ public class Report {
         solutions = Collections.emptyList();
         this.smellFound = smellFound;
         this.cycles = cycles;
+    }
+
+    public Map<String, Set<String>> getLanguageBlobs() {
+        return languageBlobs;
+    }
+
+    public void setLanguageBlobs(Map<String, Set<String>> languageBlobs) {
+        this.languageBlobs = languageBlobs;
     }
 
     public Map<String, Set<String>> getFeatureScatterings() {

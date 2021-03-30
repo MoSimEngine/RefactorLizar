@@ -16,10 +16,11 @@ public class AnalyzeAdapter {
 
     protected IAnalyzer loadAnalyzer(String analyzerId) {
 
-        IAnalyzer iAnalyzer = IAnalyzer.getAllAnalyzer().stream()
-                .filter(a -> a.getName().equals(analyzerId))
-                .findFirst()
-                .get();
+        IAnalyzer iAnalyzer =
+                IAnalyzer.getAllAnalyzer().stream()
+                        .filter(a -> a.getName().equals(analyzerId))
+                        .findFirst()
+                        .get();
 
         iAnalyzer.init(modularLanguage, simulatorModel);
         return iAnalyzer;

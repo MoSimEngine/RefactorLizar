@@ -11,8 +11,8 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.IAnalyzer;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.adapter.analyze.*;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.analyze_model.*;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.exception.AnalyzerNotFoundException;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.analyze_model.*;
 import java.util.List;
 import javax.annotation.Nonnull;
 
@@ -27,12 +27,17 @@ public class AnalyzeApi {
 
     public AnalyzeApi(ModularLanguage modularLanguage, SimulatorModel simulatorModel) {
 
-        this.dependencyCycleOnComponentLevelAdapter = new DependencyCyclesOnComponentLevelAdapter(modularLanguage, simulatorModel);
-        this.dependencyCycleOnClassLevelAdapter = new DependencyCyclesOnClassLevelAdapter(modularLanguage, simulatorModel);
-        this.featureScatteringAdapter = new FeatureScatteringAdapter(modularLanguage, simulatorModel);
+        this.dependencyCycleOnComponentLevelAdapter =
+                new DependencyCyclesOnComponentLevelAdapter(modularLanguage, simulatorModel);
+        this.dependencyCycleOnClassLevelAdapter =
+                new DependencyCyclesOnClassLevelAdapter(modularLanguage, simulatorModel);
+        this.featureScatteringAdapter =
+                new FeatureScatteringAdapter(modularLanguage, simulatorModel);
         this.layerBreachesAdapter = new LayerBreachesAdapter(modularLanguage, simulatorModel);
-        this.languageBlobsOnClassLevelAdapter = new LanguageBlobsOnClassLevelAdapter(modularLanguage, simulatorModel);
-        this.languageBlobsOnComponentLevelAdapter = new LanguageBlobsOnComponentLevelAdapter(modularLanguage, simulatorModel);
+        this.languageBlobsOnClassLevelAdapter =
+                new LanguageBlobsOnClassLevelAdapter(modularLanguage, simulatorModel);
+        this.languageBlobsOnComponentLevelAdapter =
+                new LanguageBlobsOnComponentLevelAdapter(modularLanguage, simulatorModel);
     }
 
     @Nonnull
