@@ -1,70 +1,83 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi;
 
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.core.RefactorLizar;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.input_source.InputSourceModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.input_source.InputSourceSimulator;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.input_source.InputSourceType;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.input_source.InputSourceTypeId;
-import org.junit.jupiter.api.BeforeAll;
-
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
-
 public abstract class BaseTest {
 
-  protected static RefactorLizar refactorLizar;
+    private static final Map<String, RefactorLizar> refactorLizarMap = new HashMap<>();
 
-  @BeforeAll public static void beforeAll() {
+    protected static RefactorLizar provideRefactorLizar(String testCase) {
 
-    InputSourceTypeId inputSourceTypeId = loadLocalFileSystemSourceTypeId();
+        if (refactorLizarMap.containsKey(testCase)) {
+            return refactorLizarMap.get(testCase);
+        }
 
-    InputSourceSimulator inputSourceSimulator = buildInputSourceForSimulator(inputSourceTypeId);
-    InputSourceModularLanguage inputSourceModularLanguage =
-        buildInputSourceForModularLanguage(inputSourceTypeId);
+        InputSourceTypeId inputSourceTypeId = loadLocalFileSystemSourceTypeId();
 
-    refactorLizar = RefactorLizar.load(inputSourceSimulator, inputSourceModularLanguage);
-  }
+        InputSourceSimulator inputSourceSimulator =
+                buildInputSourceForSimulator(inputSourceTypeId, testCase);
+        InputSourceModularLanguage inputSourceModularLanguage =
+                buildInputSourceForModularLanguage(inputSourceTypeId, testCase);
 
-  private static InputSourceTypeId loadLocalFileSystemSourceTypeId() {
+        RefactorLizar refactorLizar =
+                RefactorLizar.load(inputSourceSimulator, inputSourceModularLanguage);
+        refactorLizarMap.put(testCase, refactorLizar);
 
-    List<InputSourceType> inputSourceTypes = RefactorLizar.listSupportedInputSourceTypes();
+        return refactorLizar;
+    }
 
-    Optional<InputSourceType> optionalInputSourceType =  //
-        inputSourceTypes //
-            .stream() //
-            .filter( //
-                inputSourceType -> inputSourceType //
-                    .getIdentifier() //
-                    .equals(InputSourceTypeId.fileSystem()) //
-            ) //
-            .findFirst();
+    private static InputSourceTypeId loadLocalFileSystemSourceTypeId() {
 
-    assumeTrue(optionalInputSourceType.isPresent());
-    return optionalInputSourceType.get().getIdentifier();
-  }
+        List<InputSourceType> inputSourceTypes = RefactorLizar.listSupportedInputSourceTypes();
 
-  private static InputSourceSimulator buildInputSourceForSimulator(
-      InputSourceTypeId inputSourceTypeId) {
+        Optional<InputSourceType> optionalInputSourceType =
+                inputSourceTypes.stream()
+                        .filter(
+                                inputSourceType ->
+                                        inputSourceType
+                                                .getIdentifier()
+                                                .equals(InputSourceTypeId.fileSystem()))
+                        .findFirst();
 
-    Map<String, String> inputSourceTypeParameters =
-        Map.of("path", determinePathInResourcesFolder("test-case-small/simulator"));
+        assumeTrue(optionalInputSourceType.isPresent());
+        return optionalInputSourceType.get().getIdentifier();
+    }
 
-    return new InputSourceSimulator(inputSourceTypeId, inputSourceTypeParameters);
-  }
+    private static InputSourceSimulator buildInputSourceForSimulator(
+            InputSourceTypeId inputSourceTypeId, String testCase) {
 
-  private static InputSourceModularLanguage buildInputSourceForModularLanguage(
-      InputSourceTypeId inputSourceTypeId) {
+        Map<String, String> inputSourceTypeParameters =
+                Map.of(
+                        "path",
+                        determinePathInResourcesFolder(
+                                "test-resources/" + testCase + "/simulator"));
 
-    Map<String, String> inputSourceTypeParameters =
-        Map.of("path", determinePathInResourcesFolder("test-case-small/modular-language"));
+        return new InputSourceSimulator(inputSourceTypeId, inputSourceTypeParameters);
+    }
 
-    return new InputSourceModularLanguage(inputSourceTypeId, inputSourceTypeParameters);
-  }
+    private static InputSourceModularLanguage buildInputSourceForModularLanguage(
+            InputSourceTypeId inputSourceTypeId, String testCase) {
 
-  private static String determinePathInResourcesFolder(String folderName) {
-    return "src/test/resources/" + folderName;
-  }
+        Map<String, String> inputSourceTypeParameters =
+                Map.of(
+                        "path",
+                        determinePathInResourcesFolder(
+                                "test-resources/" + testCase + "/modular-language"));
+
+        return new InputSourceModularLanguage(inputSourceTypeId, inputSourceTypeParameters);
+    }
+
+    private static String determinePathInResourcesFolder(String folderName) {
+        return "src/test/resources/" + folderName;
+    }
 }

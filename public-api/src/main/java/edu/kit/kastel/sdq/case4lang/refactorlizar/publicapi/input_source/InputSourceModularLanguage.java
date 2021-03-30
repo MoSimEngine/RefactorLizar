@@ -4,8 +4,8 @@ import java.util.Map;
 
 public class InputSourceModularLanguage extends InputSource {
 
-  public InputSourceModularLanguage(InputSourceTypeId inputSourceTypeId,
-      Map<String, String> parameters) {
-    super(inputSourceTypeId, parameters);
-  }
+    public InputSourceModularLanguage(
+            InputSourceTypeId inputSourceTypeId, Map<String, String> parameters) {
+        super(inputSourceTypeId, parameters);
+    }
 }

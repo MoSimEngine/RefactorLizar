@@ -1,5 +1,3 @@
 package SimpleExample.LanguageFeatureA;
 
-public class A {
-  
-}
+public class A {}
