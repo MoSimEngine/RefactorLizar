@@ -5,7 +5,7 @@ plugins {
 	id 'java-library'
 	id 'maven-publish'
 	id 'java-library-distribution'
-	id 'groovy-gradle-plugin'
+	id "com.github.johnrengelman.shadow"
 }
 
 repositories {
@@ -13,10 +13,6 @@ repositories {
 	mavenCentral()
 	gradlePluginPortal()
 	jcenter()
-	maven {
-		url = uri('https://repo.maven.apache.org/maven2/')
-	}
-	maven { url 'https://plugins.gradle.org/m2' }
 }
 
 dependencies {
@@ -51,4 +47,7 @@ publishing {
 
 tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
+}
+test {
+	useJUnitPlatform()
 }
