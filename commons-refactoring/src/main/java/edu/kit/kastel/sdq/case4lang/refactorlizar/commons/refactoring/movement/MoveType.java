@@ -7,10 +7,10 @@ public class MoveType {
   private  MoveType()  {
 
   }
-  public void movePackage(CtType<?> type, String packageName) {
+  public static void movePackage(CtType<?> type, String packageName) {
       movePackage(type, type.getFactory().Package().getOrCreate(packageName));
   }
-  public void movePackage(CtType<?> type, CtPackage ctPackage) {
+  public static void movePackage(CtType<?> type, CtPackage ctPackage) {
     if(type.isTopLevel())  {
         type.setParent(ctPackage);
     }

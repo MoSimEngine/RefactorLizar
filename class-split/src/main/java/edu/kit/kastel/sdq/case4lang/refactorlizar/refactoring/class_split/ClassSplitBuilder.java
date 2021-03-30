@@ -1,14 +1,17 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.refactoring.class_split;
 
 import java.util.function.Consumer;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.refactoring.Refactoring;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.refactoring.creation.TypeCreation;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.refactoring.modification.Relations;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.refactoring.movement.MoveMember;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.refactoring.movement.MoveType;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.declaration.CtTypeMember;
 
 public class ClassSplitBuilder {
   
+
   private CtType<?> source;
   private String targetQName;
   private CtType<?> target;
@@ -23,6 +26,22 @@ public class ClassSplitBuilder {
     this.targetQName = targetQName;
     return this; 
   }
+  public ClassSplitBuilder renameSource(String newName)  {
+    action =action.andThen((v) ->source.setSimpleName(newName));
+    return this; 
+  }
+  public ClassSplitBuilder renameTarget(String newName)  {
+    action =action.andThen((v) ->target.setSimpleName(newName));
+    return this; 
+  }
+  public ClassSplitBuilder moveSourcePackage(String qPackageName) {
+    action =action.andThen(v -> MoveType.movePackage(source, qPackageName));
+    return this;
+  }
+  public ClassSplitBuilder moveTargetPackage(String qPackageName) {
+    action =action.andThen(v -> MoveType.movePackage(target, qPackageName));
+    return this;
+  }
   public ClassSplitBuilder moveTypeMember(CtTypeMember member) {
     action =action.andThen(v -> MoveMember.moveMember(source, target, member));
     return this;
@@ -35,11 +54,11 @@ public class ClassSplitBuilder {
     action = action.andThen(v -> Relations.setInheritance(source, target));
     return this;
   }
-  public Consumer<Void> createClassSplit() {
+  public Refactoring createClassSplit() {
     if(targetQName.isEmpty() || source == null) {
       throw new IllegalArgumentException("Source and target class must be set");
     }
     target = TypeCreation.classOfQualifiedName(source, targetQName);
-    return v -> action.accept(v);
+    return () -> action.accept(null);
   }
 }

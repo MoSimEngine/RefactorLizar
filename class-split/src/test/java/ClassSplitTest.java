@@ -23,7 +23,7 @@ public class ClassSplitTest {
             .moveTypeMember(field1)
             .moveTypeMember(method)
             .createClassSplit()
-            .accept(null);
+            .refactor();
     assertEquals(model.getAllTypes().size(), 2);
     assertEquals(type.getTypeMembers().size(), 3);
 
