@@ -10,9 +10,8 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.view_model.com
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.view_model.component_view.ComponentView;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.view_model.feature_component_view.FeatureComponentView;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.publicapi.model.view_model.feature_view.FeatureView;
-import org.apache.commons.lang3.NotImplementedException;
-
 import javax.annotation.Nonnull;
+import org.apache.commons.lang3.NotImplementedException;
 
 public class VisualizeApi {
 

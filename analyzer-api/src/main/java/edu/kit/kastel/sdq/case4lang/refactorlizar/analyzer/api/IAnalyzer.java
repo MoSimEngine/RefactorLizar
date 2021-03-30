@@ -67,7 +67,15 @@ public interface IAnalyzer {
         return false;
     }
 
+    default boolean supportsFullAnalysisLevel(SearchLevels level) {
+        return true;
+    }
+
     default Report fullAnalysis() {
+        return new UnsupportedAnalysisReport(getName());
+    }
+
+    default Report fullAnalysis(SearchLevels level) {
         return new UnsupportedAnalysisReport(getName());
     }
 

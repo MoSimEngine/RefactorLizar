@@ -15,4 +15,5 @@ dependencies {
 	testImplementation project(":core")
 	implementation project(':analyzer-api')
 	implementation project(':model')
+	implementation project(':commons-analyzer')
 }

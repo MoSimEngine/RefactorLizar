@@ -1,7 +1,6 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.model;
 
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import spoon.reflect.declaration.CtElement;
@@ -11,8 +10,6 @@ import spoon.reflect.declaration.CtTypeInformation;
 import spoon.reflect.reference.CtTypeReference;
 import spoon.reflect.visitor.filter.TypeFilter;
 
-import javax.management.relation.Relation;
-
 /** SimulatorModel */
 public class SimulatorModel {
 
@@ -20,6 +17,12 @@ public class SimulatorModel {
 
     public <T extends CtElement> Collection<T> getAllElements(Class<? extends T> clazz) {
         return languageFeatures.stream()
+                .filter(
+                        v ->
+                                v.getJavaPackage().getParent(CtPackage.class) != null
+                                        && v.getJavaPackage()
+                                                .getParent(CtPackage.class)
+                                                .isUnnamedPackage())
                 .flatMap(v -> v.getJavaPackage().getElements(new TypeFilter<>(clazz)).stream())
                 .collect(Collectors.toList());
     }
@@ -36,8 +39,7 @@ public class SimulatorModel {
 
     private List<CtType<?>> getSimulatorClassesForComponent(String componentFqn) {
 
-        return getTopLevelCtPackages()
-                .stream()
+        return getTopLevelCtPackages().stream()
                 .filter(ctPackage -> ctPackage.getQualifiedName().equals(componentFqn))
                 .findFirst()
                 .get()
@@ -46,8 +48,7 @@ public class SimulatorModel {
 
     public Collection<String> getClassesForSimulatorComponent(String componentFqn) {
 
-        return getSimulatorClassesForComponent(componentFqn)
-                .stream()
+        return getSimulatorClassesForComponent(componentFqn).stream()
                 .map(CtTypeInformation::getQualifiedName)
                 .collect(Collectors.toSet());
     }
@@ -55,17 +56,22 @@ public class SimulatorModel {
     public Set<ClassRelation> getClassToClassRelations(String componentFqn) {
 
         Set<ClassRelation> result = new HashSet<>();
-        HashSet<CtType<?>> simulatorClassesForComponent = new HashSet<>(getSimulatorClassesForComponent(componentFqn));
+        HashSet<CtType<?>> simulatorClassesForComponent =
+                new HashSet<>(getSimulatorClassesForComponent(componentFqn));
 
         for (CtType<?> origin : simulatorClassesForComponent) {
 
-            origin.getReferencedTypes()
-                    .stream()
+            origin.getReferencedTypes().stream()
                     .map(CtTypeReference::getTypeDeclaration)
                     .filter(Objects::nonNull)
                     .filter(simulatorClassesForComponent::contains)
                     .filter(target -> !target.equals(origin))
-                    .forEach(target -> result.add(new ClassRelation(origin.getQualifiedName(), target.getQualifiedName())));
+                    .forEach(
+                            target ->
+                                    result.add(
+                                            new ClassRelation(
+                                                    origin.getQualifiedName(),
+                                                    target.getQualifiedName())));
         }
 
         return result;
@@ -105,5 +111,14 @@ public class SimulatorModel {
     /** @param languageFeatures */
     public SimulatorModel(Collection<Feature> languageFeatures) {
         this.languageFeatures = languageFeatures;
+    }
+
+    public CtType<?> getTypeWithQualifiedName(String qName) {
+        return languageFeatures.stream()
+                .map(v -> v.getJavaPackage().getElements(new TypeFilter<>(CtType.class)))
+                .flatMap(v -> v.stream())
+                .filter(v -> v.getQualifiedName().equals(qName))
+                .findFirst()
+                .orElse(null);
     }
 }
