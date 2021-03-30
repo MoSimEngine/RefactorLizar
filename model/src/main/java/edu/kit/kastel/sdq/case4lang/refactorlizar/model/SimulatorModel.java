@@ -75,21 +75,10 @@ public class SimulatorModel {
         this.languageFeatures = languageFeatures;
     }
 
-    public CtPackage getUnnamedPackage() {
-        return languageFeatures.stream()
-                .filter(
-                        v ->
-                                v.getJavaPackage().getParent(CtPackage.class) != null
-                                        && v.getJavaPackage()
-                                                .getParent(CtPackage.class)
-                                                .isUnnamedPackage())
-                .findAny()
-                .get()
-                .getJavaPackage();
-    }
-
     public CtType<?> getTypeWithQualifiedName(String qName) {
-        return getUnnamedPackage().getElements(new TypeFilter<>(CtType.class)).stream()
+        return languageFeatures.stream()
+                .map(v -> v.getJavaPackage().getElements(new TypeFilter<>(CtType.class)))
+                .flatMap(v -> v.stream())
                 .filter(v -> v.getQualifiedName().equals(qName))
                 .findFirst()
                 .orElse(null);

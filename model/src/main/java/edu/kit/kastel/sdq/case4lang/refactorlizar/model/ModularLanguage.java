@@ -33,7 +33,9 @@ public class ModularLanguage {
     }
 
     public CtType<?> getTypeWithQualifiedName(String qName) {
-        return getUnnamedPackage().getElements(new TypeFilter<>(CtType.class)).stream()
+        return languageFeatures.stream()
+                .map(v -> v.getJavaPackage().getElements(new TypeFilter<>(CtType.class)))
+                .flatMap(v -> v.stream())
                 .filter(v -> v.getQualifiedName().equals(qName))
                 .findFirst()
                 .orElse(null);

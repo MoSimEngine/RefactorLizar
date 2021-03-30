@@ -9,6 +9,7 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.SearchLevels;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.DependencyEdge;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.DependencyGraphSupplier;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.EdgeValue;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
@@ -110,15 +111,14 @@ public class PackageVisitor extends CtAbstractVisitor {
                                     formattedDescriptions.toString()),
                             true);
 
-
             Map<String, Set<String>> featureScatterings = new HashMap<>();
             for (Node node : result) {
 
-                featureScatterings.put(node.packag.getQualifiedName(),
+                featureScatterings.put(
+                        node.packag.getQualifiedName(),
                         graph.successors(node).stream()
                                 .map(v -> v.packag.getQualifiedName())
                                 .collect(Collectors.toSet()));
-
             }
 
             report.setFeatureScatterings(featureScatterings);
@@ -191,11 +191,11 @@ public class PackageVisitor extends CtAbstractVisitor {
             Map<String, Set<String>> featureScatterings = new HashMap<>();
             for (Node node : result) {
 
-                featureScatterings.put(node.packag.getQualifiedName(),
+                featureScatterings.put(
+                        node.packag.getQualifiedName(),
                         graph.successors(node).stream()
                                 .map(v -> v.packag.getQualifiedName())
                                 .collect(Collectors.toSet()));
-
             }
 
             report.setFeatureScatterings(featureScatterings);
@@ -285,15 +285,6 @@ public class PackageVisitor extends CtAbstractVisitor {
                                                     + "\n\n"));
         }
         report = new Report("Feature Scatter Analyze", builder.toString(), true);
-    }
-
-    private CtPackage getTopLevelPackage(CtPackage ctPackage) {
-        CtPackage currentPackage = ctPackage;
-        while (currentPackage.getDeclaringPackage() != null
-                && !currentPackage.getDeclaringPackage().isUnnamedPackage()) {
-            currentPackage = currentPackage.getDeclaringPackage();
-        }
-        return currentPackage;
     }
 
     private void createClassLevelReport() {
@@ -392,7 +383,7 @@ public class PackageVisitor extends CtAbstractVisitor {
     /** Removes all edges with a simulator type as target. */
     private void removeEdgesWithSimulatorAsTarget(MutableNetwork<CtType<?>, EdgeValue> graph) {
         graph.nodes().stream()
-                .filter(v -> isSimulatorType(v))
+                .filter(v -> JavaUtils.isSimulatorType(model, v))
                 .map(v -> graph.inEdges(v))
                 .flatMap(v -> v.stream())
                 .collect(Collectors.toList())
@@ -406,19 +397,11 @@ public class PackageVisitor extends CtAbstractVisitor {
      */
     private void removeLanguageToSimulatorEdges(MutableNetwork<CtType<?>, EdgeValue> graph) {
         graph.nodes().stream()
-                .filter(v -> isLanguageType(v))
+                .filter(v -> JavaUtils.isLanguageType(language, v))
                 .map(v -> graph.outEdges(v))
                 .flatMap(v -> v.stream())
                 .collect(Collectors.toList())
                 .forEach(graph::removeEdge);
-    }
-
-    private boolean isLanguageType(CtType<?> target) {
-        return target.hasParent(language.getUnnamedPackage());
-    }
-
-    private boolean isSimulatorType(CtType<?> source) {
-        return source.hasParent(model.getUnnamedPackage());
     }
 
     static class Node {

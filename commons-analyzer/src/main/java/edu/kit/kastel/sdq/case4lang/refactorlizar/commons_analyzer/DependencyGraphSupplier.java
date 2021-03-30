@@ -35,7 +35,7 @@ public class DependencyGraphSupplier {
         classMembers.forEach(
                 member ->
                         member.getReferencedTypes().stream()
-                                .map(retriveTypes(language, model))
+                                .map(retrieveTypes(language, model))
                                 .filter(Objects::nonNull)
                                 .filter(type -> !isInnerClass(member, type))
                                 .filter(
@@ -70,7 +70,7 @@ public class DependencyGraphSupplier {
         return member.getTopLevelType().equals(type);
     }
 
-    private Function<? super CtTypeReference<?>, CtType<?>> retriveTypes(
+    private Function<? super CtTypeReference<?>, CtType<?>> retrieveTypes(
             ModularLanguage language, SimulatorModel model) {
         return type -> {
             CtType<?> clazz = type.getTypeDeclaration();
