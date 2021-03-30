@@ -1,5 +1,6 @@
 plugins {
 	id "com.diffplug.spotless" version "5.11.1"
+	id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions'
 }
 
 repositories {
@@ -12,7 +13,9 @@ repositories {
 	}
 }
 
-
+apply plugin: 'application'
+mainClassName = 'edu.kit.kastel.sdq.case4lang.refactorlizar.core.RefactorLizar'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 
 allprojects {
@@ -33,14 +36,29 @@ spotless {
 	}
 }
 
-
-
-task deploy() {
-	dependsOn "core:distZip"
-	dependsOn "core:unzip"
-	dependsOn "dependency-cycle:copyJar"
-	dependsOn "dependency-direction:copyJar"
-	dependsOn "feature-scatter:copyJar"
-	dependsOn "language-blob:copyJar"
-	dependsOn "public-api:copyJar"
+dependencies {
+	implementation project(":model")
+	implementation project (":core")
+	implementation project(':feature-scatter')
+	implementation project(':dependency-cycle')
+	implementation project(':dependency-direction')
+	implementation project(':language-blob')
+	implementation project(":class-split")
 }
+jar {
+	manifest {
+		attributes(
+				'Main-Class': 'edu.kit.kastel.sdq.case4lang.refactorlizar.core.RefactorLizar'
+				)
+	}
+}
+repositories {
+	mavenLocal()
+}
+shadowJar {
+	mergeServiceFiles()
+}
+tasks.withType(JavaCompile).configureEach {
+	options.fork = true
+}
+defaultTasks "shadowJar"
