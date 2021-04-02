@@ -18,6 +18,8 @@ mainClassName = 'edu.kit.kastel.sdq.case4lang.refactorlizar.core.RefactorLizar'
 apply plugin: 'com.github.johnrengelman.shadow'
 
 
+apply plugin: 'maven-publish'
+
 allprojects {
 	apply plugin: 'com.diffplug.spotless'
 }
@@ -51,9 +53,6 @@ jar {
 				'Main-Class': 'edu.kit.kastel.sdq.case4lang.refactorlizar.core.RefactorLizar'
 				)
 	}
-}
-repositories {
-	mavenLocal()
 }
 shadowJar {
 	mergeServiceFiles()
