@@ -11,5 +11,5 @@ include(':public-api')
 include(":commons-refactoring")
 include(":class-split")
 include(":commons-analyzer")
-include(":commons-analyzer")
+include(":commons")
 
