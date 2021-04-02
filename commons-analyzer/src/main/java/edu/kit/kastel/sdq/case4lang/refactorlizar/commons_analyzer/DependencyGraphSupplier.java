@@ -1,5 +1,7 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer;
 
+import com.google.common.flogger.FluentLogger;
+import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableNetwork;
 import com.google.common.graph.NetworkBuilder;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
@@ -7,7 +9,6 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtPackage;
@@ -17,13 +18,33 @@ import spoon.reflect.reference.CtTypeReference;
 
 public class DependencyGraphSupplier {
 
-    private ModularLanguage language;
-    private SimulatorModel model;
+    private static final FluentLogger LOGGER = FluentLogger.forEnclosingClass();
+    private static ModularLanguage cachedLanguage;
+    private static SimulatorModel cachedModel;
+    private static MutableNetwork<CtType<?>, EdgeValue> graph;
 
     public static MutableNetwork<CtType<?>, EdgeValue> getDependencyGraph(
             ModularLanguage language, SimulatorModel model) {
-        // TODO: check if graph is dirty and needs recalc
-        return new DependencyGraphSupplier().createDependencyGraph(language, model);
+        if (checkIfLanguageIsSame(language)) {
+            if (checkIfSimulatorIsSame(model)) {
+                if (graph != null) {
+                    LOGGER.atInfo().log("Reusing graph");
+                    return Graphs.copyOf(graph);
+                }
+            }
+        }
+        graph = new DependencyGraphSupplier().createDependencyGraph(language, model);
+        cachedModel = model;
+        cachedLanguage = language;
+        return Graphs.copyOf(graph);
+    }
+
+    private static boolean checkIfSimulatorIsSame(SimulatorModel model) {
+        return Objects.hashCode(cachedModel) == Objects.hashCode(model);
+    }
+
+    private static boolean checkIfLanguageIsSame(ModularLanguage language) {
+        return Objects.hashCode(cachedLanguage) == Objects.hashCode(language);
     }
 
     private MutableNetwork<CtType<?>, EdgeValue> createDependencyGraph(
@@ -38,14 +59,6 @@ public class DependencyGraphSupplier {
                                 .map(retrieveTypes(language, model))
                                 .filter(Objects::nonNull)
                                 .filter(type -> !isInnerClass(member, type))
-                                .filter(
-                                        type -> {
-                                            if (hasEdgeConnecting(graph, member, type)) {
-                                                return getEdgeValues(graph, member, type)
-                                                        .contains(EdgeValue.of(member));
-                                            }
-                                            return true;
-                                        })
                                 .forEach(type -> createEdge(graph, member, type)));
 
         return graph;
@@ -53,17 +66,13 @@ public class DependencyGraphSupplier {
 
     private boolean createEdge(
             MutableNetwork<CtType<?>, EdgeValue> graph, CtTypeMember member, CtType<?> type) {
-        return graph.addEdge(member.getTopLevelType(), type, EdgeValue.of(member));
-    }
-
-    private boolean hasEdgeConnecting(
-            MutableNetwork<CtType<?>, EdgeValue> graph, CtTypeMember member, CtType<?> type) {
-        return graph.hasEdgeConnecting(member.getTopLevelType(), type);
-    }
-
-    private Set<EdgeValue> getEdgeValues(
-            MutableNetwork<CtType<?>, EdgeValue> graph, CtTypeMember member, CtType<?> type) {
-        return graph.edgesConnecting(member.getTopLevelType(), type);
+        EdgeValue edgeValue = EdgeValue.of(member.getTopLevelType(), type, member);
+        if (graph.nodes().contains(type)
+                && graph.nodes().contains(member.getTopLevelType())
+                && graph.edgesConnecting(member.getTopLevelType(), type).contains(edgeValue)) {
+            return false;
+        }
+        return graph.addEdge(member.getTopLevelType(), type, edgeValue);
     }
 
     private boolean isInnerClass(CtTypeMember member, CtType<?> type) {

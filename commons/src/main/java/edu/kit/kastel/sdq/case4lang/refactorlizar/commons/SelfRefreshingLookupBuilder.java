@@ -12,7 +12,8 @@ public class SelfRefreshingLookupBuilder<T, U, R> {
         this.wrappedObject = object;
     }
 
-    SelfRefreshingLookupBuilder<T, U, R> rebuildFunction(Function<T, Map<U, R>> rebuildFunction) {
+    public SelfRefreshingLookupBuilder<T, U, R> rebuildFunction(
+            Function<T, Map<U, R>> rebuildFunction) {
         this.rebuildFunction = rebuildFunction;
         return this;
     }
@@ -21,7 +22,7 @@ public class SelfRefreshingLookupBuilder<T, U, R> {
      *
      * @return a SelfRefreshingLookup for the given value.
      */
-    Lookup<U, R> build() {
+    public Lookup<U, R> build() {
         return new AbstractSelfRefreshingLookup<T, U, R>(wrappedObject) {
             @Override
             public void rebuild() {
