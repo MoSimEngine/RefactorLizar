@@ -1,39 +1,52 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer;
 
-import java.util.Objects;
+import spoon.reflect.declaration.CtType;
 import spoon.reflect.declaration.CtTypeMember;
 
 public class EdgeValue {
     private CtTypeMember member;
+    private CtType<?> source;
+    private CtType<?> target;
 
-    private EdgeValue(CtTypeMember member) {
+    private EdgeValue(CtTypeMember member, CtType<?> source, CtType<?> target) {
         this.member = member;
+        this.source = source;
+        this.target = target;
     }
 
-    public static EdgeValue of(CtTypeMember member) {
-        return new EdgeValue(member);
+    public static EdgeValue of(CtType<?> source, CtType<?> target, CtTypeMember member) {
+        return new EdgeValue(member, source, target);
     }
     /** @return the member */
     public CtTypeMember getMember() {
         return member;
     }
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
 
     @Override
     public int hashCode() {
-        return Objects.hash(member.getPath());
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((member == null) ? 0 : member.hashCode());
+        result = prime * result + ((source == null) ? 0 : source.hashCode());
+        result = prime * result + ((target == null) ? 0 : target.hashCode());
+        return result;
     }
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
 
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof EdgeValue)) return false;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
         EdgeValue other = (EdgeValue) obj;
-        return member.getPath().equals(other.member.getPath());
+        if (member == null) {
+            if (other.member != null) return false;
+        } else if (!member.equals(other.member)) return false;
+        if (source == null) {
+            if (other.source != null) return false;
+        } else if (!source.equals(other.source)) return false;
+        if (target == null) {
+            if (other.target != null) return false;
+        } else if (!target.equals(other.target)) return false;
+        return true;
     }
 }

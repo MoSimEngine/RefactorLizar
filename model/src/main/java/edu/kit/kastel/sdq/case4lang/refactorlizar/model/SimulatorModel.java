@@ -1,6 +1,9 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.model;
 
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.Lookup;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.SelfRefreshingLookupBuilder;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import spoon.reflect.declaration.CtElement;
@@ -14,6 +17,7 @@ import spoon.reflect.visitor.filter.TypeFilter;
 public class SimulatorModel {
 
     private Collection<Feature> languageFeatures;
+    private Lookup<String, CtType<?>> typeByQNameLookup;
 
     public <T extends CtElement> Collection<T> getAllElements(Class<? extends T> clazz) {
         return languageFeatures.stream()
@@ -111,14 +115,51 @@ public class SimulatorModel {
     /** @param languageFeatures */
     public SimulatorModel(Collection<Feature> languageFeatures) {
         this.languageFeatures = languageFeatures;
+        typeByQNameLookup = createTypeByQNameLookup(languageFeatures);
+    }
+
+    private Lookup<String, CtType<?>> createTypeByQNameLookup(
+            Collection<Feature> languageFeatures) {
+        return new SelfRefreshingLookupBuilder<Collection<Feature>, String, CtType<?>>(
+                        languageFeatures)
+                .rebuildFunction(
+                        feature ->
+                                feature.stream()
+                                        .map(
+                                                v ->
+                                                        v.getJavaPackage()
+                                                                .getElements(
+                                                                        new TypeFilter<>(
+                                                                                CtType.class)))
+                                        .flatMap(v -> v.stream())
+                                        .collect(
+                                                Collectors.toMap(
+                                                        CtType::getQualifiedName,
+                                                        Function.identity())))
+                .build();
     }
 
     public CtType<?> getTypeWithQualifiedName(String qName) {
-        return languageFeatures.stream()
-                .map(v -> v.getJavaPackage().getElements(new TypeFilter<>(CtType.class)))
-                .flatMap(v -> v.stream())
-                .filter(v -> v.getQualifiedName().equals(qName))
-                .findFirst()
-                .orElse(null);
+        return typeByQNameLookup.lookup(qName);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((languageFeatures == null) ? 0 : languageFeatures.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        SimulatorModel other = (SimulatorModel) obj;
+        if (languageFeatures == null) {
+            if (other.languageFeatures != null) return false;
+        } else if (!languageFeatures.equals(other.languageFeatures)) return false;
+        return true;
     }
 }
