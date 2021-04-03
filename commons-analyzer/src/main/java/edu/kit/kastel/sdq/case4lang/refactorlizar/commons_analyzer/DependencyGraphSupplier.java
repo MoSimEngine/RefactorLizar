@@ -7,6 +7,7 @@ import com.google.common.graph.NetworkBuilder;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -101,6 +102,6 @@ public class DependencyGraphSupplier {
     }
 
     private Set<CtType<?>> getAllTypes(SimulatorModel model) {
-        return model.getAllElements(CtType.class).stream().collect(Collectors.toSet());
+        return new HashSet<>(model.getAllElements(CtType.class));
     }
 }
