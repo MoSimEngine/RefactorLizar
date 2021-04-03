@@ -21,12 +21,6 @@ public class SimulatorModel {
 
     public <T extends CtElement> Collection<T> getAllElements(Class<? extends T> clazz) {
         return languageFeatures.stream()
-                .filter(
-                        v ->
-                                v.getJavaPackage().getParent(CtPackage.class) != null
-                                        && v.getJavaPackage()
-                                                .getParent(CtPackage.class)
-                                                .isUnnamedPackage())
                 .flatMap(v -> v.getJavaPackage().getElements(new TypeFilter<>(clazz)).stream())
                 .collect(Collectors.toList());
     }
@@ -135,7 +129,8 @@ public class SimulatorModel {
                                         .collect(
                                                 Collectors.toMap(
                                                         CtType::getQualifiedName,
-                                                        Function.identity())))
+                                                        Function.identity(),
+                                                        (u, v) -> u)))
                 .build();
     }
 
