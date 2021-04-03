@@ -44,7 +44,7 @@ public class TypeLevelReportGeneration {
                         member ->
                                 "\t\t"
                                         + member.getDeclaringType().getQualifiedName()
-                                        +"#"
+                                        + "#"
                                         + member.getSimpleName()
                                         + "  "
                                         + member.getPosition().getLine())
