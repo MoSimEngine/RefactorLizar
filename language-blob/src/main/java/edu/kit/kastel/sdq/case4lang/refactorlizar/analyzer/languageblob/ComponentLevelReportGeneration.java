@@ -1,26 +1,21 @@
-package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.featurescatter;
+package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.languageblob;
 
 import static java.lang.String.format;
-import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.DependencyEdge;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.EdgeValue;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
-import spoon.reflect.declaration.CtTypeMember;
 
 public class ComponentLevelReportGeneration {
 
@@ -29,23 +24,31 @@ public class ComponentLevelReportGeneration {
             SimulatorModel model,
             ModularLanguage language) {
         StringBuilder builder = new StringBuilder();
-        Map<Feature, Set<DependencyEdge<CtType<?>>>> mergedView =
-                mergeTypesToFeature(dependencyEdges, language);
+        Map<Feature, Set<DependencyEdge<CtType<?>>>> foo =
+                dependencyEdges.values().stream()
+                        .flatMap(v -> v.stream())
+                        .collect(
+                                Collectors.groupingBy(
+                                        v ->
+                                                getSimulatorComponent(
+                                                        v.getSource().getPackage(), model),
+                                        toSet()));
+
         // TODO: why?
-        removeNonScatter(model, mergedView);
-        builder.append(format("Found %d feature scatter \n", mergedView.entrySet().size()));
-        for (Entry<Feature, Set<DependencyEdge<CtType<?>>>> entry : mergedView.entrySet()) {
+        removeNonScatter(language, foo);
+        builder.append(format("Found %d language blobs \n", foo.entrySet().size()));
+        for (Entry<Feature, Set<DependencyEdge<CtType<?>>>> entry : foo.entrySet()) {
             builder.append(
                     format(
-                            "\nFeature:\n%s\nis used in the Components:\n",
+                            "\nSImulator Component:\n%s\n uses the language features:\n",
                             entry.getKey().getBundle().getName()));
-            appendUsageTypes(builder, entry, model);
+            appendUsageTypes(builder, entry.getValue(), language);
         }
-        return new Report("Feature Scatter Analyze on component level", builder.toString(), true);
+        return new Report("Language Blob Analyze on component level", builder.toString(), true);
     }
 
     private void removeNonScatter(
-            SimulatorModel model, Map<Feature, Set<DependencyEdge<CtType<?>>>> mergedView) {
+            ModularLanguage language, Map<Feature, Set<DependencyEdge<CtType<?>>>> mergedView) {
         mergedView
                 .entrySet()
                 .removeIf(
@@ -53,24 +56,13 @@ public class ComponentLevelReportGeneration {
                                 v.getValue().stream()
                                                 .map(
                                                         member ->
-                                                                getSimulatorComponent(
-                                                                        member.getSource()
+                                                                getFeature(
+                                                                        member.getTarget()
                                                                                 .getPackage(),
-                                                                        model))
+                                                                        language))
                                                 .distinct()
                                                 .count()
                                         < 2);
-    }
-
-    private Map<Feature, Set<DependencyEdge<CtType<?>>>> mergeTypesToFeature(
-            Map<CtType<?>, Set<DependencyEdge<CtType<?>>>> dependencyEdges,
-            ModularLanguage language) {
-        return dependencyEdges.entrySet().stream()
-                .collect(
-                        toMap(
-                                v -> getFeature(v.getKey().getPackage(), language),
-                                v -> v.getValue(),
-                                (o1, o2) -> mergeTwoSets(o1, o2)));
     }
 
     private Feature getFeature(CtPackage child, ModularLanguage language) {
@@ -92,7 +84,7 @@ public class ComponentLevelReportGeneration {
                                 v ->
                                         child.equals(v.getJavaPackage())
                                                 || child.hasParent(v.getJavaPackage()))
-                        .findFirst()
+                        .findAny()
                         .orElse(null);
         return parent;
     }
@@ -103,33 +95,30 @@ public class ComponentLevelReportGeneration {
     }
 
     private void appendUsageTypes(
-            StringBuilder builder,
-            Entry<Feature, Set<DependencyEdge<CtType<?>>>> entry,
-            SimulatorModel model) {
-        Map<Feature, List<CtPackage>> packagesByComponent =
-                entry.getValue().stream()
-                        .map(DependencyEdge::getValue)
-                        .flatMap(Collection::stream)
-                        .map(EdgeValue::getMember)
-                        .map(CtTypeMember::getDeclaringType)
-                        .filter(v -> v.getPackage() != null)
-                        .map(CtType::getPackage)
-                        .collect(groupingBy(v -> getSimulatorComponent(v, model)));
-        packagesByComponent.entrySet().stream()
+            StringBuilder builder, Set<DependencyEdge<CtType<?>>> entry, ModularLanguage language) {
+        Map<Feature, Set<DependencyEdge<CtType<?>>>> foo =
+                entry.stream()
+                        .collect(
+                                Collectors.groupingBy(
+                                        v -> getFeature(v.getTarget().getPackage(), language),
+                                        toSet()));
+        foo.entrySet().stream()
                 .forEach(
                         v ->
                                 builder.append(
                                         "\t"
                                                 + v.getKey().getBundle().getName()
                                                 + "\n"
-                                                + generateReferencedPackages(v)
+                                                + generateReferencedPackages(v.getValue())
                                                 + "\n"));
     }
 
-    private String generateReferencedPackages(Entry<Feature, List<CtPackage>> packagesInFeature) {
-        return packagesInFeature.getValue().stream()
-                .distinct()
+    private String generateReferencedPackages(Set<DependencyEdge<CtType<?>>> packagesInFeature) {
+        return packagesInFeature.stream()
+                .map(v -> v.getTarget())
+                .map(CtType::getPackage)
                 .map(CtPackage::getQualifiedName)
+                .distinct()
                 .map(fqName -> "\t\t" + fqName + "\n")
                 .collect(joining(""));
     }
