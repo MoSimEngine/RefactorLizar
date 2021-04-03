@@ -17,9 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -40,6 +38,7 @@ public class PackageVisitor extends CtAbstractVisitor {
         this.model = model;
     }
 
+    @Deprecated(forRemoval = true)
     @Override
     public void visitCtPackage(CtPackage ctPackage) {
         MutableGraph<Node> graph = GraphBuilder.directed().build();
@@ -125,6 +124,7 @@ public class PackageVisitor extends CtAbstractVisitor {
         }
     }
 
+    @Deprecated(forRemoval = true)
     public void fullAnalysis() {
         MutableGraph<Node> graph = GraphBuilder.directed().build();
         Map<CtPackage, Feature> featureByPackage = new HashMap<>();
@@ -213,7 +213,7 @@ public class PackageVisitor extends CtAbstractVisitor {
                 createComponentLevelReport();
                 return getReport();
             case TYPE:
-                createClassLevelReport();
+                createTypeLevelReport();
                 return getReport();
             case PACKAGE:
                 createPackageLevelReport();
@@ -224,140 +224,53 @@ public class PackageVisitor extends CtAbstractVisitor {
     }
 
     private void createComponentLevelReport() {
-        Map<CtType<?>, List<DependencyEdge<CtType<?>>>> dependencyEdges =
-                findLanguageScatterEdges();
+        Map<CtType<?>, Set<DependencyEdge<CtType<?>>>> dependencyEdges = findLanguageScatterEdges();
         if (dependencyEdges.isEmpty()) {
             report = createEmptyReport();
         }
-        Map<String, Feature> featureByQName = new HashMap<>();
-
-        for (Feature feature : language.getLanguageFeature()) {
-            Collection<CtPackage> packages =
-                    feature.getJavaPackage()
-                            .getElements(new TypeFilter<CtPackage>(CtPackage.class));
-            packages.stream().forEach(v -> featureByQName.put(v.getQualifiedName(), feature));
-        }
-        StringBuilder builder = new StringBuilder();
-        for (Entry<CtType<?>, List<DependencyEdge<CtType<?>>>> entry : dependencyEdges.entrySet()) {
-            builder.append(
-                    "Feature Component:\n"
-                            + featureByQName
-                                    .get(entry.getKey().getPackage().getQualifiedName())
-                                    .getBundle()
-                                    .getName()
-                            + "\n"
-                            + "is used in the Packages:\n");
-            entry.getValue().stream()
-                    .collect(
-                            Collectors.groupingBy(
-                                    v -> v.getSource().getPackage().getQualifiedName()))
-                    .forEach(
-                            (fqn, types) ->
-                                    builder.append(
-                                            fqn
-                                                    + " at types: \n"
-                                                    + generatePositionStringClassLevel(types)
-                                                    + "\n\n"));
-        }
-        report = new Report("Feature Scatter Analyze", builder.toString(), true);
+        report =
+                new ComponentLevelReportGeneration()
+                        .generateReportOf(dependencyEdges, model, language);
     }
 
     private void createPackageLevelReport() {
-        Map<CtType<?>, List<DependencyEdge<CtType<?>>>> dependencyEdges =
-                findLanguageScatterEdges();
+        Map<CtType<?>, Set<DependencyEdge<CtType<?>>>> dependencyEdges = findLanguageScatterEdges();
         if (dependencyEdges.isEmpty()) {
             report = createEmptyReport();
         }
-        StringBuilder builder = new StringBuilder();
-        for (Entry<CtType<?>, List<DependencyEdge<CtType<?>>>> entry : dependencyEdges.entrySet()) {
-            builder.append(
-                    "Feature Package:\n"
-                            + entry.getKey().getPackage().getQualifiedName()
-                            + "\n"
-                            + "is used in the Packages:\n");
-            entry.getValue()
-                    .forEach(
-                            v ->
-                                    builder.append(
-                                            v.getSource().getPackage().getQualifiedName()
-                                                    + " at types: \n"
-                                                    + generatePositionStringClassLevel(v)
-                                                    + "\n\n"));
-        }
-        report = new Report("Feature Scatter Analyze", builder.toString(), true);
+        report =
+                new PackageLevelReportGeneration()
+                        .generateReportOf(dependencyEdges, model, language);
     }
 
-    private void createClassLevelReport() {
-        Map<CtType<?>, List<DependencyEdge<CtType<?>>>> dependencyEdges =
-                findLanguageScatterEdges();
+    private void createTypeLevelReport() {
+        Map<CtType<?>, Set<DependencyEdge<CtType<?>>>> dependencyEdges = findLanguageScatterEdges();
         if (dependencyEdges.isEmpty()) {
             report = createEmptyReport();
         }
-        StringBuilder builder = new StringBuilder();
-        for (Entry<CtType<?>, List<DependencyEdge<CtType<?>>>> entry : dependencyEdges.entrySet()) {
-            builder.append(
-                    "Feature Type:\n"
-                            + entry.getKey().getQualifiedName()
-                            + "\n"
-                            + "is used in the types:\n");
-            entry.getValue()
-                    .forEach(
-                            v ->
-                                    builder.append(
-                                            v.getSource().getQualifiedName()
-                                                    + " at positions: \n"
-                                                    + generatePositionStringMemberLevel(v)
-                                                    + "\n\n"));
-        }
-        report = new Report("Feature Scatter Analyze", builder.toString(), true);
+        report = new TypeLevelReportGeneration().generateReportOf(dependencyEdges, model, language);
     }
 
-    private String generatePositionStringMemberLevel(DependencyEdge<CtType<?>> v) {
-        return v.getValue().stream()
-                .map(
-                        member ->
-                                member.getMember().getPath().toString()
-                                        + "  "
-                                        + member.getMember().getPosition().toString())
-                .collect(Collectors.joining(","));
-    }
-
-    private String generatePositionStringClassLevel(DependencyEdge<CtType<?>> v) {
-        return v.getValue().stream()
-                .map(member -> member.getMember().getDeclaringType())
-                .map(type -> type.getQualifiedName())
-                .collect(Collectors.joining(","));
-    }
-
-    private String generatePositionStringClassLevel(List<DependencyEdge<CtType<?>>> v) {
-        return v.stream()
-                .map(edge -> edge.getValue().stream())
-                .flatMap(stream -> stream)
-                .map(edge -> edge.getMember().getDeclaringType().getQualifiedName())
-                .collect(Collectors.joining("\n"));
-    }
-
-    private Map<CtType<?>, List<DependencyEdge<CtType<?>>>> findLanguageScatterEdges() {
+    private Map<CtType<?>, Set<DependencyEdge<CtType<?>>>> findLanguageScatterEdges() {
         MutableNetwork<CtType<?>, EdgeValue> graph =
                 DependencyGraphSupplier.getDependencyGraph(language, model);
         // remove all uneeded edges
         removeLanguageToSimulatorEdges(graph);
         removeEdgesWithSimulatorAsTarget(graph);
-        // remove all edges which are not from from a simulator to a language type.
-        // graph.edges().stream().filter(v -> !isSimulatorToLanguageEdge(graph,
-        // v)).collect(Collectors.toList()).forEach(graph::removeEdge);
-        graph.nodes().stream()
-                .filter(v -> isJavaType(v) || isVoidType(v))
-                .collect(Collectors.toList())
-                .forEach(graph::removeNode);
+        removeAllNonProjectNodes(graph);
 
-        List<DependencyEdge<CtType<?>>> dependencyEdges =
-                graph.nodes().stream()
-                        .filter(node -> graph.inDegree(node) > 1)
-                        .map(node -> createDependencyEdgeForPredecessors(graph, node))
-                        .flatMap(v -> v)
-                        .collect(Collectors.toList());
-        return dependencyEdges.stream().collect(Collectors.groupingBy(DependencyEdge::getTarget));
+        Set<DependencyEdge<CtType<?>>> dependencyEdges = findDependencyEdges(graph);
+        return dependencyEdges.stream()
+                .collect(Collectors.groupingBy(DependencyEdge::getTarget, Collectors.toSet()));
+    }
+
+    private Set<DependencyEdge<CtType<?>>> findDependencyEdges(
+            MutableNetwork<CtType<?>, EdgeValue> graph) {
+        return graph.nodes().stream()
+                .filter(node -> graph.inDegree(node) > 1)
+                .map(node -> createDependencyEdgeForPredecessors(graph, node))
+                .flatMap(v -> v)
+                .collect(Collectors.toSet());
     }
 
     private Stream<DependencyEdge<CtType<?>>> createDependencyEdgeForPredecessors(
@@ -372,14 +285,6 @@ public class PackageVisitor extends CtAbstractVisitor {
                 predecessor, node, graph.edgesConnecting(predecessor, node));
     }
 
-    private boolean isVoidType(CtType<?> v) {
-        return v.getQualifiedName().equals("void");
-    }
-
-    private boolean isJavaType(CtType<?> v) {
-        return v.getQualifiedName().startsWith("java");
-    }
-
     /** Removes all edges with a simulator type as target. */
     private void removeEdgesWithSimulatorAsTarget(MutableNetwork<CtType<?>, EdgeValue> graph) {
         graph.nodes().stream()
@@ -389,7 +294,16 @@ public class PackageVisitor extends CtAbstractVisitor {
                 .collect(Collectors.toList())
                 .forEach(graph::removeEdge);
     }
-
+    /** Removes all non project nodes. A project node is either a language or simulator type */
+    private void removeAllNonProjectNodes(MutableNetwork<CtType<?>, EdgeValue> graph) {
+        graph.nodes().stream()
+                .filter(
+                        v ->
+                                !(JavaUtils.isSimulatorType(model, v)
+                                        || JavaUtils.isLanguageType(language, v)))
+                .collect(Collectors.toSet())
+                .forEach(graph::removeNode);
+    }
     /**
      * Removes all edges from language type to a simulator type
      *
