@@ -13,3 +13,4 @@ dependencies {
 }
 
 description = project.languageBlobAnalyzer
+version = "0.0.2"

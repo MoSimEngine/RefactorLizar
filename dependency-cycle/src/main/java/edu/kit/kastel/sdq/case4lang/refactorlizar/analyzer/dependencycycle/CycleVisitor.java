@@ -4,7 +4,12 @@ import static edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUt
 import static edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils.isSimulatorType;
 import static edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils.isVoidType;
 import static java.lang.String.format;
-
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import com.google.common.graph.Graph;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
@@ -17,12 +22,6 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.EdgeValue;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.algorithm.CycleDetection;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.visitor.CtAbstractVisitor;
@@ -32,14 +31,14 @@ public class CycleVisitor extends CtAbstractVisitor {
     private ModularLanguage language;
     private SimulatorModel model;
     private Report report;
-
+    @Deprecated(forRemoval =true)
     public CycleVisitor() {}
 
     public CycleVisitor(ModularLanguage language, SimulatorModel model) {
         this.language = language;
         this.model = model;
     }
-
+    @Deprecated(forRemoval =true)
     public Report fullAnalysis(SimulatorModel model) {
         Collection<CtPackage> packages = model.getAllElements(CtPackage.class);
         MutableGraph<CtType<?>> graph = GraphBuilder.directed().build();
@@ -117,18 +116,7 @@ public class CycleVisitor extends CtAbstractVisitor {
                     format(
                             "%d Cycles found.\n%s",
                             cycles.size(),
-                            cycle.getCycle().stream()
-                                    .map(
-                                            v ->
-                                                    v.getSource().getPackage().getQualifiedName()
-                                                            + " -> "
-                                                            + v.getTarget()
-                                                                    .getPackage()
-                                                                    .getQualifiedName()
-                                                            + "\n"
-                                                            + "with the following classes:\n"
-                                                            + generateClassString(v))
-                                    .collect(Collectors.joining("\n"))));
+                                cycle.printOnPackageLevel()));
         }
         report =
                 new Report(
@@ -156,25 +144,12 @@ public class CycleVisitor extends CtAbstractVisitor {
         }
         StringBuilder builder = new StringBuilder();
         for (Cycle cycle : cycles) {
-            builder.append(
-                    format(
-                            "%d Cycles found.\n%s",
-                            cycles.size(),
-                            cycle.getCycle().stream()
-                                    .map(
-                                            v ->
-                                                    v.getSource().getQualifiedName()
-                                                            + " -> "
-                                                            + v.getTarget().getQualifiedName()
-                                                            + "\n"
-                                                            + "with the following members:"
-                                                            + generateTypeMemberString(v))
-                                    .collect(Collectors.joining("\n"))));
+            builder.append(cycle.printOnTypeLevel());
         }
         report =
                 new Report(
                         "Dependency Cycle Analysis",
-                        format("%d Cycles found.\n%s", cycles.size(), builder.toString()),
+                        format("%d Cycles found.\n%s", cycles.size(), builder),
                         true);
     }
 
@@ -219,7 +194,6 @@ public class CycleVisitor extends CtAbstractVisitor {
                         format("%d Cycles found.\n%s", cycles.size(), builder.toString()),
                         true);
     }
-
     private String getTopLevelPackageName(CtPackage packag) {
         CtPackage currentPackage = packag;
         while (currentPackage.getParent(CtPackage.class) != null
@@ -243,7 +217,7 @@ public class CycleVisitor extends CtAbstractVisitor {
                 .map(LinkedList::new)
                 .map(
                         v -> {
-                            Cycle cycle = new Cycle();
+                            Cycle cycle = new Cycle(language, model);
                             CtType<?> firstElement = v.peekFirst();
                             LinkedList<CtType<?>> types = v;
                             while (!types.isEmpty()) {
