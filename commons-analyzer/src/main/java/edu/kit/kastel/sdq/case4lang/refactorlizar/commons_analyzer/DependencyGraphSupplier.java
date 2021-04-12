@@ -1,17 +1,18 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import com.google.common.flogger.FluentLogger;
 import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableNetwork;
 import com.google.common.graph.NetworkBuilder;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.declaration.CtTypeMember;
 import spoon.reflect.reference.CtTypeReference;
@@ -99,8 +100,10 @@ public class DependencyGraphSupplier {
                 .flatMap(v -> v.stream())
                 .collect(Collectors.toList());
     }
+
     private Set<CtType<?>> getAllTypes(SimulatorModel model) {
-        Set<CtType<?>> types = model.getAllElements(CtType.class).stream().collect(Collectors.toSet());
+        Set<CtType<?>> types = new HashSet<>();
+        model.getAllElements(CtType.class).stream().forEach(types::add);
         return types;
     }
 }
