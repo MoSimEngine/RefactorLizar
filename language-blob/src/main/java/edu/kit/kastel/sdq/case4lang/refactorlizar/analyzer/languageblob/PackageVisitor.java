@@ -23,7 +23,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.reference.CtPackageReference;
@@ -45,6 +44,7 @@ public class PackageVisitor extends CtAbstractVisitor {
         this.model = model;
     }
 
+    @Deprecated(forRemoval = true)
     @Override
     public void visitCtPackage(CtPackage ctPackage) {
         MutableGraph<Node> graph = GraphBuilder.directed().build();
@@ -167,6 +167,7 @@ public class PackageVisitor extends CtAbstractVisitor {
         return report;
     }
 
+    @Deprecated(forRemoval = true)
     public void analyzeFullModel(SimulatorModel model) {
         MutableGraph<Node> graph = GraphBuilder.directed().build();
         Map<String, Feature> featureByPackage = generateFeatureByPackageQName();
@@ -219,7 +220,7 @@ public class PackageVisitor extends CtAbstractVisitor {
                 createComponentLevelReport();
                 return getReport();
             case TYPE:
-                createClassLevelReport();
+                createTypeLevelReport();
                 return getReport();
             case PACKAGE:
                 createPackageLevelReport();
@@ -230,37 +231,14 @@ public class PackageVisitor extends CtAbstractVisitor {
     }
 
     private void createPackageLevelReport() {
-        Map<CtType<?>, List<DependencyEdge<CtType<?>>>> languageBlopsByType =
-                findLanguageScatterEdges();
-        if (languageBlopsByType.isEmpty()) {
+        Map<CtType<?>, Set<DependencyEdge<CtType<?>>>> languageBlobsByType =
+                findLanguageBlobEdges();
+        if (languageBlobsByType.isEmpty()) {
             generateEmptyReport();
         }
-        StringBuilder builder = new StringBuilder();
-        for (Map.Entry<CtType<?>, List<DependencyEdge<CtType<?>>>> entry :
-                languageBlopsByType.entrySet()) {
-            StringBuilder result = new StringBuilder();
-            result.append(
-                    String.format(
-                            "Simulator Component %s uses the following language feature:\n",
-                            JavaUtils.getTopLevelPackage(entry.getKey().getPackage())));
-            entry.getValue().stream()
-                    .map(
-                            v ->
-                                    JavaUtils.getTopLevelPackage(v.getTarget().getPackage())
-                                                    .getQualifiedName()
-                                            + " with classes\n"
-                                            + v.getTarget().getQualifiedName()
-                                            + "\n")
-                    .forEach(result::append);
-            builder.append(result);
-        }
         report =
-                new Report(
-                        "Language Blob Analyzer",
-                        String.format(
-                                "There are %n language blobs\n\n%s",
-                                languageBlopsByType.size(), builder),
-                        true);
+                new PackageLevelReportGeneration()
+                        .generateReportOf(languageBlobsByType, model, language);
     }
 
     private void generateEmptyReport() {
@@ -268,95 +246,49 @@ public class PackageVisitor extends CtAbstractVisitor {
                 new Report("Language Blob Analyze", "Es wurde kein language blob gefunden.", false);
     }
 
-    private void createClassLevelReport() {
-        Map<CtType<?>, List<DependencyEdge<CtType<?>>>> languageBlopsByType =
-                findLanguageScatterEdges();
-        if (languageBlopsByType.isEmpty()) {
+    private void createTypeLevelReport() {
+        Map<CtType<?>, Set<DependencyEdge<CtType<?>>>> languageBlobsByType =
+                findLanguageBlobEdges();
+        if (languageBlobsByType.isEmpty()) {
             generateEmptyReport();
         }
-        StringBuilder builder = new StringBuilder();
-        for (Map.Entry<CtType<?>, List<DependencyEdge<CtType<?>>>> entry :
-                languageBlopsByType.entrySet()) {
-            StringBuilder result = new StringBuilder();
-            result.append(
-                    String.format(
-                            "Simulator Component %s uses the following language feature:\n",
-                            JavaUtils.getTopLevelPackage(entry.getKey().getPackage())));
-            entry.getValue().stream()
-                    .map(
-                            v ->
-                                    v.getTarget().getQualifiedName()
-                                            + " with members\n"
-                                            + v.getValue().stream()
-                                                    .map(EdgeValue::getMember)
-                                                    .map(CtElement::getPath)
-                                                    .map(Object::toString)
-                                                    .collect(Collectors.joining("\n"))
-                                            + "\n")
-                    .forEach(result::append);
-            builder.append(result);
-        }
         report =
-                new Report(
-                        "Language Blob Analyzer",
-                        String.format(
-                                "There are %n language blobs\n\n%s",
-                                languageBlopsByType.size(), builder),
-                        true);
+                new TypeLevelReportGeneration()
+                        .generateReportOf(languageBlobsByType, model, language);
     }
 
     private void createComponentLevelReport() {
-        Map<CtType<?>, List<DependencyEdge<CtType<?>>>> languageBlopsByType =
-                findLanguageScatterEdges();
-        if (languageBlopsByType.isEmpty()) {
+        Map<CtType<?>, Set<DependencyEdge<CtType<?>>>> languageBlobsByType =
+                findLanguageBlobEdges();
+        if (languageBlobsByType.isEmpty()) {
             generateEmptyReport();
         }
-        StringBuilder builder = new StringBuilder();
-        for (Map.Entry<CtType<?>, List<DependencyEdge<CtType<?>>>> entry :
-                languageBlopsByType.entrySet()) {
-            StringBuilder result = new StringBuilder();
-            result.append(
-                    String.format(
-                            "Simulator Component %s uses the following language feature:\n",
-                            JavaUtils.getTopLevelPackage(entry.getKey().getPackage())));
-            entry.getValue().stream()
-                    .map(
-                            v ->
-                                    JavaUtils.getTopLevelPackage(v.getTarget().getPackage())
-                                                    .getQualifiedName()
-                                            + " with package\n"
-                                            + v.getTarget().getPackage()
-                                            + "\n")
-                    .forEach(result::append);
-            builder.append(result);
-        }
         report =
-                new Report(
-                        "Language Blob Analyzer",
-                        String.format(
-                                "There are %n language blobs\n\n%s",
-                                languageBlopsByType.size(), builder),
-                        true);
+                new ComponentLevelReportGeneration()
+                        .generateReportOf(languageBlobsByType, model, language);
     }
 
-    private Map<CtType<?>, List<DependencyEdge<CtType<?>>>> findLanguageScatterEdges() {
+    private Map<CtType<?>, Set<DependencyEdge<CtType<?>>>> findLanguageBlobEdges() {
         MutableNetwork<CtType<?>, EdgeValue> graph =
                 DependencyGraphSupplier.getDependencyGraph(language, model);
         // remove all uneeded edges
         removeLanguageToSimulatorEdges(graph);
         removeEdgesWithSimulatorAsTarget(graph);
-        graph.nodes().stream()
-                .filter(v -> isJavaType(v) || isVoidType(v))
-                .collect(Collectors.toList())
-                .forEach(graph::removeNode);
+        removeAllNonProjectNodes(graph);
+
         List<DependencyEdge<CtType<?>>> dependencyEdges =
                 graph.nodes().stream()
                         .filter(node -> graph.outDegree(node) > 1)
                         .map(node -> createDependencyEdgeForPredecessors(graph, node))
                         .flatMap(v -> v)
                         .collect(Collectors.toList());
-        Map<CtType<?>, List<DependencyEdge<CtType<?>>>> result =
-                dependencyEdges.stream().collect(Collectors.groupingBy(DependencyEdge::getSource));
+        Map<CtType<?>, Set<DependencyEdge<CtType<?>>>> result =
+                dependencyEdges.stream()
+                        .collect(
+                                Collectors.groupingBy(
+                                        DependencyEdge::getSource, Collectors.toSet()));
+        // TODO: WHY???
+        result.values().forEach(v -> v.removeIf(edge -> edge.getTarget().getPackage() == null));
         result.entrySet().removeIf(v -> v.getValue().size() < 2);
         result.entrySet()
                 .removeIf(
@@ -380,18 +312,21 @@ public class PackageVisitor extends CtAbstractVisitor {
                 .map(successor -> createDependencyEdge(graph, node, successor));
     }
 
+    /** Removes all non project nodes. A project node is either a language or simulator type */
+    private void removeAllNonProjectNodes(MutableNetwork<CtType<?>, EdgeValue> graph) {
+        graph.nodes().stream()
+                .filter(
+                        v ->
+                                !(JavaUtils.isSimulatorType(model, v)
+                                        || JavaUtils.isLanguageType(language, v)))
+                .collect(Collectors.toSet())
+                .forEach(graph::removeNode);
+    }
+
     private DependencyEdge<CtType<?>> createDependencyEdge(
             MutableNetwork<CtType<?>, EdgeValue> graph, CtType<?> node, CtType<?> succcessor) {
         return new DependencyEdge<CtType<?>>(
                 node, succcessor, graph.edgesConnecting(node, succcessor));
-    }
-
-    private boolean isVoidType(CtType<?> v) {
-        return v.getQualifiedName().equals("void");
-    }
-
-    private boolean isJavaType(CtType<?> v) {
-        return v.getQualifiedName().startsWith("java");
     }
 
     /** Removes all edges with a simulator type as target. */

@@ -2,8 +2,11 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.model;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.Lookup;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.SelfRefreshingLookupBuilder;
-import java.util.*;
-import java.util.function.Function;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import spoon.reflect.declaration.CtElement;
@@ -21,12 +24,6 @@ public class SimulatorModel {
 
     public <T extends CtElement> Collection<T> getAllElements(Class<? extends T> clazz) {
         return languageFeatures.stream()
-                .filter(
-                        v ->
-                                v.getJavaPackage().getParent(CtPackage.class) != null
-                                        && v.getJavaPackage()
-                                                .getParent(CtPackage.class)
-                                                .isUnnamedPackage())
                 .flatMap(v -> v.getJavaPackage().getElements(new TypeFilter<>(clazz)).stream())
                 .collect(Collectors.toList());
     }
@@ -135,7 +132,8 @@ public class SimulatorModel {
                                         .collect(
                                                 Collectors.toMap(
                                                         CtType::getQualifiedName,
-                                                        Function.identity())))
+                                                        v -> v,
+                                                        (u, v) -> u)))
                 .build();
     }
 

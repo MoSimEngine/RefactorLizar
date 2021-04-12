@@ -29,7 +29,8 @@ public class SelfRefreshingLookupTest {
                                                 .collect(
                                                         Collectors.toMap(
                                                                 String::length,
-                                                                Function.identity())))
+                                                                Function.identity(),
+                                                                (u, v) -> u)))
                         .build();
         assertEquals("a", lookup.lookup(1));
         set.remove("a");

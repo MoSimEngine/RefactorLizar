@@ -3,7 +3,6 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.model;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.Lookup;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.SelfRefreshingLookupBuilder;
 import java.util.Collection;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
@@ -60,7 +59,7 @@ public class ModularLanguage {
                                                         CtType::getQualifiedName,
                                                         // TODO: spoon includes generics like T and
                                                         // these are duplicates
-                                                        Function.identity(),
+                                                        v -> v,
                                                         (u, v) -> u)))
                 .build();
     }

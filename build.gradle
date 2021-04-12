@@ -16,7 +16,7 @@ repositories {
 apply plugin: 'application'
 mainClassName = 'edu.kit.kastel.sdq.case4lang.refactorlizar.core.RefactorLizar'
 apply plugin: 'com.github.johnrengelman.shadow'
-
+version = "0.0.2"
 
 apply plugin: 'maven-publish'
 

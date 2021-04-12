@@ -17,6 +17,7 @@ public class DependencyCycleAnalyzer implements IAnalyzer {
 
     public DependencyCycleAnalyzer() {}
 
+    @Deprecated(forRemoval = true)
     @Override
     public Report analyze(CtElement element) {
         // TODO: für paket und klasse anbieten
@@ -39,6 +40,7 @@ public class DependencyCycleAnalyzer implements IAnalyzer {
         return "DependencyCycleAnalyzer";
     }
 
+    @Deprecated(forRemoval = true)
     @Override
     public boolean canAnalyze(CtElement element) {
         // nicht sehr spannend
