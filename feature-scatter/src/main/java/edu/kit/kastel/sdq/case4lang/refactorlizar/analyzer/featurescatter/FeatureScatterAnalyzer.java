@@ -72,4 +72,18 @@ public class FeatureScatterAnalyzer implements IAnalyzer {
     public boolean supportsFullAnalysis() {
         return true;
     }
+
+    @Override
+    public boolean supportsFullAnalysisLevel(SearchLevels level) {
+        switch (level) {
+            case TYPE:
+                return true;
+            case COMPONENT:
+                return true;
+            case PACKAGE:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

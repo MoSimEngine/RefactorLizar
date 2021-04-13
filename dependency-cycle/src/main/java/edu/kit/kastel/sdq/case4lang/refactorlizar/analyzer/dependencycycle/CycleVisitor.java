@@ -58,8 +58,7 @@ public class CycleVisitor extends CtAbstractVisitor {
                 result.nodes().stream().filter(v -> v.size() > 1).collect(Collectors.toList());
 
         if (cycles.isEmpty()) {
-            return new Report(
-                    "Dependency Cycle Analysis", "No cycle found.", false, Collections.emptyList());
+            return createEmptyReport();
         }
 
         Collection<List<String>> cyclesForReport =
@@ -106,12 +105,8 @@ public class CycleVisitor extends CtAbstractVisitor {
     private void createPackageLevelReport() {
         List<Cycle> cycles = findDependencyCycles();
         if (cycles.isEmpty()) {
-            report =
-                    new Report(
-                            "Dependency Cycle Analysis",
-                            "No cycle found.",
-                            false,
-                            Collections.emptyList());
+            report = createEmptyReport();
+            return;
         }
         StringBuilder builder = new StringBuilder();
         for (Cycle cycle : cycles) {
@@ -135,12 +130,8 @@ public class CycleVisitor extends CtAbstractVisitor {
     private void createTypeLevelReport() {
         List<Cycle> cycles = findDependencyCycles();
         if (cycles.isEmpty()) {
-            report =
-                    new Report(
-                            "Dependency Cycle Analysis",
-                            "No cycle found.",
-                            false,
-                            Collections.emptyList());
+            report = createEmptyReport();
+            return;
         }
         StringBuilder builder = new StringBuilder();
         for (Cycle cycle : cycles) {
@@ -153,21 +144,16 @@ public class CycleVisitor extends CtAbstractVisitor {
                         true);
     }
 
-    private String generateTypeMemberString(DependencyEdge<CtType<?>> v) {
-        return v.getValue().stream()
-                .map(member -> member.getMember().getPath().toString())
-                .collect(Collectors.joining("\n"));
+    private Report createEmptyReport() {
+        return new Report(
+                "Dependency Cycle Analysis", "No cycle found.", false, Collections.emptyList());
     }
 
     private void createComponentLevelReport() {
         List<Cycle> cycles = findDependencyCycles();
         if (cycles.isEmpty()) {
-            report =
-                    new Report(
-                            "Dependency Cycle Analysis",
-                            "No cycle found.",
-                            false,
-                            Collections.emptyList());
+            report = createEmptyReport();
+            return;
         }
         StringBuilder builder = new StringBuilder();
         for (Cycle cycle : cycles) {

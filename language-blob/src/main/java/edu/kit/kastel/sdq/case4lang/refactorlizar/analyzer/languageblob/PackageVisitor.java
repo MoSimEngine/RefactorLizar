@@ -235,6 +235,7 @@ public class PackageVisitor extends CtAbstractVisitor {
                 findLanguageBlobEdges();
         if (languageBlobsByType.isEmpty()) {
             generateEmptyReport();
+            return;
         }
         report =
                 new PackageLevelReportGeneration()
@@ -251,6 +252,7 @@ public class PackageVisitor extends CtAbstractVisitor {
                 findLanguageBlobEdges();
         if (languageBlobsByType.isEmpty()) {
             generateEmptyReport();
+            return;
         }
         report =
                 new TypeLevelReportGeneration()
@@ -262,6 +264,7 @@ public class PackageVisitor extends CtAbstractVisitor {
                 findLanguageBlobEdges();
         if (languageBlobsByType.isEmpty()) {
             generateEmptyReport();
+            return;
         }
         report =
                 new ComponentLevelReportGeneration()
