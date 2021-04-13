@@ -4,6 +4,7 @@ import com.google.auto.service.AutoService;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.ElementVisitor;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.IAnalyzer;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.SearchLevels;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import spoon.reflect.declaration.CtElement;
@@ -63,5 +64,24 @@ public class DependencyCycleAnalyzer implements IAnalyzer {
     @Override
     public boolean supportsFullAnalysis() {
         return true;
+    }
+
+    @Override
+    public Report fullAnalysis(SearchLevels level) {
+        return new CycleVisitor(language, model).fullAnalysis(level);
+    }
+
+    @Override
+    public boolean supportsFullAnalysisLevel(SearchLevels level) {
+        switch (level) {
+            case TYPE:
+                return true;
+            case COMPONENT:
+                return true;
+            case PACKAGE:
+                return true;
+            default:
+                return false;
+        }
     }
 }
