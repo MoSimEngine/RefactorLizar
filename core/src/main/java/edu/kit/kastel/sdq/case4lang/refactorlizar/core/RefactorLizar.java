@@ -8,8 +8,8 @@ public class RefactorLizar {
 
     public static void main(String[] args) {
 
-        ModularLanguage lang = new ModularLanguage(new LanguageParser().parseLanguage(args[1]));
-        SimulatorModel model = new SimulatorModel(new SimulatorParser().parseLanguage(args[2]));
+        ModularLanguage lang = new ModularLanguage(LanguageParser.parseLanguage(args[1]));
+        SimulatorModel model = new SimulatorModel(SimulatorParser.parseSimulator(args[2]));
 
         System.out.println(IAnalyzer.getAllAnalyzer().size());
 
