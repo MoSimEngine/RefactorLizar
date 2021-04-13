@@ -16,10 +16,9 @@ public class SimpleTest {
     public void typeLevelReport() {
         ModularLanguage lang =
                 new ModularLanguage(
-                        new LanguageParser().parseLanguage("src/test/resources/modular-language"));
+                        LanguageParser.parseLanguage("src/test/resources/modular-language"));
         SimulatorModel model =
-                new SimulatorModel(
-                        new SimulatorParser().parseLanguage("src/test/resources/simulator"));
+                new SimulatorModel(SimulatorParser.parseSimulator("src/test/resources/simulator"));
         PackageVisitor visitor = new PackageVisitor(lang, model);
         visitor.fullAnalysis(SearchLevels.TYPE);
         assertNotNull(visitor.getReport());
@@ -29,10 +28,9 @@ public class SimpleTest {
     public void packageLevelReport() {
         ModularLanguage lang =
                 new ModularLanguage(
-                        new LanguageParser().parseLanguage("src/test/resources/modular-language"));
+                        LanguageParser.parseLanguage("src/test/resources/modular-language"));
         SimulatorModel model =
-                new SimulatorModel(
-                        new SimulatorParser().parseLanguage("src/test/resources/simulator"));
+                new SimulatorModel(SimulatorParser.parseSimulator("src/test/resources/simulator"));
         PackageVisitor visitor = new PackageVisitor(lang, model);
         visitor.fullAnalysis(SearchLevels.PACKAGE);
         assertNotNull(visitor.getReport());
@@ -42,10 +40,9 @@ public class SimpleTest {
     public void componentLevelReport() {
         ModularLanguage lang =
                 new ModularLanguage(
-                        new LanguageParser().parseLanguage("src/test/resources/modular-language"));
+                        LanguageParser.parseLanguage("src/test/resources/modular-language"));
         SimulatorModel model =
-                new SimulatorModel(
-                        new SimulatorParser().parseLanguage("src/test/resources/simulator"));
+                new SimulatorModel(SimulatorParser.parseSimulator("src/test/resources/simulator"));
         PackageVisitor visitor = new PackageVisitor(lang, model);
         visitor.fullAnalysis(SearchLevels.COMPONENT);
         assertNotNull(visitor.getReport());

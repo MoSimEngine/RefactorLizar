@@ -16,11 +16,10 @@ public class SimpleTest {
     public void typeLevelReport() {
         ModularLanguage lang =
                 new ModularLanguage(
-                        new LanguageParser()
-                                .parseLanguage("src/test/resources/xppu/modular-language"));
+                        LanguageParser.parseLanguage("src/test/resources/xppu/modular-language"));
         SimulatorModel model =
                 new SimulatorModel(
-                        new SimulatorParser().parseLanguage("src/test/resources/xppu/simulator"));
+                        SimulatorParser.parseSimulator("src/test/resources/xppu/simulator"));
         CycleVisitor visitor = new CycleVisitor(lang, model);
         visitor.fullAnalysis(SearchLevels.TYPE);
         assertNotNull(visitor.getReport());
@@ -30,11 +29,10 @@ public class SimpleTest {
     public void packageLevelReport() {
         ModularLanguage lang =
                 new ModularLanguage(
-                        new LanguageParser()
-                                .parseLanguage("src/test/resources/xppu/modular-language"));
+                        LanguageParser.parseLanguage("src/test/resources/xppu/modular-language"));
         SimulatorModel model =
                 new SimulatorModel(
-                        new SimulatorParser().parseLanguage("src/test/resources/xppu/simulator"));
+                        SimulatorParser.parseSimulator("src/test/resources/xppu/simulator"));
         CycleVisitor visitor = new CycleVisitor(lang, model);
         visitor.fullAnalysis(SearchLevels.PACKAGE);
         assertNotNull(visitor.getReport());
@@ -44,11 +42,10 @@ public class SimpleTest {
     public void componentLevelReport() {
         ModularLanguage lang =
                 new ModularLanguage(
-                        new LanguageParser()
-                                .parseLanguage("src/test/resources/xppu/modular-language"));
+                        LanguageParser.parseLanguage("src/test/resources/xppu/modular-language"));
         SimulatorModel model =
                 new SimulatorModel(
-                        new SimulatorParser().parseLanguage("src/test/resources/xppu/simulator"));
+                        SimulatorParser.parseSimulator("src/test/resources/xppu/simulator"));
         CycleVisitor visitor = new CycleVisitor(lang, model);
         visitor.fullAnalysis(SearchLevels.COMPONENT);
         assertNotNull(visitor.getReport());
