@@ -3,7 +3,6 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.commons;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.Test;
 
 public class SettingsTest {
@@ -44,7 +43,7 @@ public class SettingsTest {
 
     @Test
     public void createSettingWithValueTest() {
-        Settings settings = new Settings.SettingsBuilder().addSetting("test", "foo").build();
+        Settings settings = new Settings.SettingsBuilder().addSetting("test","foo", "").build();
         assertThat(settings).isNotNull();
         assertThat(settings.getSetting("test").isPresent()).isTrue();
         assertFalse(settings.getSetting("test").get().isMandatory());
