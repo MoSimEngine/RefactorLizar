@@ -2,6 +2,7 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.dependencydirection;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.IAnalyzer;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.Settings;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import spoon.reflect.declaration.CtElement;
@@ -39,5 +40,11 @@ public class DependencyDirectionAnalyzer implements IAnalyzer {
     public boolean canAnalyze(CtElement element) {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    @Override
+    public void init(ModularLanguage language, SimulatorModel simulatorAST, Settings settings) {
+        // TODO Auto-generated method stub
+
     }
 }
