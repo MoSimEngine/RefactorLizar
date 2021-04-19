@@ -1,9 +1,9 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.commons;
 
+import com.google.common.flogger.FluentLogger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import com.google.common.flogger.FluentLogger;
 
 public class Settings {
 

@@ -1,6 +1,5 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.commons;
 
-
 public class MutableSettingsEntry implements SettingsEntry {
 
     private String value;
@@ -14,7 +13,8 @@ public class MutableSettingsEntry implements SettingsEntry {
      * @param defaultValue
      * @param mandatory
      */
-    private MutableSettingsEntry(String value, boolean defaultValue, boolean mandatory, String description) {
+    private MutableSettingsEntry(
+            String value, boolean defaultValue, boolean mandatory, String description) {
         this.value = value;
         this.defaultValue = defaultValue;
         this.mandatory = mandatory;
