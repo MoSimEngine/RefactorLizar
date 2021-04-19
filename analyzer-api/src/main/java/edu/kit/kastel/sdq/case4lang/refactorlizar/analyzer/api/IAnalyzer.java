@@ -1,5 +1,6 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api;
 
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.Settings;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.io.IOException;
@@ -53,7 +54,16 @@ public interface IAnalyzer {
 
     Report analyze(CtElement element);
 
+    @Deprecated(forRemoval = true)
+    /**
+     * @deprecated change the usage to the new Method {@link #init(ModularLanguage, SimulatorModel,
+     *     Settings)}
+     * @param language
+     * @param simulatorAST
+     */
     void init(ModularLanguage language, SimulatorModel simulatorAST);
+
+    void init(ModularLanguage language, SimulatorModel simulatorAST, Settings settings);
 
     String getDescription();
 
@@ -80,4 +90,8 @@ public interface IAnalyzer {
     }
 
     boolean canAnalyze(CtElement element);
+
+    default Settings getSettings() {
+        return new Settings.SettingsBuilder().build();
+    }
 }

@@ -4,6 +4,7 @@ import com.google.auto.service.AutoService;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.ElementVisitor;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.IAnalyzer;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.Settings;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import spoon.reflect.declaration.CtElement;
@@ -63,5 +64,11 @@ public class LanguageBlobAnalyzer implements IAnalyzer {
     @Override
     public boolean supportsFullAnalysis() {
         return true;
+    }
+
+    @Override
+    public void init(ModularLanguage language, SimulatorModel simulatorAST, Settings settings) {
+        this.language = language;
+        this.model = simulatorAST;
     }
 }
