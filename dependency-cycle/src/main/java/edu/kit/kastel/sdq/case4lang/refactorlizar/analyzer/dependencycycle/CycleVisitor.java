@@ -4,7 +4,11 @@ import static edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUt
 import static edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils.isSimulatorType;
 import static edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils.isVoidType;
 import static java.lang.String.format;
-
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import com.google.common.graph.Graph;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
@@ -17,12 +21,6 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.EdgeValue;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.algorithm.CycleDetection;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.visitor.CtAbstractVisitor;
@@ -41,50 +39,6 @@ public class CycleVisitor extends CtAbstractVisitor {
         this.model = model;
     }
 
-    @Deprecated(forRemoval = true)
-    public Report fullAnalysis(SimulatorModel model) {
-        Collection<CtPackage> packages = model.getAllElements(CtPackage.class);
-        MutableGraph<CtType<?>> graph = GraphBuilder.directed().build();
-        for (CtPackage ctPackage : packages) {
-            for (CtType<?> type : ctPackage.getTypes()) {
-                type.getReferencedTypes().stream()
-                        .filter(v -> v.getDeclaration() != null)
-                        .filter(v -> !v.getDeclaration().equals(type))
-                        .forEach(v -> graph.putEdge(type, v.getDeclaration()));
-            }
-        }
-        Graph<Set<CtType<?>>> result = CycleDetection.findStronglyConnectedComponents(graph);
-        Collection<Set<CtType<?>>> cycles =
-                result.nodes().stream().filter(v -> v.size() > 1).collect(Collectors.toList());
-
-        if (cycles.isEmpty()) {
-            return createEmptyReport();
-        }
-
-        Collection<List<String>> cyclesForReport =
-                cycles.stream()
-                        .map(
-                                v ->
-                                        v.stream()
-                                                .map(CtType::getQualifiedName)
-                                                .collect(Collectors.toList()))
-                        .collect(Collectors.toList());
-
-        return new Report(
-                "Dependency Cycle Analysis",
-                format(
-                        "%d Cycles found.%s",
-                        cycles.size(),
-                        cycles.stream()
-                                .map(
-                                        v ->
-                                                v.stream()
-                                                        .map(CtType::getQualifiedName)
-                                                        .collect(Collectors.joining(" -> ")))
-                                .collect(Collectors.joining("\n"))),
-                true,
-                cyclesForReport);
-    }
 
     public Report fullAnalysis(SearchLevels level) {
         switch (level) {
