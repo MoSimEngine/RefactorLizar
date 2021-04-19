@@ -1,9 +1,9 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.commons;
 
-import com.google.common.flogger.FluentLogger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import com.google.common.flogger.FluentLogger;
 
 public class Settings {
 
@@ -34,17 +34,17 @@ public class Settings {
             settingsObject = new Settings();
         }
 
-        public SettingsBuilder addSetting(String key) {
-            return addSetting(key, false);
+        public SettingsBuilder addSetting(String key, String description) {
+            return addSetting(key, false, description);
         }
 
-        public SettingsBuilder addSetting(String key, boolean mandatory) {
-            settingsObject.settings.put(key, MutableSettingsEntry.of(mandatory));
+        public SettingsBuilder addSetting(String key, boolean mandatory, String description) {
+            settingsObject.settings.put(key, MutableSettingsEntry.of(mandatory, description));
             return this;
         }
 
-        public SettingsBuilder addSetting(String key, String value) {
-            settingsObject.settings.put(key, MutableSettingsEntry.of(value));
+        public SettingsBuilder addSetting(String key, String value, String description) {
+            settingsObject.settings.put(key, MutableSettingsEntry.of(value, description));
             return this;
         }
 

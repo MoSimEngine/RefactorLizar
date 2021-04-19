@@ -18,4 +18,6 @@ public interface SettingsEntry {
 
     /** @return true if the current value is the default value, false otherwise */
     public boolean isDefaultValue();
+
+    public String getDescription();
 }
