@@ -45,6 +45,6 @@ public class DependencyDirectionAnalyzer implements IAnalyzer {
     @Override
     public void init(ModularLanguage language, SimulatorModel simulatorAST, Settings settings) {
         // TODO Auto-generated method stub
-        
+
     }
 }
