@@ -79,4 +79,17 @@ public class FeatureScatterAnalyzer implements IAnalyzer {
         this.language = language;
         this.model = simulatorAST;
     }
+  
+    public boolean supportsFullAnalysisLevel(SearchLevels level) {
+        switch (level) {
+            case TYPE:
+                return true;
+            case COMPONENT:
+                return true;
+            case PACKAGE:
+                return true;
+            default:
+                return false;
+        }
+    }
 }
