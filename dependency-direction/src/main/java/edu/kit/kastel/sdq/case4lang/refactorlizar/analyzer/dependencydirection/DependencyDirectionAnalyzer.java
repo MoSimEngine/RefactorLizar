@@ -1,28 +1,17 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.dependencydirection;
 
-import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.IAnalyzer;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.AbstractAnalyzer;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.SearchLevels;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.Settings;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import spoon.reflect.declaration.CtElement;
+import org.apache.commons.lang3.NotImplementedException;
 
-public class DependencyDirectionAnalyzer implements IAnalyzer {
+public class DependencyDirectionAnalyzer extends AbstractAnalyzer {
 
     private ModularLanguage language;
     private SimulatorModel simulatorAST;
-
-    @Override
-    public Report analyze(CtElement element) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void init(ModularLanguage language, SimulatorModel simulatorAST) {
-        // TODO Auto-generated method stub
-
-    }
 
     @Override
     public String getDescription() {
@@ -37,14 +26,25 @@ public class DependencyDirectionAnalyzer implements IAnalyzer {
     }
 
     @Override
-    public boolean canAnalyze(CtElement element) {
-        // TODO Auto-generated method stub
-        return false;
+    protected void checkSettings(Settings settings) {
+        if (SearchLevels.of(settings.getSetting("level").get().getValue()) == null) {
+            throw new IllegalArgumentException("No level setting was set");
+        }
     }
 
     @Override
-    public void init(ModularLanguage language, SimulatorModel simulatorAST, Settings settings) {
-        // TODO Auto-generated method stub
+    public Settings getSettings() {
+        return new Settings.SettingsBuilder()
+                .addSetting(
+                        "level",
+                        true,
+                        "defines the result level of the smell analyzer, available are: type, component and package")
+                .build();
+    }
 
+    @Override
+    protected Report fullAnalysis(
+            ModularLanguage language, SimulatorModel simulatorAST, Settings settings) {
+        throw new NotImplementedException();
     }
 }

@@ -4,11 +4,7 @@ import static edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUt
 import static edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils.isSimulatorType;
 import static edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils.isVoidType;
 import static java.lang.String.format;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+
 import com.google.common.graph.Graph;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
@@ -21,6 +17,11 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.EdgeValue;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.algorithm.CycleDetection;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.visitor.CtAbstractVisitor;
@@ -38,7 +39,6 @@ public class CycleVisitor extends CtAbstractVisitor {
         this.language = language;
         this.model = model;
     }
-
 
     public Report fullAnalysis(SearchLevels level) {
         switch (level) {
