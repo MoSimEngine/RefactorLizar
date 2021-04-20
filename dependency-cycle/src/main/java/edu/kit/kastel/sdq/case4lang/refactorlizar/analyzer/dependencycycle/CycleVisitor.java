@@ -17,7 +17,6 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.EdgeValue;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.algorithm.CycleDetection;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,51 +38,6 @@ public class CycleVisitor extends CtAbstractVisitor {
     public CycleVisitor(ModularLanguage language, SimulatorModel model) {
         this.language = language;
         this.model = model;
-    }
-
-    @Deprecated(forRemoval = true)
-    public Report fullAnalysis(SimulatorModel model) {
-        Collection<CtPackage> packages = model.getAllElements(CtPackage.class);
-        MutableGraph<CtType<?>> graph = GraphBuilder.directed().build();
-        for (CtPackage ctPackage : packages) {
-            for (CtType<?> type : ctPackage.getTypes()) {
-                type.getReferencedTypes().stream()
-                        .filter(v -> v.getDeclaration() != null)
-                        .filter(v -> !v.getDeclaration().equals(type))
-                        .forEach(v -> graph.putEdge(type, v.getDeclaration()));
-            }
-        }
-        Graph<Set<CtType<?>>> result = CycleDetection.findStronglyConnectedComponents(graph);
-        Collection<Set<CtType<?>>> cycles =
-                result.nodes().stream().filter(v -> v.size() > 1).collect(Collectors.toList());
-
-        if (cycles.isEmpty()) {
-            return createEmptyReport();
-        }
-
-        Collection<List<String>> cyclesForReport =
-                cycles.stream()
-                        .map(
-                                v ->
-                                        v.stream()
-                                                .map(CtType::getQualifiedName)
-                                                .collect(Collectors.toList()))
-                        .collect(Collectors.toList());
-
-        return new Report(
-                "Dependency Cycle Analysis",
-                format(
-                        "%d Cycles found.%s",
-                        cycles.size(),
-                        cycles.stream()
-                                .map(
-                                        v ->
-                                                v.stream()
-                                                        .map(CtType::getQualifiedName)
-                                                        .collect(Collectors.joining(" -> ")))
-                                .collect(Collectors.joining("\n"))),
-                true,
-                cyclesForReport);
     }
 
     public Report fullAnalysis(SearchLevels level) {

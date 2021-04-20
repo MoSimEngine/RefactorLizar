@@ -1,8 +1,6 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.Settings;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -14,9 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
-import java.util.UUID;
 import java.util.stream.Collectors;
-import spoon.reflect.declaration.CtElement;
 
 /** IAnalyzer */
 public interface IAnalyzer {
@@ -52,26 +48,9 @@ public interface IAnalyzer {
                 .collect(Collectors.toList());
     }
 
-    Report analyze(CtElement element);
-
-    @Deprecated(forRemoval = true)
-    /**
-     * @deprecated change the usage to the new Method {@link #init(ModularLanguage, SimulatorModel,
-     *     Settings)}
-     * @param language
-     * @param simulatorAST
-     */
-    void init(ModularLanguage language, SimulatorModel simulatorAST);
-
-    void init(ModularLanguage language, SimulatorModel simulatorAST, Settings settings);
-
     String getDescription();
 
     String getName();
-
-    public default UUID getIdentifier() {
-        return UUID.randomUUID();
-    }
 
     default boolean supportsFullAnalysis() {
         return false;
@@ -88,8 +67,6 @@ public interface IAnalyzer {
     default Report fullAnalysis(SearchLevels level) {
         return new UnsupportedAnalysisReport(getName());
     }
-
-    boolean canAnalyze(CtElement element);
 
     default Settings getSettings() {
         return new Settings.SettingsBuilder().build();

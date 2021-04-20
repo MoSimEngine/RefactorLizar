@@ -12,14 +12,5 @@ public class RefactorLizar {
         SimulatorModel model = new SimulatorModel(SimulatorParser.parseSimulator(args[2]));
 
         System.out.println(IAnalyzer.getAllAnalyzer().size());
-
-        IAnalyzer.getAllAnalyzer()
-                .forEach(
-                        v -> {
-                            v.init(lang, model);
-                            if (v.supportsFullAnalysis()) {
-                                System.out.println(v.fullAnalysis());
-                            }
-                        });
     }
 }
