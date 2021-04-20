@@ -7,9 +7,7 @@ import spoon.reflect.declaration.CtType;
 
 public class JavaUtils {
 
-    public static boolean isSimulatorType(SimulatorModel model, CtType<?> source) {
-        return model.getTypeWithQualifiedName(source.getQualifiedName()) != null;
-    }
+
 
     public static boolean isVoidType(CtType<?> v) {
         return v.getQualifiedName().equals("void");
@@ -28,7 +26,22 @@ public class JavaUtils {
         return currentPackage;
     }
 
+    public static boolean isSimulatorType(SimulatorModel model, CtType<?> source) {
+        return model.getTypeWithQualifiedName(source.getQualifiedName()) != null;
+    }
+
     public static boolean isLanguageType(ModularLanguage language, CtType<?> target) {
         return language.getTypeWithQualifiedName(target.getQualifiedName()) != null;
+    }
+
+    public static boolean isSimulatorPackage(SimulatorModel model, CtPackage packag) {
+        return model.getLanguageFeature().stream().anyMatch(candidate -> isParentOrSame(candidate.getJavaPackage(),packag));
+    }
+    public static boolean isLanguagePackage(ModularLanguage language, CtPackage packag) {
+        return language.getLanguageFeature().stream().anyMatch(candidate -> isParentOrSame(candidate.getJavaPackage(),packag));
+    }
+
+    public static boolean isParentOrSame(CtPackage candidate, CtPackage child) { 
+        return candidate.equals(child) || child.hasParent(candidate);
     }
 }
