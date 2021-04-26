@@ -1,13 +1,12 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer;
 
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 
 public class JavaUtils {
-
-
 
     public static boolean isVoidType(CtType<?> v) {
         return v.getQualifiedName().equals("void");
@@ -35,13 +34,26 @@ public class JavaUtils {
     }
 
     public static boolean isSimulatorPackage(SimulatorModel model, CtPackage packag) {
-        return model.getLanguageFeature().stream().anyMatch(candidate -> isParentOrSame(candidate.getJavaPackage(),packag));
-    }
-    public static boolean isLanguagePackage(ModularLanguage language, CtPackage packag) {
-        return language.getLanguageFeature().stream().anyMatch(candidate -> isParentOrSame(candidate.getJavaPackage(),packag));
+        return model.getLanguageFeature().stream()
+                .anyMatch(candidate -> isParentOrSame(candidate.getJavaPackage(), packag));
     }
 
-    public static boolean isParentOrSame(CtPackage candidate, CtPackage child) { 
+    public static boolean isLanguagePackage(ModularLanguage language, CtPackage packag) {
+        return language.getLanguageFeature().stream()
+                .anyMatch(candidate -> isParentOrSame(candidate.getJavaPackage(), packag));
+    }
+
+    public static boolean isSimulatorComponent(SimulatorModel model, Feature simulatorComponent) {
+        return model.getLanguageFeature().stream()
+                .anyMatch(candidate -> candidate.equals(simulatorComponent));
+    }
+
+    public static boolean isLanguageComponent(ModularLanguage language, Feature languageComponent) {
+        return language.getLanguageFeature().stream()
+                .anyMatch(candidate -> candidate.equals(languageComponent));
+    }
+
+    public static boolean isParentOrSame(CtPackage candidate, CtPackage child) {
         return candidate.equals(child) || child.hasParent(candidate);
     }
 }

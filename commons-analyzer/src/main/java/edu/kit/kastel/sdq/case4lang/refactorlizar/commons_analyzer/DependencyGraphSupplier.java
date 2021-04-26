@@ -208,9 +208,13 @@ public class DependencyGraphSupplier {
         MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> graph =
                 NetworkBuilder.directed().allowsParallelEdges(true).build();
         for (CtType<?> source : getAllTypes(model)) {
+            if(source.getPackage() == null) {
+                continue;
+            }
             source.getReferencedTypes().stream()
                     .map(retrieveTypes(language, model))
                     .filter(Objects::nonNull)
+                    .filter(target -> target.getPackage() != null)
                     .filter(target -> !source.getPackage().equals(target.getPackage()))
                     .filter(
                             target ->
@@ -237,6 +241,9 @@ public class DependencyGraphSupplier {
         MutableNetwork<Feature, Edge<Feature, CtPackage>> graph =
                 NetworkBuilder.directed().allowsParallelEdges(true).build();
         for (CtType<?> source : getAllTypes(model)) {
+            if(source.getPackage() == null) {
+                continue;
+            }
             Optional<Feature> sourceComponent = findSimulatorFeature(source.getPackage(), model);
             if (sourceComponent.isEmpty()) {
                 continue;
@@ -244,6 +251,7 @@ public class DependencyGraphSupplier {
             source.getReferencedTypes().stream()
                     .map(retrieveTypes(language, model))
                     .filter(Objects::nonNull)
+                    .filter(target -> target.getPackage() != null)
                     .map(target -> findLanguageFeature(target.getPackage(), language))
                     .filter(Optional::isPresent)
                     .map(Optional::get)
@@ -271,8 +279,7 @@ public class DependencyGraphSupplier {
         return model.getLanguageFeature().stream()
                 .filter(
                         v ->
-                                v.getJavaPackage().equals(packag)
-                                        || packag.hasParent(v.getJavaPackage()))
+                                JavaUtils.isParentOrSame(v.getJavaPackage(), packag))
                 .findFirst();
     }
 
@@ -280,13 +287,16 @@ public class DependencyGraphSupplier {
         return language.getLanguageFeature().stream()
                 .filter(
                         v ->
-                                v.getJavaPackage().equals(packag)
-                                        || packag.hasParent(v.getJavaPackage()))
+                        JavaUtils.isParentOrSame(v.getJavaPackage(), packag))
                 .findFirst();
     }
 
     private <T, U, R> boolean graphHasEdge(
             Network<T, Edge<U, R>> graph, T source, T target, R value) {
+        if (source == null || target == null) {
+            // types like T or void have no packages
+            return true;
+        }
         return graph.nodes().containsAll(List.of(source, target))
                 && graph.edgesConnecting(source, target)
                         .contains(new Edge<T, R>(source, target, value));
