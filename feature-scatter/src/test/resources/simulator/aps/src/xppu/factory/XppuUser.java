@@ -1,6 +1,6 @@
-package factory;
+package xppu.factory;
 
-import xppu.Sensor;
+import aps.Sensor;
 
 public class XppuUser {
 
