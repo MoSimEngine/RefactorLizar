@@ -24,7 +24,7 @@ public class SimpleTest {
         settings.setValue("level", "type");
         Report report = fca.analyze(lang, model, settings);
         Truth.assertThat(report).isNotNull();
-        Truth.assertThat(report.getDescription()).doesNotContain("Found 0 feature scatter ");
+        Truth.assertThat(report.getDescription()).contains("Found 2 feature scatter");
     }
 
     @Test
@@ -39,7 +39,7 @@ public class SimpleTest {
         settings.setValue("level", "package");
         Report report = fca.analyze(lang, model, settings);
         Truth.assertThat(report).isNotNull();
-        Truth.assertThat(report.getDescription()).doesNotContain("Found 0 feature scatter ");
+        Truth.assertThat(report.getDescription()).contains("Found 1 feature scatter");
     }
 
     @Test
@@ -54,6 +54,6 @@ public class SimpleTest {
         settings.setValue("level", "component");
         Report report = fca.analyze(lang, model, settings);
         Truth.assertThat(report).isNotNull();
-        Truth.assertThat(report.getDescription()).contains("Found 0 feature scatter ");
+        Truth.assertThat(report.getDescription()).contains("Found 1 feature scatter");
     }
 }

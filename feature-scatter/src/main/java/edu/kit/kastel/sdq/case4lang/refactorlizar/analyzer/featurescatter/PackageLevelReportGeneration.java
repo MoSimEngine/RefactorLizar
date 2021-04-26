@@ -1,91 +1,62 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.featurescatter;
 
 import static java.lang.String.format;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
 
+import com.google.common.graph.MutableNetwork;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.DependencyEdge;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.EdgeValue;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Edge;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
-import spoon.reflect.declaration.CtTypeMember;
 
 public class PackageLevelReportGeneration {
-    Report generateReportOf(
-            Map<CtType<?>, Set<DependencyEdge<CtType<?>>>> dependencyEdges,
+    public static Report generateReport(
+            MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> graph,
             SimulatorModel model,
             ModularLanguage language) {
-        StringBuilder builder = new StringBuilder();
-        Map<CtPackage, Set<DependencyEdge<CtType<?>>>> mergedView =
-                mergeTypesToPackages(dependencyEdges);
-        // TODO: why?
-        mergedView.entrySet().removeIf(v -> v.getValue().size() < 2);
-        builder.append(format("Found %d feature scatter \n", mergedView.entrySet().size()));
-        for (Entry<CtPackage, Set<DependencyEdge<CtType<?>>>> entry : mergedView.entrySet()) {
-            builder.append(
-                    format(
-                            "\nFeature Package:\n%s\nis used in the packages:\n",
-                            entry.getKey().getQualifiedName()));
-            appendUsageTypes(builder, entry);
+        long count =
+                graph.nodes().stream()
+                        .filter(type -> JavaUtils.isLanguagePackage(language, type))
+                        .count();
+        if (count == 0) {
+            return new Report("Feature Scatter Analyzer", "No feature scatter was found", false);
         }
-        return new Report("Feature Scatter Analyze on package level", builder.toString(), true);
+        StringBuilder builder = new StringBuilder();
+        builder.append(format("Found %d feature scatter \n", count));
+        for (CtPackage target : graph.nodes()) {
+            if (JavaUtils.isLanguagePackage(language, target)) {
+                builder.append(
+                        format(
+                                "\nLanguage Package:\n%s\n is used by simulator packages:\n",
+                                target.getQualifiedName()));
+                graph.predecessors(target).stream()
+                        .forEach(
+                                source ->
+                                        builder.append(
+                                                generateTypeUsage(
+                                                        source,
+                                                        graph.edgesConnecting(source, target))));
+            }
+        }
+        return new Report("Feature Scatter Analyzer on package level", builder.toString(), true);
     }
 
-    private Map<CtPackage, Set<DependencyEdge<CtType<?>>>> mergeTypesToPackages(
-            Map<CtType<?>, Set<DependencyEdge<CtType<?>>>> dependencyEdges) {
-        return dependencyEdges.entrySet().stream()
-                .collect(
-                        toMap(
-                                v -> v.getKey().getPackage(),
-                                v -> v.getValue(),
-                                (o1, o2) -> mergeTwoSets(o1, o2)));
+    private static String generateTypeUsage(
+            CtPackage target, Set<Edge<CtPackage, CtType<?>>> causes) {
+        return format(
+                "\t%s at classes:\n %s\n\n",
+                target.getQualifiedName(), generatePositionStringMemberLevel(causes));
     }
 
-    private Set<DependencyEdge<CtType<?>>> mergeTwoSets(
-            Set<DependencyEdge<CtType<?>>> o1, Set<DependencyEdge<CtType<?>>> o2) {
-        return Stream.concat(o1.stream(), o2.stream()).collect(toSet());
-    }
-
-    private void appendUsageTypes(
-            StringBuilder builder, Entry<CtPackage, Set<DependencyEdge<CtType<?>>>> entry) {
-        Map<CtPackage, List<CtType<?>>> typesByPackage =
-                entry.getValue().stream()
-                        .map(DependencyEdge::getValue)
-                        .flatMap(Collection::stream)
-                        .map(EdgeValue::getMember)
-                        .map(CtTypeMember::getDeclaringType)
-                        .filter(Objects::nonNull)
-                        .filter(v -> v.getPackage() != null)
-                        .collect(groupingBy(CtType::getPackage));
-        typesByPackage.entrySet().stream()
-                .forEach(
-                        v ->
-                                builder.append(
-                                        "\t"
-                                                + v.getKey().getQualifiedName()
-                                                + "\n"
-                                                + generateReferencedClasses(v)
-                                                + "\n"));
-    }
-
-    private String generateReferencedClasses(
-            Entry<CtPackage, List<CtType<?>>> dependentClassesByPackage) {
-        return dependentClassesByPackage.getValue().stream()
-                .distinct()
-                .map(CtType::getQualifiedName)
-                .map(fqName -> "\t\t" + fqName + "\n")
-                .collect(joining(""));
+    private static String generatePositionStringMemberLevel(
+            Set<Edge<CtPackage, CtType<?>>> causes) {
+        return causes.stream()
+                .map(Edge::getCause)
+                .map(member -> "\t\t" + member.getQualifiedName())
+                .collect(Collectors.joining("\n"));
     }
 }

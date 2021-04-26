@@ -16,7 +16,7 @@ public class FeatureScatterAnalyzer extends AbstractAnalyzer {
 
     @Override
     public String getDescription() {
-        return "";
+        return "A feature scatter is defined as the usage of a language feature in multiple simulator components";
     }
 
     @Override
@@ -62,7 +62,7 @@ public class FeatureScatterAnalyzer extends AbstractAnalyzer {
     @Override
     protected Report fullAnalysis(
             ModularLanguage language, SimulatorModel simulatorAST, Settings settings) {
-        return new PackageVisitor(language, simulatorAST)
+        return new LevelAnalyzer(language, simulatorAST)
                 .fullAnalysis(SearchLevels.of(settings.getSetting("level").get().getValue()));
     }
 }
