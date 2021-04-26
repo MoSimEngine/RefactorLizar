@@ -1,28 +1,19 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.languageblob;
 
 import static java.lang.String.format;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toSet;
 
 import com.google.common.graph.Network;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.DependencyEdge;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Edge;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import spoon.reflect.declaration.CtPackage;
-import spoon.reflect.declaration.CtType;
 
 public class ComponentLevelReportGeneration {
-
-    
 
     public static Report generateReport(
             Network<Feature, Edge<Feature, CtPackage>> graph,

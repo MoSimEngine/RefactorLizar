@@ -208,7 +208,7 @@ public class DependencyGraphSupplier {
         MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> graph =
                 NetworkBuilder.directed().allowsParallelEdges(true).build();
         for (CtType<?> source : getAllTypes(model)) {
-            if(source.getPackage() == null) {
+            if (source.getPackage() == null) {
                 continue;
             }
             source.getReferencedTypes().stream()
@@ -241,7 +241,7 @@ public class DependencyGraphSupplier {
         MutableNetwork<Feature, Edge<Feature, CtPackage>> graph =
                 NetworkBuilder.directed().allowsParallelEdges(true).build();
         for (CtType<?> source : getAllTypes(model)) {
-            if(source.getPackage() == null) {
+            if (source.getPackage() == null) {
                 continue;
             }
             Optional<Feature> sourceComponent = findSimulatorFeature(source.getPackage(), model);
@@ -277,17 +277,13 @@ public class DependencyGraphSupplier {
 
     private Optional<Feature> findSimulatorFeature(CtPackage packag, SimulatorModel model) {
         return model.getLanguageFeature().stream()
-                .filter(
-                        v ->
-                                JavaUtils.isParentOrSame(v.getJavaPackage(), packag))
+                .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), packag))
                 .findFirst();
     }
 
     private Optional<Feature> findLanguageFeature(CtPackage packag, ModularLanguage language) {
         return language.getLanguageFeature().stream()
-                .filter(
-                        v ->
-                        JavaUtils.isParentOrSame(v.getJavaPackage(), packag))
+                .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), packag))
                 .findFirst();
     }
 
