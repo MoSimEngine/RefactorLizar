@@ -11,6 +11,7 @@ import java.util.jar.Manifest;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 
 /** This defines an regex based manifest parser. For value retrieving regex are used. */
 public class RegexManifestParser implements ManifestParser {
@@ -22,12 +23,14 @@ public class RegexManifestParser implements ManifestParser {
             Manifest manifest = new Manifest(new FileInputStream(manifestFile));
             String bundleName = parseBundleName(manifest);
             String bundleVersion = parseBundleVersion(manifest);
+            String layer = parseLayer(manifest);
             Collection<String> exportedPackages = parseExportedPackages(manifest);
             Collection<String> requiredBundles = parseRequiredBundle(manifest);
             return Optional.of(
                     new Bundle(
                             bundleName,
                             bundleVersion,
+                            layer,
                             exportedPackages,
                             requiredBundles,
                             manifestFile));
@@ -36,6 +39,11 @@ public class RegexManifestParser implements ManifestParser {
                     "Cant parse %s. Reason %s", manifestFile.getAbsolutePath(), e.getCause());
             return Optional.empty();
         }
+    }
+
+    private String parseLayer(Manifest manifest) {
+        return StringUtils.defaultString(
+                manifest.getMainAttributes().getValue(OSGIKeys.LAYER_NAME.toString()), "UNKNOWN");
     }
 
     private Collection<String> parseExportedPackages(Manifest manifest) {
@@ -84,8 +92,8 @@ public class RegexManifestParser implements ManifestParser {
         REQUIRE_BUNDLE("Require-Bundle"),
         EXPORT_PACKAGE("Export-Package"),
         BUNDLE_VERSION("Bundle-Version"),
-        BUNDLE_SYMBOLIC_NAME("Bundle-SymbolicName");
-
+        BUNDLE_SYMBOLIC_NAME("Bundle-SymbolicName"),
+        LAYER_NAME("Layer");
         private String keyName;
 
         OSGIKeys(String keyName) {

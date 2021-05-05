@@ -6,12 +6,10 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.SearchLevels;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.Settings;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import org.apache.commons.lang3.NotImplementedException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DependencyDirectionAnalyzer extends AbstractAnalyzer {
-
-    private ModularLanguage language;
-    private SimulatorModel simulatorAST;
 
     @Override
     public String getDescription() {
@@ -21,14 +19,35 @@ public class DependencyDirectionAnalyzer extends AbstractAnalyzer {
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
-        return null;
+        return "Dependency Direction Analyzer";
     }
 
     @Override
     protected void checkSettings(Settings settings) {
         if (SearchLevels.of(settings.getSetting("level").get().getValue()) == null) {
             throw new IllegalArgumentException("No level setting was set");
+        }
+        if (settings.getSetting("layers") == null) {
+            throw new IllegalArgumentException("No layer input was given");
+        }
+    }
+
+    @Override
+    public boolean supportsFullAnalysis() {
+        return true;
+    }
+
+    @Override
+    public boolean supportsFullAnalysisLevel(SearchLevels level) {
+        switch (level) {
+            case TYPE:
+                return false;
+            case COMPONENT:
+                return false;
+            case PACKAGE:
+                return false;
+            default:
+                return false;
         }
     }
 
@@ -39,12 +58,25 @@ public class DependencyDirectionAnalyzer extends AbstractAnalyzer {
                         "level",
                         true,
                         "defines the result level of the smell analyzer, available are: type, component and package")
+                .addSetting(
+                        "layers",
+                        true,
+                        "A list of layers separated by ','. The order is given by the input order. 'A,B,C' means that A is lower than B")
                 .build();
     }
 
     @Override
     protected Report fullAnalysis(
             ModularLanguage language, SimulatorModel simulatorAST, Settings settings) {
-        throw new NotImplementedException();
+        Map<String, Integer> levelValues = new HashMap<>();
+        String layers = settings.getSetting("layers").get().getValue();
+        int value = 0;
+        for (String layer : layers.split(",")) {
+            levelValues.put(layer.trim().toLowerCase(), value++);
+        }
+        return new LevelAnalyzer(language, simulatorAST)
+                .fullAnalysis(
+                        SearchLevels.of(settings.getSetting("level").get().getValue()),
+                        levelValues);
     }
 }
