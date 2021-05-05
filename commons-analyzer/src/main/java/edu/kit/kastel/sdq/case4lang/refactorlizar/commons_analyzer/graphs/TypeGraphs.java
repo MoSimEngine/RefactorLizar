@@ -26,15 +26,6 @@ public class TypeGraphs {
         }
     }
 
-    public static void removeNonBlobs(
-            MutableNetwork<CtType<?>, Edge<CtType<?>, CtTypeMember>> graph, SimulatorModel model) {
-        graph.nodes().stream()
-                .filter(type -> JavaUtils.isSimulatorType(model, type))
-                .filter(type -> graph.successors(type).size() < 2)
-                .collect(Collectors.toList())
-                .forEach(graph::removeNode);
-    }
-
     public static void removeNonSimulatorToLanguageEdges(
             ModularLanguage language,
             SimulatorModel model,
@@ -45,6 +36,15 @@ public class TypeGraphs {
                 .flatMap(v -> v.stream())
                 .collect(Collectors.toList())
                 .forEach(graph::removeEdge);
+    }
+
+    public static void removeLanguageNodes(
+            ModularLanguage language,
+            MutableNetwork<CtType<?>, Edge<CtType<?>, CtTypeMember>> graph) {
+        new HashSet<>(graph.nodes())
+                .stream()
+                        .filter(type -> JavaUtils.isLanguageType(language, type))
+                        .forEach(graph::removeNode);
     }
 
     public static void removeNonProjectNodes(

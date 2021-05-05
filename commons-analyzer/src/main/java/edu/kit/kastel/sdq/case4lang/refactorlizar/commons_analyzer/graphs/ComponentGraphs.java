@@ -53,4 +53,12 @@ public class ComponentGraphs {
         return JavaUtils.isLanguageComponent(language, candidate)
                 || JavaUtils.isSimulatorComponent(model, candidate);
     }
+
+    public static void removeLanguageNodes(
+            ModularLanguage language, MutableNetwork<Feature, Edge<Feature, CtPackage>> graph) {
+        new HashSet<>(graph.nodes())
+                .stream()
+                        .filter(type -> JavaUtils.isLanguageComponent(language, type))
+                        .forEach(graph::removeNode);
+    }
 }

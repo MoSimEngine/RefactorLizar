@@ -52,4 +52,12 @@ public class PackageGraphs {
         return JavaUtils.isLanguagePackage(language, candidate)
                 || JavaUtils.isSimulatorPackage(model, candidate);
     }
+
+    public static void removeLanguageNodes(
+            ModularLanguage language, MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> graph) {
+        new HashSet<>(graph.nodes())
+                .stream()
+                        .filter(type -> JavaUtils.isLanguagePackage(language, type))
+                        .forEach(graph::removeNode);
+    }
 }

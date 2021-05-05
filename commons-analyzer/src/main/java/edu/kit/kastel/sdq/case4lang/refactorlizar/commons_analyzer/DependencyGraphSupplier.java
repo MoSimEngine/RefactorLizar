@@ -252,7 +252,7 @@ public class DependencyGraphSupplier {
                     .map(retrieveTypes(language, model))
                     .filter(Objects::nonNull)
                     .filter(target -> target.getPackage() != null)
-                    .map(target -> findLanguageFeature(target.getPackage(), language))
+                    .map(target -> findFeature(target.getPackage(), language, model))
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .filter(
@@ -262,6 +262,7 @@ public class DependencyGraphSupplier {
                                             sourceComponent.get(),
                                             target,
                                             source.getPackage()))
+                    .filter(target -> !sourceComponent.get().equals(target))
                     .forEach(
                             target ->
                                     graph.addEdge(
@@ -285,6 +286,20 @@ public class DependencyGraphSupplier {
         return language.getLanguageFeature().stream()
                 .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), packag))
                 .findFirst();
+    }
+
+    private Optional<Feature> findFeature(
+            CtPackage packag, ModularLanguage language, SimulatorModel model) {
+        Optional<Feature> simulatorFeature = findSimulatorFeature(packag, model);
+        Optional<Feature> languageFeature = findLanguageFeature(packag, language);
+        if (simulatorFeature.isPresent() && languageFeature.isPresent()) {
+            throw new IllegalArgumentException("Both feature found");
+        }
+        if (simulatorFeature.isPresent()) {
+            return simulatorFeature;
+        } else {
+            return languageFeature;
+        }
     }
 
     private <T, U, R> boolean graphHasEdge(

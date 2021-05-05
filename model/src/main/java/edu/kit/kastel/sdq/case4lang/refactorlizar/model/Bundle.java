@@ -11,6 +11,7 @@ public class Bundle {
     private Collection<String> requiredBundle;
     private Collection<String> internalRequiredBundles;
     private File manifestFile;
+    private String layer;
     /**
      * @param name
      * @param version
@@ -28,6 +29,22 @@ public class Bundle {
         this.exportedPackage = exportedPackage;
         this.requiredBundle = requiredBundle;
         this.manifestFile = manifestFile;
+    }
+    /**
+     * @param name
+     * @param version
+     * @param exportedPackage
+     * @param requiredBundle
+     */
+    public Bundle(
+            String name,
+            String version,
+            String layer,
+            Collection<String> exportedPackage,
+            Collection<String> requiredBundle,
+            File manifestFile) {
+        this(name, version, exportedPackage, requiredBundle, manifestFile);
+        this.layer = layer;
     }
 
     /** @return the name */
@@ -88,13 +105,13 @@ public class Bundle {
                 + version
                 + "]";
     }
-    /** @return the interalRequiredBundles */
+    /** @return the internalRequiredBundles */
     public Collection<String> getInternalRequiredBundles() {
         return internalRequiredBundles;
     }
-    /** @param interalRequiredBundles the interalRequiredBundles to set */
-    public void setInternalRequiredBundles(Collection<String> interalRequiredBundles) {
-        this.internalRequiredBundles = interalRequiredBundles;
+    /** @param internalRequiredBundles the internalRequiredBundles to set */
+    public void setInternalRequiredBundles(Collection<String> internalRequiredBundles) {
+        this.internalRequiredBundles = internalRequiredBundles;
     }
 
     public String getSimpleName() {
@@ -103,5 +120,9 @@ public class Bundle {
 
     public File getManifestFile() {
         return manifestFile;
+    }
+
+    public String getLayer() {
+        return layer;
     }
 }
