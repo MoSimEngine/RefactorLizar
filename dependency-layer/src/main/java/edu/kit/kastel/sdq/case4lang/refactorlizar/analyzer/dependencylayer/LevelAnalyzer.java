@@ -1,0 +1,201 @@
+package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.dependencylayer;
+
+import com.google.common.flogger.FluentLogger;
+import com.google.common.graph.MutableNetwork;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.SearchLevels;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.DependencyGraphSupplier;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Edge;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.ComponentGraphs;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.PackageGraphs;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.TypeGraphs;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import spoon.reflect.declaration.CtPackage;
+import spoon.reflect.declaration.CtType;
+import spoon.reflect.declaration.CtTypeMember;
+
+public class LevelAnalyzer {
+    private static final String UNKNOWN_LAYER_IDENTIFIER = "UNKNOWN";
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
+    private ModularLanguage language;
+    private SimulatorModel model;
+
+    public LevelAnalyzer(ModularLanguage language, SimulatorModel model) {
+        this.language = language;
+        this.model = model;
+    }
+
+    public Report fullAnalysis(SearchLevels level) {
+        switch (level) {
+            case COMPONENT:
+                return findComponentImproperDependencyLayer(language, model);
+            case TYPE:
+                return findTypeImproperDependencyLayer(language, model);
+            case PACKAGE:
+                return findPackageImproperDependencyLayer(language, model);
+            default:
+                throw new IllegalArgumentException("level not found");
+        }
+    }
+
+    private Report findComponentImproperDependencyLayer(
+            ModularLanguage language, SimulatorModel model) {
+        MutableNetwork<Feature, Edge<Feature, CtPackage>> graph =
+                DependencyGraphSupplier.getComponentGraph(language, model);
+        ComponentGraphs.removeNonProjectNodes(language, model, graph);
+        removeNodesWithoutLayer(model, graph, feature -> !isUnknownLayer(feature));
+        removeProperLayerEdgesComponent(language, model, graph);
+        return null;
+    }
+
+    private Report findPackageImproperDependencyLayer(
+            ModularLanguage language, SimulatorModel model) {
+        MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> graph =
+                DependencyGraphSupplier.getPackageGraph(language, model);
+        PackageGraphs.removeNonProjectNodes(language, model, graph);
+        removeNodesWithoutLayer(
+                model,
+                graph,
+                (CtPackage v) ->
+                        findFeature(model, v).map(feature -> isUnknownLayer(feature)).orElse(true));
+        removeProperLayerEdgesPackage(language, model, graph);
+        return null;
+    }
+
+    private Report findTypeImproperDependencyLayer(ModularLanguage language, SimulatorModel model) {
+        MutableNetwork<CtType<?>, Edge<CtType<?>, CtTypeMember>> graph =
+                DependencyGraphSupplier.getTypeGraph(language, model);
+        TypeGraphs.removeNonProjectNodes(language, model, graph);
+        removeNodesWithoutLayer(
+                model,
+                graph,
+                (CtType<?> v) ->
+                        findFeature(model, v).map(feature -> isUnknownLayer(feature)).orElse(true));
+        removeProperLayerEdgesType(language, model, graph);
+        return null;
+    }
+
+    private void removeProperLayerEdgesType(
+            ModularLanguage language,
+            SimulatorModel model,
+            MutableNetwork<CtType<?>, Edge<CtType<?>, CtTypeMember>> graph) {
+        removeProperLayerEdges(
+                language,
+                model,
+                graph,
+                type -> JavaUtils.isSimulatorType(model, type),
+                type -> JavaUtils.isLanguageType(language, type),
+                (type) -> findFeature(model, type),
+                (type) -> findFeature(language, type));
+    }
+
+    private void removeProperLayerEdgesPackage(
+            ModularLanguage language,
+            SimulatorModel model,
+            MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> graph) {
+        removeProperLayerEdges(
+                language,
+                model,
+                graph,
+                (packag) -> JavaUtils.isSimulatorPackage(model, packag),
+                (packag) -> JavaUtils.isLanguagePackage(language, packag),
+                (packag) -> findFeature(model, packag),
+                (packag) -> findFeature(language, packag));
+    }
+
+    private void removeProperLayerEdgesComponent(
+            ModularLanguage language,
+            SimulatorModel model,
+            MutableNetwork<Feature, Edge<Feature, CtPackage>> graph) {
+        removeProperLayerEdges(
+                language,
+                model,
+                graph,
+                feature -> JavaUtils.isSimulatorComponent(model, feature),
+                feature -> JavaUtils.isLanguageComponent(language, feature),
+                (feature) -> Optional.of(feature),
+                (feature) -> Optional.of(feature));
+    }
+
+    private <T, U> void removeProperLayerEdges(
+            ModularLanguage language,
+            SimulatorModel model,
+            MutableNetwork<T, Edge<T, U>> graph,
+            Predicate<T> isSimulator,
+            Predicate<T> isLanguage,
+            Function<T, Optional<Feature>> findSimulatorFeature,
+            Function<T, Optional<Feature>> findLanguageFeature) {
+        Set<Edge<T, U>> removableEdges = new HashSet<>();
+
+        for (T source : graph.nodes()) {
+            Optional<Feature> sourceFeature = findSimulatorFeature.apply(source);
+            if (isLanguage.test(source) || sourceFeature.isEmpty()) {
+                continue;
+            }
+            for (T target : graph.successors(source)) {
+                Optional<Feature> targetFeature = findLanguageFeature.apply(source);
+                if (isSimulator.test(target) || targetFeature.isEmpty()) {
+                    removableEdges.addAll(graph.edgesConnecting(source, target));
+                } else {
+                    if (!getLayer(sourceFeature).equals(getLayer(targetFeature))) {
+                        removableEdges.addAll(graph.edgesConnecting(source, target));
+                    }
+                }
+            }
+        }
+        removableEdges.forEach(graph::removeEdge);
+        graph.nodes().stream()
+                .filter(v -> graph.degree(v) == 0)
+                .collect(Collectors.toSet())
+                .forEach(graph::removeNode);
+    }
+
+    private String getLayer(Optional<Feature> featureSource) {
+        return featureSource.get().getBundle().getLayer();
+    }
+
+    private Optional<Feature> findFeature(SimulatorModel model, CtType<?> type) {
+        return model.getLanguageFeature().stream()
+                .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), type.getPackage()))
+                .findFirst();
+    }
+
+    private Optional<Feature> findFeature(ModularLanguage language, CtType<?> type) {
+        return language.getLanguageFeature().stream()
+                .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), type.getPackage()))
+                .findFirst();
+    }
+
+    private Optional<Feature> findFeature(SimulatorModel model, CtPackage packag) {
+        return model.getLanguageFeature().stream()
+                .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), packag))
+                .findFirst();
+    }
+
+    private Optional<Feature> findFeature(ModularLanguage language, CtPackage packag) {
+        return language.getLanguageFeature().stream()
+                .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), packag))
+                .findFirst();
+    }
+
+    private <T, U> void removeNodesWithoutLayer(
+            SimulatorModel model, MutableNetwork<T, Edge<T, U>> graph, Predicate<T> hasLayer) {
+        graph.nodes().stream()
+                .filter(v -> hasLayer.test(v))
+                .collect(Collectors.toList())
+                .forEach(graph::removeNode);
+    }
+
+    private boolean isUnknownLayer(Feature feature) {
+        return feature.getBundle().getLayer().equals(UNKNOWN_LAYER_IDENTIFIER);
+    }
+}
