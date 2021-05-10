@@ -25,7 +25,7 @@ public class SimpleTest {
         settings.setValue("level", "type");
         Report report = dca.analyze(lang, model, settings);
         Truth.assertThat(report).isNotNull();
-        Truth.assertThat(report.getDescription()).doesNotContain("No cycle found");
+        Truth.assertThat(report.getDescription()).doesNotContain("no dependency cycle found");
     }
 
     @Test
@@ -41,7 +41,7 @@ public class SimpleTest {
         settings.setValue("level", "package");
         Report report = dca.analyze(lang, model, settings);
         Truth.assertThat(report).isNotNull();
-        Truth.assertThat(report.getDescription()).doesNotContain("No cycle found");
+        Truth.assertThat(report.getDescription()).doesNotContain("no dependency cycle found");
     }
 
     @Test
@@ -57,6 +57,6 @@ public class SimpleTest {
         settings.setValue("level", "component");
         Report report = dca.analyze(lang, model, settings);
         Truth.assertThat(report).isNotNull();
-        Truth.assertThat(report.getDescription()).doesNotContain("No cycle found");
+        Truth.assertThat(report.getDescription()).contains("no dependency cycle found");
     }
 }

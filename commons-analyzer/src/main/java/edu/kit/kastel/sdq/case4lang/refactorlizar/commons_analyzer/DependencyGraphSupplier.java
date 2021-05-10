@@ -26,25 +26,10 @@ public class DependencyGraphSupplier {
     private static final FluentLogger LOGGER = FluentLogger.forEnclosingClass();
     private static ModularLanguage cachedLanguage;
     private static SimulatorModel cachedModel;
-    private static MutableNetwork<CtType<?>, EdgeValue> graph;
     private static MutableNetwork<CtType<?>, Edge<CtType<?>, CtTypeMember>> typeGraph;
     private static MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> packageGraph;
     private static MutableNetwork<Feature, Edge<Feature, CtPackage>> componentGraph;
 
-    public static MutableNetwork<CtType<?>, EdgeValue> getDependencyGraph(
-            ModularLanguage language, SimulatorModel model) {
-        if (checkIfLanguageIsSame(language)) {
-            if (checkIfSimulatorIsSame(model)) {
-                if (graph != null) {
-                    LOGGER.atInfo().log("Reusing graph");
-                    return Graphs.copyOf(graph);
-                }
-            }
-        }
-        graph = new DependencyGraphSupplier().createDependencyGraph(language, model);
-        cacheData(language, model);
-        return Graphs.copyOf(graph);
-    }
     /** @return the typeGraph */
     public static MutableNetwork<CtType<?>, Edge<CtType<?>, CtTypeMember>> getTypeGraph(
             ModularLanguage language, SimulatorModel model) {
@@ -110,34 +95,6 @@ public class DependencyGraphSupplier {
 
     private static boolean checkIfCacheIsStale(SimulatorModel model, ModularLanguage language) {
         return checkIfLanguageIsSame(language) || checkIfSimulatorIsSame(model);
-    }
-
-    private MutableNetwork<CtType<?>, EdgeValue> createDependencyGraph(
-            ModularLanguage language, SimulatorModel model) {
-        MutableNetwork<CtType<?>, EdgeValue> graph =
-                NetworkBuilder.directed().allowsParallelEdges(true).build();
-        Collection<CtType<?>> types = getAllTypes(model);
-        Collection<CtTypeMember> classMembers = getAllTypeMembers(types);
-        classMembers.forEach(
-                member ->
-                        member.getReferencedTypes().stream()
-                                .map(retrieveTypes(language, model))
-                                .filter(Objects::nonNull)
-                                .filter(type -> !isInnerClass(member, type))
-                                .forEach(type -> createEdge(graph, member, type)));
-
-        return graph;
-    }
-
-    private boolean createEdge(
-            MutableNetwork<CtType<?>, EdgeValue> graph, CtTypeMember member, CtType<?> type) {
-        EdgeValue edgeValue = EdgeValue.of(member.getTopLevelType(), type, member);
-        if (graph.nodes().contains(type)
-                && graph.nodes().contains(member.getTopLevelType())
-                && graph.edgesConnecting(member.getTopLevelType(), type).contains(edgeValue)) {
-            return false;
-        }
-        return graph.addEdge(member.getTopLevelType(), type, edgeValue);
     }
 
     private boolean isInnerClass(CtTypeMember member, CtType<?> type) {

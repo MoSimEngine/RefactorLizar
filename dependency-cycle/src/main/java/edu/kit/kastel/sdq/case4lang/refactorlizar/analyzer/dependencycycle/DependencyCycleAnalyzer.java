@@ -63,7 +63,7 @@ public class DependencyCycleAnalyzer extends AbstractAnalyzer {
     @Override
     protected Report fullAnalysis(
             ModularLanguage language, SimulatorModel simulatorAST, Settings settings) {
-        return new CycleVisitor(language, simulatorAST)
+        return new LevelAnalyzer(language, simulatorAST)
                 .fullAnalysis(SearchLevels.of(settings.getSetting("level").get().getValue()));
     }
 }
