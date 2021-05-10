@@ -30,7 +30,6 @@ public class DependencyGraphSupplier {
     private static MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> packageGraph;
     private static MutableNetwork<Feature, Edge<Feature, CtPackage>> componentGraph;
 
-
     /** @return the typeGraph */
     public static MutableNetwork<CtType<?>, Edge<CtType<?>, CtTypeMember>> getTypeGraph(
             ModularLanguage language, SimulatorModel model) {
@@ -97,9 +96,6 @@ public class DependencyGraphSupplier {
     private static boolean checkIfCacheIsStale(SimulatorModel model, ModularLanguage language) {
         return checkIfLanguageIsSame(language) || checkIfSimulatorIsSame(model);
     }
-
-
-
 
     private boolean isInnerClass(CtTypeMember member, CtType<?> type) {
         return member.getTopLevelType().equals(type);
