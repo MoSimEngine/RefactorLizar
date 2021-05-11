@@ -44,14 +44,12 @@ public class ModelBuilder {
 
         @Override
         public void end(Process process) {
-            logger.atInfo().log("Finishing process %s",process);
+            logger.atInfo().log("Finishing process %s", process);
         }
 
         @Override
         public void start(Process process) {
-            logger.atInfo().log("Starting process %s",process);
+            logger.atInfo().log("Starting process %s", process);
         }
-        
     }
-
 }
