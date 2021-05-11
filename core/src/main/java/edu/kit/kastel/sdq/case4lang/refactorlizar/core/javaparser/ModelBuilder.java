@@ -8,9 +8,11 @@ import spoon.compiler.Environment;
 import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
+import spoon.support.compiler.SpoonProgress;
 
 /** ModelBuilder */
 public class ModelBuilder {
+
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private CtModel model;
 
@@ -23,6 +25,7 @@ public class ModelBuilder {
         env.setNoClasspath(true);
         env.setShouldCompile(false);
         launcher.addInputResource(path);
+        launcher.getEnvironment().setSpoonProgress(new SpoonProgressImplementation());
         model = launcher.buildModel();
         logger.atInfo().log(
                 "finished building model for path %s, with model size: %d, in %d packages",
@@ -35,5 +38,18 @@ public class ModelBuilder {
 
     public Collection<CtPackage> getAllPackages() {
         return model.getAllPackages();
+    }
+
+    private final class SpoonProgressImplementation implements SpoonProgress {
+
+        @Override
+        public void end(Process process) {
+            logger.atInfo().log("Finishing process %s", process);
+        }
+
+        @Override
+        public void start(Process process) {
+            logger.atInfo().log("Starting process %s", process);
+        }
     }
 }
