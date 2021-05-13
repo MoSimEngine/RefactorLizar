@@ -4,7 +4,7 @@ import com.google.common.graph.MutableNetwork;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Edge;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.Optional;
@@ -66,8 +66,8 @@ public class PackageLevelReportGeneration {
                 .collect(Collectors.joining("\n"));
     }
 
-    private static Optional<Feature> findFeature(SimulatorModel model, CtPackage packag) {
-        return model.getLanguageFeature().stream()
+    private static Optional<Component> findFeature(SimulatorModel model, CtPackage packag) {
+        return model.getSimulatorComponents().stream()
                 .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), packag))
                 .findFirst();
     }

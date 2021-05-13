@@ -2,7 +2,7 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.dependencycycle;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Relation;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.List;
@@ -15,7 +15,7 @@ public class ComponentLevelReportGeneration {
     public static Report createReport(
             ModularLanguage language,
             SimulatorModel model,
-            Set<List<Relation<Feature, CtPackage>>> result) {
+            Set<List<Relation<Component, CtPackage>>> result) {
         if (result.isEmpty()) {
             return new Report(
                     "Dependency cycle analyzer on component level",
@@ -24,9 +24,9 @@ public class ComponentLevelReportGeneration {
         }
         StringBuilder description = new StringBuilder();
         description.append(result.size() + " cycles found\n");
-        for (List<Relation<Feature, CtPackage>> list : result) {
+        for (List<Relation<Component, CtPackage>> list : result) {
             description.append(">>>>>>>> Cycle start\n");
-            for (Relation<Feature, CtPackage> relation : list) {
+            for (Relation<Component, CtPackage> relation : list) {
                 description.append(
                         String.format(
                                 "\t%s -> %s\n",

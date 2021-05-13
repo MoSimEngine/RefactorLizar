@@ -5,7 +5,7 @@ import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableNetwork;
 import com.google.common.graph.Network;
 import com.google.common.graph.NetworkBuilder;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.Collection;
@@ -23,35 +23,33 @@ import spoon.reflect.reference.CtTypeReference;
 
 public class DependencyGraphSupplier {
 
+    private static final String REUSING_TYPE_GRAPH = "Reusing type graph";
     private static final FluentLogger LOGGER = FluentLogger.forEnclosingClass();
     private static ModularLanguage cachedLanguage;
     private static SimulatorModel cachedModel;
     private static MutableNetwork<CtType<?>, Edge<CtType<?>, CtTypeMember>> typeGraph;
     private static MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> packageGraph;
-    private static MutableNetwork<Feature, Edge<Feature, CtPackage>> componentGraph;
+    private static MutableNetwork<Component, Edge<Component, CtPackage>> componentGraph;
 
     /** @return the typeGraph */
     public static MutableNetwork<CtType<?>, Edge<CtType<?>, CtTypeMember>> getTypeGraph(
             ModularLanguage language, SimulatorModel model) {
-        if (checkIfCacheIsStale(model, language)) {
-            if (typeGraph != null) {
-                LOGGER.atInfo().log("Reusing type graph");
-                return Graphs.copyOf(typeGraph);
-            }
+        if (checkIfCacheIsStale(model, language) && graphIsPresent(typeGraph)) {
+            LOGGER.atInfo().log(REUSING_TYPE_GRAPH);
+            return Graphs.copyOf(typeGraph);
         }
         clearCache();
         cacheData(language, model);
         typeGraph = new DependencyGraphSupplier().createTypeGraph(language, model);
         return Graphs.copyOf(typeGraph);
     }
+
     /** @return the typeGraph */
     public static MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> getPackageGraph(
             ModularLanguage language, SimulatorModel model) {
-        if (checkIfCacheIsStale(model, language)) {
-            if (packageGraph != null) {
-                LOGGER.atInfo().log("Reusing type graph");
-                return Graphs.copyOf(packageGraph);
-            }
+        if (checkIfCacheIsStale(model, language) && graphIsPresent(packageGraph)) {
+            LOGGER.atInfo().log(REUSING_TYPE_GRAPH);
+            return Graphs.copyOf(packageGraph);
         }
         clearCache();
         cacheData(language, model);
@@ -60,18 +58,20 @@ public class DependencyGraphSupplier {
     }
 
     /** @return the typeGraph */
-    public static MutableNetwork<Feature, Edge<Feature, CtPackage>> getComponentGraph(
+    public static MutableNetwork<Component, Edge<Component, CtPackage>> getComponentGraph(
             ModularLanguage language, SimulatorModel model) {
-        if (checkIfCacheIsStale(model, language)) {
-            if (componentGraph != null) {
-                LOGGER.atInfo().log("Reusing type graph");
-                return Graphs.copyOf(componentGraph);
-            }
+        if (checkIfCacheIsStale(model, language) && graphIsPresent(componentGraph)) {
+            LOGGER.atInfo().log(REUSING_TYPE_GRAPH);
+            return Graphs.copyOf(componentGraph);
         }
         clearCache();
         cacheData(language, model);
         componentGraph = new DependencyGraphSupplier().createComponentGraph(language, model);
         return Graphs.copyOf(componentGraph);
+    }
+
+    private static boolean graphIsPresent(Network<?, ?> graph) {
+        return graph != null;
     }
 
     private static void cacheData(ModularLanguage language, SimulatorModel model) {
@@ -117,8 +117,8 @@ public class DependencyGraphSupplier {
 
     private List<CtTypeMember> getAllTypeMembers(Collection<CtType<?>> types) {
         return types.stream()
-                .map(type -> type.getTypeMembers())
-                .flatMap(v -> v.stream())
+                .map(CtType::getTypeMembers)
+                .flatMap(List::stream)
                 .collect(Collectors.toList());
     }
 
@@ -193,15 +193,15 @@ public class DependencyGraphSupplier {
         return graph;
     }
 
-    public MutableNetwork<Feature, Edge<Feature, CtPackage>> createComponentGraph(
+    public MutableNetwork<Component, Edge<Component, CtPackage>> createComponentGraph(
             ModularLanguage language, SimulatorModel model) {
-        MutableNetwork<Feature, Edge<Feature, CtPackage>> graph =
+        MutableNetwork<Component, Edge<Component, CtPackage>> graph =
                 NetworkBuilder.directed().allowsParallelEdges(true).build();
         for (CtType<?> source : getAllTypes(model)) {
             if (source.getPackage() == null) {
                 continue;
             }
-            Optional<Feature> sourceComponent = findSimulatorFeature(source.getPackage(), model);
+            Optional<Component> sourceComponent = findSimulatorFeature(source.getPackage(), model);
             if (sourceComponent.isEmpty()) {
                 continue;
             }
@@ -233,22 +233,22 @@ public class DependencyGraphSupplier {
         return graph;
     }
 
-    private Optional<Feature> findSimulatorFeature(CtPackage packag, SimulatorModel model) {
-        return model.getLanguageFeature().stream()
+    private Optional<Component> findSimulatorFeature(CtPackage packag, SimulatorModel model) {
+        return model.getSimulatorComponents().stream()
                 .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), packag))
                 .findFirst();
     }
 
-    private Optional<Feature> findLanguageFeature(CtPackage packag, ModularLanguage language) {
-        return language.getLanguageFeature().stream()
+    private Optional<Component> findLanguageFeature(CtPackage packag, ModularLanguage language) {
+        return language.getLanguageComponents().stream()
                 .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), packag))
                 .findFirst();
     }
 
-    private Optional<Feature> findFeature(
+    private Optional<Component> findFeature(
             CtPackage packag, ModularLanguage language, SimulatorModel model) {
-        Optional<Feature> simulatorFeature = findSimulatorFeature(packag, model);
-        Optional<Feature> languageFeature = findLanguageFeature(packag, language);
+        Optional<Component> simulatorFeature = findSimulatorFeature(packag, model);
+        Optional<Component> languageFeature = findLanguageFeature(packag, language);
         if (simulatorFeature.isPresent() && languageFeature.isPresent()) {
             throw new IllegalArgumentException("Both feature found");
         }

@@ -12,12 +12,7 @@ public class Bundle {
     private Collection<String> internalRequiredBundles;
     private File manifestFile;
     private String layer;
-    /**
-     * @param name
-     * @param version
-     * @param exportedPackage
-     * @param requiredBundle
-     */
+
     public Bundle(
             String name,
             String version,
@@ -30,12 +25,7 @@ public class Bundle {
         this.requiredBundle = requiredBundle;
         this.manifestFile = manifestFile;
     }
-    /**
-     * @param name
-     * @param version
-     * @param exportedPackage
-     * @param requiredBundle
-     */
+
     public Bundle(
             String name,
             String version,

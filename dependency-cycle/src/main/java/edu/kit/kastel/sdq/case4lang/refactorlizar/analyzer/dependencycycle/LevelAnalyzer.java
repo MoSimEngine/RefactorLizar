@@ -11,7 +11,7 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.algorithm.Cyc
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.ComponentGraphs;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.PackageGraphs;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.TypeGraphs;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.ArrayList;
@@ -116,24 +116,24 @@ public class LevelAnalyzer extends CtAbstractVisitor {
 
     private Report findDependencyCycleComponentLevel(
             ModularLanguage language, SimulatorModel model) {
-        MutableNetwork<Feature, Edge<Feature, CtPackage>> graph =
+        MutableNetwork<Component, Edge<Component, CtPackage>> graph =
                 DependencyGraphSupplier.getComponentGraph(language, model);
         ComponentGraphs.removeLanguageNodes(language, graph);
         ComponentGraphs.removeNonProjectNodes(language, model, graph);
-        Graph<Set<Feature>> cycles =
+        Graph<Set<Component>> cycles =
                 CycleDetection.findStronglyConnectedComponents(graph.asGraph());
-        Set<List<Relation<Feature, CtPackage>>> result = new HashSet<>();
+        Set<List<Relation<Component, CtPackage>>> result = new HashSet<>();
         cycles.nodes().stream()
                 .filter(v -> v.size() > 1)
                 .map(LinkedList::new)
                 .map(
                         stack -> {
-                            List<Relation<Feature, CtPackage>> cycle = new ArrayList<>();
-                            Feature firstElement = stack.peekFirst();
-                            LinkedList<Feature> types = stack;
+                            List<Relation<Component, CtPackage>> cycle = new ArrayList<>();
+                            Component firstElement = stack.peekFirst();
+                            LinkedList<Component> types = stack;
                             while (!types.isEmpty()) {
-                                Feature source = types.poll();
-                                Feature target = types.isEmpty() ? firstElement : types.peek();
+                                Component source = types.poll();
+                                Component target = types.isEmpty() ? firstElement : types.peek();
                                 cycle.add(
                                         new Relation<>(
                                                 source,
