@@ -9,7 +9,7 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.ComponentGraphs;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.PackageGraphs;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.TypeGraphs;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.function.Predicate;
@@ -48,7 +48,7 @@ public class LevelAnalyzer extends CtAbstractVisitor {
         TypeGraphs.removeNonProjectNodes(language, model, graph);
         TypeGraphs.removeNonSimulatorToLanguageEdges(language, model, graph);
         TypeGraphs.removeEdgesWithSimulatorAsTarget(graph, model);
-        removeNonScatter(graph, model, (v) -> JavaUtils.isLanguageType(language, v));
+        removeNonScatter(graph, model, type -> JavaUtils.isLanguageType(language, type));
         return TypeLevelReportGeneration.generateReport(graph, model, language);
         // remove simulator to simulator edges
     }
@@ -59,18 +59,19 @@ public class LevelAnalyzer extends CtAbstractVisitor {
         PackageGraphs.removeNonProjectNodes(language, model, graph);
         PackageGraphs.removeNonSimulatorToLanguageEdges(language, model, graph);
         PackageGraphs.removeEdgesWithSimulatorAsTarget(graph, model);
-        removeNonScatter(graph, model, (v) -> JavaUtils.isLanguagePackage(language, v));
+        removeNonScatter(graph, model, packag -> JavaUtils.isLanguagePackage(language, packag));
 
         return PackageLevelReportGeneration.generateReport(graph, model, language);
     }
 
     private Report findComponentFeatureScatter(ModularLanguage language, SimulatorModel model) {
-        MutableNetwork<Feature, Edge<Feature, CtPackage>> graph =
+        MutableNetwork<Component, Edge<Component, CtPackage>> graph =
                 DependencyGraphSupplier.getComponentGraph(language, model);
         ComponentGraphs.removeNonProjectNodes(language, model, graph);
         ComponentGraphs.removeNonSimulatorToLanguageEdges(language, model, graph);
         ComponentGraphs.removeEdgesWithSimulatorAsTarget(graph, model);
-        removeNonScatter(graph, model, (v) -> JavaUtils.isLanguageComponent(language, v));
+        removeNonScatter(
+                graph, model, component -> JavaUtils.isLanguageComponent(language, component));
         return ComponentLevelReportGeneration.generateReport(graph, model, language);
     }
 

@@ -12,7 +12,7 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.ComponentGraphs;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.PackageGraphs;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.TypeGraphs;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.HashSet;
@@ -51,7 +51,7 @@ public class LevelAnalyzer {
 
     private Report findComponentDependencyDirectionBreach(
             ModularLanguage language, SimulatorModel model, Map<String, Integer> valuesByLevel) {
-        MutableNetwork<Feature, Edge<Feature, CtPackage>> graph =
+        MutableNetwork<Component, Edge<Component, CtPackage>> graph =
                 DependencyGraphSupplier.getComponentGraph(language, model);
         ComponentGraphs.removeNonProjectNodes(language, model, graph);
         ComponentGraphs.removeLanguageNodes(language, graph);
@@ -75,7 +75,7 @@ public class LevelAnalyzer {
         return TypeLevelReportGeneration.generateReport(graph, model, language);
     }
 
-    private boolean isUnknownLayer(Feature feature) {
+    private boolean isUnknownLayer(Component feature) {
         return feature.getBundle().getLayer().equals(UNKNOWN_LAYER_IDENTIFIER);
     }
 
@@ -104,18 +104,18 @@ public class LevelAnalyzer {
 
     private <T, U> void removeNonBreaches(
             MutableNetwork<T, Edge<T, U>> graph,
-            Function<T, Optional<Feature>> findFeature,
+            Function<T, Optional<Component>> findFeature,
             Map<String, Integer> valuesByLevel) {
         Set<Edge<T, U>> removableEdges = new HashSet<>();
         for (T source : graph.nodes()) {
-            Optional<Feature> featureSource = findFeature.apply(source);
+            Optional<Component> featureSource = findFeature.apply(source);
             if (featureSource.isEmpty()) {
                 logger.atInfo().log("Ignoring element %s", source.toString());
                 continue;
             }
             Set<T> targets = graph.successors(source);
             for (T target : targets) {
-                Optional<Feature> featureTarget = findFeature.apply(target);
+                Optional<Component> featureTarget = findFeature.apply(target);
                 if (featureTarget.isEmpty()) {
                     logger.atInfo().log("Ignoring type %s", target.toString());
                     continue;
@@ -138,24 +138,24 @@ public class LevelAnalyzer {
 
     private boolean isDirectionBreach(
             Map<String, Integer> valuesByLevel,
-            Optional<Feature> featureSource,
-            Optional<Feature> featureTarget) {
+            Optional<Component> featureSource,
+            Optional<Component> featureTarget) {
         return valuesByLevel.get(getLayer(featureSource).toLowerCase())
                 < valuesByLevel.get(getLayer(featureTarget).toLowerCase());
     }
 
-    private String getLayer(Optional<Feature> featureSource) {
+    private String getLayer(Optional<Component> featureSource) {
         return featureSource.get().getBundle().getLayer();
     }
 
-    private Optional<Feature> findFeature(SimulatorModel model, CtType<?> type) {
-        return model.getLanguageFeature().stream()
+    private Optional<Component> findFeature(SimulatorModel model, CtType<?> type) {
+        return model.getSimulatorComponents().stream()
                 .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), type.getPackage()))
                 .findFirst();
     }
 
-    private Optional<Feature> findFeature(SimulatorModel model, CtPackage packag) {
-        return model.getLanguageFeature().stream()
+    private Optional<Component> findFeature(SimulatorModel model, CtPackage packag) {
+        return model.getSimulatorComponents().stream()
                 .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), packag))
                 .findFirst();
     }

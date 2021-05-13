@@ -9,7 +9,7 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.ComponentGraphs;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.PackageGraphs;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.TypeGraphs;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.function.Predicate;
@@ -72,7 +72,7 @@ public class LevelAnalyzer extends CtAbstractVisitor {
     }
 
     private Report findComponentLanguageBlobs(ModularLanguage language, SimulatorModel model) {
-        MutableNetwork<Feature, Edge<Feature, CtPackage>> graph =
+        MutableNetwork<Component, Edge<Component, CtPackage>> graph =
                 DependencyGraphSupplier.getComponentGraph(language, model);
         ComponentGraphs.removeNonProjectNodes(language, model, graph);
         ComponentGraphs.removeNonSimulatorToLanguageEdges(language, model, graph);

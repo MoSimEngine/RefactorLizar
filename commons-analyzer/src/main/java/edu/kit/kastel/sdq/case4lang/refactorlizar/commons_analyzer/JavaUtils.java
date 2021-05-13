@@ -1,6 +1,6 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer;
 
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import spoon.reflect.declaration.CtPackage;
@@ -34,22 +34,23 @@ public class JavaUtils {
     }
 
     public static boolean isSimulatorPackage(SimulatorModel model, CtPackage packag) {
-        return model.getLanguageFeature().stream()
+        return model.getSimulatorComponents().stream()
                 .anyMatch(candidate -> isParentOrSame(candidate.getJavaPackage(), packag));
     }
 
     public static boolean isLanguagePackage(ModularLanguage language, CtPackage packag) {
-        return language.getLanguageFeature().stream()
+        return language.getLanguageComponents().stream()
                 .anyMatch(candidate -> isParentOrSame(candidate.getJavaPackage(), packag));
     }
 
-    public static boolean isSimulatorComponent(SimulatorModel model, Feature simulatorComponent) {
-        return model.getLanguageFeature().stream()
+    public static boolean isSimulatorComponent(SimulatorModel model, Component simulatorComponent) {
+        return model.getSimulatorComponents().stream()
                 .anyMatch(candidate -> candidate.equals(simulatorComponent));
     }
 
-    public static boolean isLanguageComponent(ModularLanguage language, Feature languageComponent) {
-        return language.getLanguageFeature().stream()
+    public static boolean isLanguageComponent(
+            ModularLanguage language, Component languageComponent) {
+        return language.getLanguageComponents().stream()
                 .anyMatch(candidate -> candidate.equals(languageComponent));
     }
 
