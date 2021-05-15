@@ -1,9 +1,9 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer;
 
+import java.util.Optional;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import java.util.Optional;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 
@@ -19,12 +19,12 @@ public class Components {
         return findComponent(language, type.getPackage());
     }
 
-    public static Optional<Component> findFeature(
+    public static Optional<Component> findComponent(
             SimulatorModel model, ModularLanguage language, CtType<?> type) {
         return findComponent(language, type).or(() -> findComponent(model, type));
     }
 
-    public static Optional<Component> findFeature(
+    public static Optional<Component> findComponent(
             SimulatorModel model, ModularLanguage language, CtPackage packag) {
         return findComponent(language, packag).or(() -> findComponent(model, packag));
     }

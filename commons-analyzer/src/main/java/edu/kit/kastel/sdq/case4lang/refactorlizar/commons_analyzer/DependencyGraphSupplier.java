@@ -1,13 +1,5 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer;
 
-import com.google.common.flogger.FluentLogger;
-import com.google.common.graph.Graphs;
-import com.google.common.graph.MutableNetwork;
-import com.google.common.graph.Network;
-import com.google.common.graph.NetworkBuilder;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +8,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import com.google.common.flogger.FluentLogger;
+import com.google.common.graph.Graphs;
+import com.google.common.graph.MutableNetwork;
+import com.google.common.graph.Network;
+import com.google.common.graph.NetworkBuilder;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.declaration.CtTypeMember;
@@ -201,7 +201,7 @@ public class DependencyGraphSupplier {
             if (source.getPackage() == null) {
                 continue;
             }
-            Optional<Component> sourceComponent = findSimulatorFeature(source.getPackage(), model);
+            Optional<Component> sourceComponent = Components.findComponent(model, source);
             if (sourceComponent.isEmpty()) {
                 continue;
             }
@@ -209,7 +209,7 @@ public class DependencyGraphSupplier {
                     .map(retrieveTypes(language, model))
                     .filter(Objects::nonNull)
                     .filter(target -> target.getPackage() != null)
-                    .map(target -> findFeature(target.getPackage(), language, model))
+                    .map(target -> Components.findComponent(model, language, target))
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .filter(
@@ -233,31 +233,7 @@ public class DependencyGraphSupplier {
         return graph;
     }
 
-    private Optional<Component> findSimulatorFeature(CtPackage packag, SimulatorModel model) {
-        return model.getSimulatorComponents().stream()
-                .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), packag))
-                .findFirst();
-    }
 
-    private Optional<Component> findLanguageFeature(CtPackage packag, ModularLanguage language) {
-        return language.getLanguageComponents().stream()
-                .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), packag))
-                .findFirst();
-    }
-
-    private Optional<Component> findFeature(
-            CtPackage packag, ModularLanguage language, SimulatorModel model) {
-        Optional<Component> simulatorFeature = findSimulatorFeature(packag, model);
-        Optional<Component> languageFeature = findLanguageFeature(packag, language);
-        if (simulatorFeature.isPresent() && languageFeature.isPresent()) {
-            throw new IllegalArgumentException("Both feature found");
-        }
-        if (simulatorFeature.isPresent()) {
-            return simulatorFeature;
-        } else {
-            return languageFeature;
-        }
-    }
 
     private <T, U, R> boolean graphHasEdge(
             Network<T, Edge<U, R>> graph, T source, T target, R value) {

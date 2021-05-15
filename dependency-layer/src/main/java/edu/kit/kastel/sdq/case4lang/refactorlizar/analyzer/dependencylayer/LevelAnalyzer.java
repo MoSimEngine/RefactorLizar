@@ -1,5 +1,11 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.dependencylayer;
 
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import com.google.common.flogger.FluentLogger;
 import com.google.common.graph.MutableNetwork;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
@@ -14,12 +20,6 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.TypeGr
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.declaration.CtTypeMember;
@@ -53,7 +53,7 @@ public class LevelAnalyzer {
         MutableNetwork<Component, Edge<Component, CtPackage>> graph =
                 DependencyGraphSupplier.getComponentGraph(language, model);
         ComponentGraphs.removeNonProjectNodes(language, model, graph);
-        removeNodesWithoutLayer(graph, feature -> isUnknownLayer(feature));
+        removeNodesWithoutLayer(graph, component -> isUnknownLayer(component));
         removeProperLayerEdgesComponent(language, model, graph);
         return ComponentLevelReportGeneration.generateReport(graph, model);
     }
@@ -66,8 +66,8 @@ public class LevelAnalyzer {
         removeNodesWithoutLayer(
                 graph,
                 (CtPackage v) ->
-                        Components.findFeature(model, language, v)
-                                .map(feature -> isUnknownLayer(feature))
+                        Components.findComponent(model, language, v)
+                                .map(component -> isUnknownLayer(component))
                                 .orElse(true));
         removeProperLayerEdgesPackage(language, model, graph);
         return PackageLevelReportGeneration.generateReport(graph, model, language);
@@ -80,8 +80,8 @@ public class LevelAnalyzer {
         removeNodesWithoutLayer(
                 graph,
                 (CtType<?> v) ->
-                        Components.findFeature(model, language, v)
-                                .map(feature -> isUnknownLayer(feature))
+                        Components.findComponent(model, language, v)
+                                .map(component -> isUnknownLayer(component))
                                 .orElse(true));
         removeProperLayerEdgesType(language, model, graph);
         return TypeLevelReportGeneration.generateReport(graph, model, language);
@@ -117,31 +117,31 @@ public class LevelAnalyzer {
             MutableNetwork<Component, Edge<Component, CtPackage>> graph) {
         removeProperLayerEdges(
                 graph,
-                feature -> JavaUtils.isSimulatorComponent(model, feature),
-                feature -> JavaUtils.isLanguageComponent(language, feature),
-                (feature) -> Optional.of(feature),
-                (feature) -> Optional.of(feature));
+                component -> JavaUtils.isSimulatorComponent(model, component),
+                component -> JavaUtils.isLanguageComponent(language, component),
+                component -> Optional.of(component),
+                component -> Optional.of(component));
     }
 
     private <T, U> void removeProperLayerEdges(
             MutableNetwork<T, Edge<T, U>> graph,
             Predicate<T> isSimulator,
             Predicate<T> isLanguage,
-            Function<T, Optional<Component>> findSimulatorFeature,
-            Function<T, Optional<Component>> findLanguageFeature) {
+            Function<T, Optional<Component>> findSimulatorComponent,
+            Function<T, Optional<Component>> findLanguageComponent) {
         Set<Edge<T, U>> removableEdges = new HashSet<>();
 
         for (T source : graph.nodes()) {
-            Optional<Component> sourceFeature = findSimulatorFeature.apply(source);
-            if (isLanguage.test(source) || sourceFeature.isEmpty()) {
+            Optional<Component> sourceComponent = findSimulatorComponent.apply(source);
+            if (isLanguage.test(source) || sourceComponent.isEmpty()) {
                 continue;
             }
             for (T target : graph.successors(source)) {
-                Optional<Component> targetFeature = findLanguageFeature.apply(target);
-                if (isSimulator.test(target) || targetFeature.isEmpty()) {
+                Optional<Component> targetComponent = findLanguageComponent.apply(target);
+                if (isSimulator.test(target) || targetComponent.isEmpty()) {
                     removableEdges.addAll(graph.edgesConnecting(source, target));
                 } else {
-                    if (getLayer(sourceFeature).equals(getLayer(targetFeature))) {
+                    if (getLayer(sourceComponent).equals(getLayer(targetComponent))) {
                         removableEdges.addAll(graph.edgesConnecting(source, target));
                     }
                 }
@@ -154,8 +154,8 @@ public class LevelAnalyzer {
                 .forEach(graph::removeNode);
     }
 
-    private String getLayer(Optional<Component> featureSource) {
-        return featureSource.get().getBundle().getLayer();
+    private String getLayer(Optional<Component> sourceComponent) {
+        return sourceComponent.get().getBundle().getLayer();
     }
 
     private <T, U> void removeNodesWithoutLayer(
@@ -166,7 +166,7 @@ public class LevelAnalyzer {
                 .forEach(graph::removeNode);
     }
 
-    private boolean isUnknownLayer(Component feature) {
-        return feature.getBundle().getLayer().equals(UNKNOWN_LAYER_IDENTIFIER);
+    private boolean isUnknownLayer(Component component) {
+        return component.getLayer().equals(UNKNOWN_LAYER_IDENTIFIER);
     }
 }

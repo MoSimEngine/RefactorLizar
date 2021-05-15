@@ -1,11 +1,11 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.model;
 
-import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.Lookup;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.SelfRefreshingLookupBuilder;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.Lookup;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.SelfRefreshingLookupBuilder;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.visitor.filter.TypeFilter;
@@ -26,18 +26,18 @@ public class SimulatorModel {
         return simulatorComponents;
     }
 
-    public SimulatorModel(Collection<Component> languageFeatures) {
-        this.simulatorComponents = languageFeatures;
-        typeByQNameLookup = createTypeByQNameLookup(languageFeatures);
+    public SimulatorModel(Collection<Component> languageComponents) {
+        this.simulatorComponents = languageComponents;
+        typeByQNameLookup = createTypeByQNameLookup(languageComponents);
     }
 
     private Lookup<String, CtType<?>> createTypeByQNameLookup(
-            Collection<Component> languageFeatures) {
+            Collection<Component> languageComponents) {
         return new SelfRefreshingLookupBuilder<Collection<Component>, String, CtType<?>>(
-                        languageFeatures)
+                        languageComponents)
                 .rebuildFunction(
-                        feature ->
-                                feature.stream()
+                        component ->
+                                component.stream()
                                         .map(this::getAllTypes)
                                         .flatMap(List::stream)
                                         .collect(

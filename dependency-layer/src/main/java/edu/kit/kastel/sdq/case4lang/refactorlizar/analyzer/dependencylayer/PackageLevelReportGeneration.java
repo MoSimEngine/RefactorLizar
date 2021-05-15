@@ -1,5 +1,7 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.dependencylayer;
 
+import java.util.Set;
+import java.util.stream.Collectors;
 import com.google.common.graph.MutableNetwork;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Components;
@@ -7,8 +9,6 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Edge;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import java.util.Set;
-import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 
@@ -48,11 +48,11 @@ public class PackageLevelReportGeneration {
                     String.format(
                             "Simulator package %s at layer %s uses%n\tLanguage package %s at layer %s in%n",
                             source.getQualifiedName(),
-                            Components.findFeature(model, language, source)
+                            Components.findComponent(model, language, source)
                                     .map(v -> v.getBundle().getLayer())
                                     .orElse("ERROR"),
                             target.getQualifiedName(),
-                            Components.findFeature(model, language, target)
+                            Components.findComponent(model, language, target)
                                     .map(v -> v.getBundle().getLayer())
                                     .orElse("ERROR")));
             violation.append(generateCause(graph.edgesConnecting(source, target)));

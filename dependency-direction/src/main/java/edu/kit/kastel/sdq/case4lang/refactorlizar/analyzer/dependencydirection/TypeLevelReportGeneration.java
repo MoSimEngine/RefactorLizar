@@ -1,15 +1,14 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.dependencydirection;
 
-import com.google.common.graph.MutableNetwork;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Edge;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import com.google.common.graph.MutableNetwork;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Components;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Edge;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.declaration.CtTypeMember;
 
@@ -46,11 +45,11 @@ public class TypeLevelReportGeneration {
                     String.format(
                             "Simulator Type %s at layer %s uses the lower layer Type \n\t%s at layer %s in\n",
                             source.getQualifiedName(),
-                            findFeature(model, source)
+                            Components.findComponent(model, source)
                                     .map(v -> v.getBundle().getLayer())
                                     .orElse("ERROR"),
                             target.getQualifiedName(),
-                            findFeature(model, target)
+                            Components.findComponent(model, target)
                                     .map(v -> v.getBundle().getLayer())
                                     .orElse("ERROR")));
             violation.append(generateCause(source, target, graph.edgesConnecting(source, target)));
@@ -73,9 +72,4 @@ public class TypeLevelReportGeneration {
                 .collect(Collectors.joining("\n"));
     }
 
-    private static Optional<Component> findFeature(SimulatorModel model, CtType<?> type) {
-        return model.getSimulatorComponents().stream()
-                .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), type.getPackage()))
-                .findFirst();
-    }
 }

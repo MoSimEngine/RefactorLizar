@@ -1,15 +1,14 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.dependencydirection;
 
-import com.google.common.graph.MutableNetwork;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Edge;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import com.google.common.graph.MutableNetwork;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Components;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Edge;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 
@@ -44,13 +43,13 @@ public class PackageLevelReportGeneration {
         for (CtPackage target : successors) {
             violation.append(
                     String.format(
-                            "Simulator package %s at layer %s uses the lower layer package %s at layer %s in\n",
+                            "Simulator package %s at layer %s uses the lower layer package %s at layer %s in%n",
                             source.getQualifiedName(),
-                            findFeature(model, source)
+                            Components.findComponent(model, source)
                                     .map(v -> v.getBundle().getLayer())
                                     .orElse("ERROR"),
                             target.getQualifiedName(),
-                            findFeature(model, target)
+                            Components.findComponent(model, target)
                                     .map(v -> v.getBundle().getLayer())
                                     .orElse("ERROR")));
             violation.append(generateCause(source, target, graph.edgesConnecting(source, target)));
@@ -64,11 +63,5 @@ public class PackageLevelReportGeneration {
                 .map(Edge::getCause)
                 .map(v -> "\t\t" + v.getQualifiedName())
                 .collect(Collectors.joining("\n"));
-    }
-
-    private static Optional<Component> findFeature(SimulatorModel model, CtPackage packag) {
-        return model.getSimulatorComponents().stream()
-                .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), packag))
-                .findFirst();
     }
 }
