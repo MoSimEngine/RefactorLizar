@@ -43,10 +43,10 @@ public class ComponentLevelReportGeneration {
             violation.append(
                     String.format(
                             "Simulator package %s at layer %s uses the lower layer package %s at layer %s in\n",
-                            source.getBundle().getName(),
-                            source.getBundle().getLayer(),
-                            target.getBundle().getName(),
-                            target.getBundle().getLayer()));
+                            source.getName(),
+                            source.getLayer(),
+                            target.getName(),
+                            target.getLayer()));
             violation.append(generateCause(source, target, graph.edgesConnecting(source, target)));
         }
         return violation.toString();

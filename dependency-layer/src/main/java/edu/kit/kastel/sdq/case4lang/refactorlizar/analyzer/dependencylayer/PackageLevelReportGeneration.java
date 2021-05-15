@@ -49,11 +49,11 @@ public class PackageLevelReportGeneration {
                             "Simulator package %s at layer %s uses%n\tLanguage package %s at layer %s in%n",
                             source.getQualifiedName(),
                             Components.findComponent(model, language, source)
-                                    .map(v -> v.getBundle().getLayer())
+                                    .map(v -> v.getLayer())
                                     .orElse("ERROR"),
                             target.getQualifiedName(),
                             Components.findComponent(model, language, target)
-                                    .map(v -> v.getBundle().getLayer())
+                                    .map(v -> v.getLayer())
                                     .orElse("ERROR")));
             violation.append(generateCause(graph.edgesConnecting(source, target)));
         }

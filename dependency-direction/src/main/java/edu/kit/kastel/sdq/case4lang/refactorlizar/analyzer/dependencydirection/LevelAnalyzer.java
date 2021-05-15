@@ -78,7 +78,7 @@ public class LevelAnalyzer {
     }
 
     private boolean isUnknownLayer(Component component) {
-        return component.getBundle().getLayer().equals(UNKNOWN_LAYER_IDENTIFIER);
+        return component.getLayer().equals(UNKNOWN_LAYER_IDENTIFIER);
     }
 
     private <T, U> void removeNodesWithoutLayer(
@@ -149,6 +149,6 @@ public class LevelAnalyzer {
     }
 
     private String getLayer(Optional<Component> componentSource) {
-        return componentSource.get().getBundle().getLayer();
+        return componentSource.get().getLayer();
     }
 }

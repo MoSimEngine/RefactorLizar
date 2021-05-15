@@ -38,10 +38,10 @@ public class ComponentLevelReportGeneration {
             violation.append(
                     String.format(
                             "Simulator component %s at layer %s uses%n\t the Language component %s at layer %s in%n",
-                            source.getBundle().getName(),
-                            source.getBundle().getLayer(),
-                            target.getBundle().getName(),
-                            target.getBundle().getLayer()));
+                            source.getName(),
+                            source.getLayer(),
+                            target.getName(),
+                            target.getLayer()));
             violation.append(generateCause(graph.edgesConnecting(source, target)));
         }
         return violation.toString();
