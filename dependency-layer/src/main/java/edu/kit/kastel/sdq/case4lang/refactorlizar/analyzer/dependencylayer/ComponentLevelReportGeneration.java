@@ -4,7 +4,7 @@ import com.google.common.graph.MutableNetwork;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Edge;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -13,7 +13,7 @@ import spoon.reflect.declaration.CtPackage;
 public class ComponentLevelReportGeneration {
 
     public static Report generateReport(
-            MutableNetwork<Feature, Edge<Feature, CtPackage>> graph, SimulatorModel model) {
+            MutableNetwork<Component, Edge<Component, CtPackage>> graph, SimulatorModel model) {
         int count = graph.edges().size();
         if (count == 0) {
             return new Report(
@@ -31,10 +31,10 @@ public class ComponentLevelReportGeneration {
     }
 
     private static String generateUsage(
-            MutableNetwork<Feature, Edge<Feature, CtPackage>> graph, Feature source) {
-        Set<Feature> successors = graph.successors(source);
+            MutableNetwork<Component, Edge<Component, CtPackage>> graph, Component source) {
+        Set<Component> successors = graph.successors(source);
         var violation = new StringBuilder();
-        for (Feature target : successors) {
+        for (Component target : successors) {
             violation.append(
                     String.format(
                             "Simulator component %s at layer %s uses%n\t the Language component %s at layer %s in%n",
@@ -47,7 +47,7 @@ public class ComponentLevelReportGeneration {
         return violation.toString();
     }
 
-    private static String generateCause(Set<Edge<Feature, CtPackage>> edgesConnecting) {
+    private static String generateCause(Set<Edge<Component, CtPackage>> edgesConnecting) {
         return edgesConnecting.stream()
                 .map(Edge::getCause)
                 .map(v -> "\t\t" + v.getQualifiedName())

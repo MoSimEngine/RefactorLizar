@@ -11,7 +11,7 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.ComponentGraphs;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.PackageGraphs;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.TypeGraphs;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.HashSet;
@@ -50,7 +50,7 @@ public class LevelAnalyzer {
 
     private Report findComponentImproperDependencyLayer(
             ModularLanguage language, SimulatorModel model) {
-        MutableNetwork<Feature, Edge<Feature, CtPackage>> graph =
+        MutableNetwork<Component, Edge<Component, CtPackage>> graph =
                 DependencyGraphSupplier.getComponentGraph(language, model);
         ComponentGraphs.removeNonProjectNodes(language, model, graph);
         removeNodesWithoutLayer(graph, feature -> isUnknownLayer(feature));
@@ -114,7 +114,7 @@ public class LevelAnalyzer {
     private void removeProperLayerEdgesComponent(
             ModularLanguage language,
             SimulatorModel model,
-            MutableNetwork<Feature, Edge<Feature, CtPackage>> graph) {
+            MutableNetwork<Component, Edge<Component, CtPackage>> graph) {
         removeProperLayerEdges(
                 graph,
                 feature -> JavaUtils.isSimulatorComponent(model, feature),
@@ -127,17 +127,17 @@ public class LevelAnalyzer {
             MutableNetwork<T, Edge<T, U>> graph,
             Predicate<T> isSimulator,
             Predicate<T> isLanguage,
-            Function<T, Optional<Feature>> findSimulatorFeature,
-            Function<T, Optional<Feature>> findLanguageFeature) {
+            Function<T, Optional<Component>> findSimulatorFeature,
+            Function<T, Optional<Component>> findLanguageFeature) {
         Set<Edge<T, U>> removableEdges = new HashSet<>();
 
         for (T source : graph.nodes()) {
-            Optional<Feature> sourceFeature = findSimulatorFeature.apply(source);
+            Optional<Component> sourceFeature = findSimulatorFeature.apply(source);
             if (isLanguage.test(source) || sourceFeature.isEmpty()) {
                 continue;
             }
             for (T target : graph.successors(source)) {
-                Optional<Feature> targetFeature = findLanguageFeature.apply(target);
+                Optional<Component> targetFeature = findLanguageFeature.apply(target);
                 if (isSimulator.test(target) || targetFeature.isEmpty()) {
                     removableEdges.addAll(graph.edgesConnecting(source, target));
                 } else {
@@ -154,7 +154,7 @@ public class LevelAnalyzer {
                 .forEach(graph::removeNode);
     }
 
-    private String getLayer(Optional<Feature> featureSource) {
+    private String getLayer(Optional<Component> featureSource) {
         return featureSource.get().getBundle().getLayer();
     }
 
@@ -166,7 +166,7 @@ public class LevelAnalyzer {
                 .forEach(graph::removeNode);
     }
 
-    private boolean isUnknownLayer(Feature feature) {
+    private boolean isUnknownLayer(Component feature) {
         return feature.getBundle().getLayer().equals(UNKNOWN_LAYER_IDENTIFIER);
     }
 }
