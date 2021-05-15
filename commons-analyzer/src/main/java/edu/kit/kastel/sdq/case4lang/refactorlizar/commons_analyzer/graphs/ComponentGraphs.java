@@ -3,7 +3,7 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs;
 import com.google.common.graph.MutableNetwork;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Edge;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.HashSet;
@@ -13,8 +13,8 @@ import spoon.reflect.declaration.CtPackage;
 public class ComponentGraphs {
 
     public static void removeEdgesWithSimulatorAsTarget(
-            MutableNetwork<Feature, Edge<Feature, CtPackage>> graph, SimulatorModel model) {
-        for (Feature source : new HashSet<>(graph.nodes())) {
+            MutableNetwork<Component, Edge<Component, CtPackage>> graph, SimulatorModel model) {
+        for (Component source : new HashSet<>(graph.nodes())) {
             if (JavaUtils.isSimulatorComponent(model, source)) {
                 graph.successors(source).stream()
                         .filter(target -> JavaUtils.isSimulatorComponent(model, target))
@@ -29,7 +29,7 @@ public class ComponentGraphs {
     public static void removeNonSimulatorToLanguageEdges(
             ModularLanguage language,
             SimulatorModel model,
-            MutableNetwork<Feature, Edge<Feature, CtPackage>> graph) {
+            MutableNetwork<Component, Edge<Component, CtPackage>> graph) {
         graph.nodes().stream()
                 .filter(packag -> JavaUtils.isLanguageComponent(language, packag))
                 .map(packag -> graph.outEdges(packag))
@@ -41,7 +41,7 @@ public class ComponentGraphs {
     public static void removeNonProjectNodes(
             ModularLanguage language,
             SimulatorModel model,
-            MutableNetwork<Feature, Edge<Feature, CtPackage>> graph) {
+            MutableNetwork<Component, Edge<Component, CtPackage>> graph) {
         graph.nodes().stream()
                 .filter(packag -> !isProjectComponent(language, model, packag))
                 .collect(Collectors.toList())
@@ -49,13 +49,13 @@ public class ComponentGraphs {
     }
 
     public static boolean isProjectComponent(
-            ModularLanguage language, SimulatorModel model, Feature candidate) {
+            ModularLanguage language, SimulatorModel model, Component candidate) {
         return JavaUtils.isLanguageComponent(language, candidate)
                 || JavaUtils.isSimulatorComponent(model, candidate);
     }
 
     public static void removeLanguageNodes(
-            ModularLanguage language, MutableNetwork<Feature, Edge<Feature, CtPackage>> graph) {
+            ModularLanguage language, MutableNetwork<Component, Edge<Component, CtPackage>> graph) {
         new HashSet<>(graph.nodes())
                 .stream()
                         .filter(type -> JavaUtils.isLanguageComponent(language, type))

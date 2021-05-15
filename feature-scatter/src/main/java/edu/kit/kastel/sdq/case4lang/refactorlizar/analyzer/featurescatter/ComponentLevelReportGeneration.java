@@ -6,7 +6,7 @@ import com.google.common.graph.Network;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Edge;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.Set;
@@ -16,7 +16,7 @@ import spoon.reflect.declaration.CtPackage;
 public class ComponentLevelReportGeneration {
 
     public static Report generateReport(
-            Network<Feature, Edge<Feature, CtPackage>> graph,
+            Network<Component, Edge<Component, CtPackage>> graph,
             SimulatorModel model,
             ModularLanguage language) {
         long count =
@@ -28,7 +28,7 @@ public class ComponentLevelReportGeneration {
         }
         StringBuilder builder = new StringBuilder();
         builder.append(format("Found %d feature scatter \n", count));
-        for (Feature target : graph.nodes()) {
+        for (Component target : graph.nodes()) {
             if (JavaUtils.isLanguageComponent(language, target)) {
                 builder.append(
                         format(
@@ -46,13 +46,14 @@ public class ComponentLevelReportGeneration {
         return new Report("Feature Scatter Analyzer on component level", builder.toString(), true);
     }
 
-    private static String generateUsageString(Feature target, Set<Edge<Feature, CtPackage>> set) {
+    private static String generateUsageString(
+            Component target, Set<Edge<Component, CtPackage>> set) {
         return format(
                 "\t%s at positions:\n %s\n\n",
                 target.getBundle().getName(), generateCauseString(set));
     }
 
-    private static String generateCauseString(Set<Edge<Feature, CtPackage>> set) {
+    private static String generateCauseString(Set<Edge<Component, CtPackage>> set) {
         return set.stream()
                 .map(Edge::getCause)
                 .map(member -> "\t\t" + member.getQualifiedName())
