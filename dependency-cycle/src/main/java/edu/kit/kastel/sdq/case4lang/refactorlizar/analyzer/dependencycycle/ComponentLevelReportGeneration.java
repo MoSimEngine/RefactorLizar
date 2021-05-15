@@ -30,8 +30,7 @@ public class ComponentLevelReportGeneration {
                 description.append(
                         String.format(
                                 "\t%s -> %s\n",
-                                relation.getSource().getName(),
-                                relation.getTarget().getName()));
+                                relation.getSource().getName(), relation.getTarget().getName()));
                 description.append(
                         relation.getCauses().stream()
                                 .map(v -> generateUsageDescription(v))

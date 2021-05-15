@@ -1,13 +1,13 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.dependencylayer;
 
-import java.util.Set;
-import java.util.stream.Collectors;
 import com.google.common.graph.MutableNetwork;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Edge;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
+import java.util.Set;
+import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtPackage;
 
 public class ComponentLevelReportGeneration {
