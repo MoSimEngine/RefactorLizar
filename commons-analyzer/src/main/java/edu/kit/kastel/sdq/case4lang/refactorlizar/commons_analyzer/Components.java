@@ -19,12 +19,12 @@ public class Components {
         return findComponent(language, type.getPackage());
     }
 
-    public static Optional<Component> findFeature(
+    public static Optional<Component> findComponent(
             SimulatorModel model, ModularLanguage language, CtType<?> type) {
         return findComponent(language, type).or(() -> findComponent(model, type));
     }
 
-    public static Optional<Component> findFeature(
+    public static Optional<Component> findComponent(
             SimulatorModel model, ModularLanguage language, CtPackage packag) {
         return findComponent(language, packag).or(() -> findComponent(model, packag));
     }

@@ -15,38 +15,21 @@ import spoon.reflect.declaration.CtPackage;
 
 public class SimulatorParser {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-    /** Use the correct method {@link #parseSimulator(String)} */
-    @Deprecated(forRemoval = true)
-    public static Collection<Component> parseLanguage(String path) {
-        Collection<CtPackage> javaPackages = buildJavaPackages(path);
-        Collection<Bundle> bundles = new BundleParser().analyzeManifests(path);
-        Map<String, CtPackage> packageByQName = convertPackagesToMap(javaPackages);
-        Collection<Component> languageFeatures = new ArrayList<>();
-        for (Bundle bundle : bundles) {
-            CtPackage bundlePackage = packageByQName.get(bundle.getName());
-            if (bundlePackage == null) {
-                logger.atWarning().log("ignoring bundle %s", bundle);
-                continue;
-            }
-            languageFeatures.add(new Component(bundlePackage, bundle));
-        }
-        return languageFeatures;
-    }
 
     public static Collection<Component> parseSimulator(String path) {
         Collection<CtPackage> javaPackages = buildJavaPackages(path);
         Collection<Bundle> bundles = new BundleParser().analyzeManifests(path);
         Map<String, CtPackage> packageByQName = convertPackagesToMap(javaPackages);
-        Collection<Component> languageFeatures = new ArrayList<>();
+        Collection<Component> simulatorComponents = new ArrayList<>();
         for (Bundle bundle : bundles) {
             CtPackage bundlePackage = packageByQName.get(bundle.getName());
             if (bundlePackage == null) {
                 logger.atWarning().log("ignoring bundle %s", bundle);
                 continue;
             }
-            languageFeatures.add(new Component(bundlePackage, bundle));
+            simulatorComponents.add(new Component(bundlePackage, bundle));
         }
-        return languageFeatures;
+        return simulatorComponents;
     }
 
     private static Collection<CtPackage> buildJavaPackages(String path) {

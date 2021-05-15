@@ -46,11 +46,11 @@ public class TypeLevelReportGeneration {
                     String.format(
                             "Simulator Type %s at layer %s uses%n\t the Language Type %s at layer %s in%n",
                             source.getQualifiedName(),
-                            Components.findFeature(model, language, source)
+                            Components.findComponent(model, language, source)
                                     .map(v -> v.getBundle().getLayer())
                                     .orElse("ERROR"),
                             target.getQualifiedName(),
-                            Components.findFeature(model, language, target)
+                            Components.findComponent(model, language, target)
                                     .map(v -> v.getBundle().getLayer())
                                     .orElse("ERROR")));
             violation.append(generateCause(graph.edgesConnecting(source, target)));

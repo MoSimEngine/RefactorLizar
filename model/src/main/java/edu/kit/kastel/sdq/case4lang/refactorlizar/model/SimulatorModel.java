@@ -26,18 +26,18 @@ public class SimulatorModel {
         return simulatorComponents;
     }
 
-    public SimulatorModel(Collection<Component> languageFeatures) {
-        this.simulatorComponents = languageFeatures;
-        typeByQNameLookup = createTypeByQNameLookup(languageFeatures);
+    public SimulatorModel(Collection<Component> languageComponents) {
+        this.simulatorComponents = languageComponents;
+        typeByQNameLookup = createTypeByQNameLookup(languageComponents);
     }
 
     private Lookup<String, CtType<?>> createTypeByQNameLookup(
-            Collection<Component> languageFeatures) {
+            Collection<Component> languageComponents) {
         return new SelfRefreshingLookupBuilder<Collection<Component>, String, CtType<?>>(
-                        languageFeatures)
+                        languageComponents)
                 .rebuildFunction(
-                        feature ->
-                                feature.stream()
+                        component ->
+                                component.stream()
                                         .map(this::getAllTypes)
                                         .flatMap(List::stream)
                                         .collect(

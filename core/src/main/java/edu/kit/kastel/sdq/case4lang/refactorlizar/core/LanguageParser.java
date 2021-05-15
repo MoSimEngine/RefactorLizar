@@ -20,16 +20,16 @@ public class LanguageParser {
         Collection<CtPackage> javaPackages = buildJavaPackages(path);
         Collection<Bundle> bundles = new BundleParser().analyzeManifests(path);
         Map<String, CtPackage> packageByQName = convertPackagesToMap(javaPackages);
-        Collection<Component> languageFeatures = new ArrayList<>();
+        Collection<Component> languageComponents = new ArrayList<>();
         for (Bundle bundle : bundles) {
             CtPackage bundlePackage = packageByQName.get(bundle.getSimpleName());
             if (bundlePackage == null) {
                 logger.atWarning().log("ignoring bundle %s", bundle);
                 continue;
             }
-            languageFeatures.add(new Component(bundlePackage, bundle));
+            languageComponents.add(new Component(bundlePackage, bundle));
         }
-        return languageFeatures;
+        return languageComponents;
     }
 
     private static Collection<CtPackage> buildJavaPackages(String path) {

@@ -201,7 +201,7 @@ public class DependencyGraphSupplier {
             if (source.getPackage() == null) {
                 continue;
             }
-            Optional<Component> sourceComponent = findSimulatorFeature(source.getPackage(), model);
+            Optional<Component> sourceComponent = Components.findComponent(model, source);
             if (sourceComponent.isEmpty()) {
                 continue;
             }
@@ -209,7 +209,7 @@ public class DependencyGraphSupplier {
                     .map(retrieveTypes(language, model))
                     .filter(Objects::nonNull)
                     .filter(target -> target.getPackage() != null)
-                    .map(target -> findFeature(target.getPackage(), language, model))
+                    .map(target -> Components.findComponent(model, language, target))
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .filter(
@@ -231,32 +231,6 @@ public class DependencyGraphSupplier {
                                                     source.getPackage())));
         }
         return graph;
-    }
-
-    private Optional<Component> findSimulatorFeature(CtPackage packag, SimulatorModel model) {
-        return model.getSimulatorComponents().stream()
-                .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), packag))
-                .findFirst();
-    }
-
-    private Optional<Component> findLanguageFeature(CtPackage packag, ModularLanguage language) {
-        return language.getLanguageComponents().stream()
-                .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), packag))
-                .findFirst();
-    }
-
-    private Optional<Component> findFeature(
-            CtPackage packag, ModularLanguage language, SimulatorModel model) {
-        Optional<Component> simulatorFeature = findSimulatorFeature(packag, model);
-        Optional<Component> languageFeature = findLanguageFeature(packag, language);
-        if (simulatorFeature.isPresent() && languageFeature.isPresent()) {
-            throw new IllegalArgumentException("Both feature found");
-        }
-        if (simulatorFeature.isPresent()) {
-            return simulatorFeature;
-        } else {
-            return languageFeature;
-        }
     }
 
     private <T, U, R> boolean graphHasEdge(

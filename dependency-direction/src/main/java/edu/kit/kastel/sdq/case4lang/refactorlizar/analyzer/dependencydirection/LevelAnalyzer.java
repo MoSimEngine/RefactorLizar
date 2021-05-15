@@ -6,9 +6,9 @@ import com.google.common.flogger.FluentLogger;
 import com.google.common.graph.MutableNetwork;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.SearchLevels;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Components;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.DependencyGraphSupplier;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Edge;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.ComponentGraphs;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.PackageGraphs;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.TypeGraphs;
@@ -55,7 +55,7 @@ public class LevelAnalyzer {
                 DependencyGraphSupplier.getComponentGraph(language, model);
         ComponentGraphs.removeNonProjectNodes(language, model, graph);
         ComponentGraphs.removeLanguageNodes(language, graph);
-        removeNodesWithoutLayer(model, graph, feature -> isUnknownLayer(feature));
+        removeNodesWithoutLayer(model, graph, component -> isUnknownLayer(component));
         removeNonBreaches(graph, v -> Optional.of(v), valuesByLevel);
         return ComponentLevelReportGeneration.generateReport(graph, model, language);
     }
@@ -69,14 +69,16 @@ public class LevelAnalyzer {
         removeNodesWithoutLayer(
                 model,
                 graph,
-                (CtType<?> v) ->
-                        findFeature(model, v).map(feature -> isUnknownLayer(feature)).orElse(true));
-        removeNonBreaches(graph, v -> findFeature(model, v), valuesByLevel);
+                type ->
+                        Components.findComponent(model, type)
+                                .map(component -> isUnknownLayer(component))
+                                .orElse(true));
+        removeNonBreaches(graph, type -> Components.findComponent(model, type), valuesByLevel);
         return TypeLevelReportGeneration.generateReport(graph, model, language);
     }
 
-    private boolean isUnknownLayer(Component feature) {
-        return feature.getBundle().getLayer().equals(UNKNOWN_LAYER_IDENTIFIER);
+    private boolean isUnknownLayer(Component component) {
+        return component.getBundle().getLayer().equals(UNKNOWN_LAYER_IDENTIFIER);
     }
 
     private <T, U> void removeNodesWithoutLayer(
@@ -96,31 +98,33 @@ public class LevelAnalyzer {
         removeNodesWithoutLayer(
                 model,
                 graph,
-                (CtPackage v) ->
-                        findFeature(model, v).map(feature -> isUnknownLayer(feature)).orElse(true));
-        removeNonBreaches(graph, v -> findFeature(model, v), valuesByLevel);
+                packag ->
+                        Components.findComponent(model, packag)
+                                .map(component -> isUnknownLayer(component))
+                                .orElse(true));
+        removeNonBreaches(graph, packag -> Components.findComponent(model, packag), valuesByLevel);
         return PackageLevelReportGeneration.generateReport(graph, model, language);
     }
 
     private <T, U> void removeNonBreaches(
             MutableNetwork<T, Edge<T, U>> graph,
-            Function<T, Optional<Component>> findFeature,
+            Function<T, Optional<Component>> findComponent,
             Map<String, Integer> valuesByLevel) {
         Set<Edge<T, U>> removableEdges = new HashSet<>();
         for (T source : graph.nodes()) {
-            Optional<Component> featureSource = findFeature.apply(source);
-            if (featureSource.isEmpty()) {
+            Optional<Component> sourceComponent = findComponent.apply(source);
+            if (sourceComponent.isEmpty()) {
                 logger.atInfo().log("Ignoring element %s", source.toString());
                 continue;
             }
             Set<T> targets = graph.successors(source);
             for (T target : targets) {
-                Optional<Component> featureTarget = findFeature.apply(target);
-                if (featureTarget.isEmpty()) {
+                Optional<Component> targetComponent = findComponent.apply(target);
+                if (targetComponent.isEmpty()) {
                     logger.atInfo().log("Ignoring type %s", target.toString());
                     continue;
                 }
-                if (isDirectionBreach(valuesByLevel, featureSource, featureTarget)) {
+                if (isDirectionBreach(valuesByLevel, sourceComponent, targetComponent)) {
                     removableEdges.addAll(graph.edgesConnecting(source, target));
                 }
             }
@@ -138,25 +142,13 @@ public class LevelAnalyzer {
 
     private boolean isDirectionBreach(
             Map<String, Integer> valuesByLevel,
-            Optional<Component> featureSource,
-            Optional<Component> featureTarget) {
-        return valuesByLevel.get(getLayer(featureSource).toLowerCase())
-                < valuesByLevel.get(getLayer(featureTarget).toLowerCase());
+            Optional<Component> componentSource,
+            Optional<Component> componentTarget) {
+        return valuesByLevel.get(getLayer(componentSource).toLowerCase())
+                < valuesByLevel.get(getLayer(componentTarget).toLowerCase());
     }
 
-    private String getLayer(Optional<Component> featureSource) {
-        return featureSource.get().getBundle().getLayer();
-    }
-
-    private Optional<Component> findFeature(SimulatorModel model, CtType<?> type) {
-        return model.getSimulatorComponents().stream()
-                .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), type.getPackage()))
-                .findFirst();
-    }
-
-    private Optional<Component> findFeature(SimulatorModel model, CtPackage packag) {
-        return model.getSimulatorComponents().stream()
-                .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), packag))
-                .findFirst();
+    private String getLayer(Optional<Component> componentSource) {
+        return componentSource.get().getBundle().getLayer();
     }
 }
