@@ -155,7 +155,7 @@ public class LevelAnalyzer {
     }
 
     private String getLayer(Optional<Component> sourceComponent) {
-        return sourceComponent.get().getBundle().getLayer();
+        return sourceComponent.get().getLayer();
     }
 
     private <T, U> void removeNodesWithoutLayer(

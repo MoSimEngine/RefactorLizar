@@ -46,11 +46,11 @@ public class PackageLevelReportGeneration {
                             "Simulator package %s at layer %s uses the lower layer package %s at layer %s in%n",
                             source.getQualifiedName(),
                             Components.findComponent(model, source)
-                                    .map(v -> v.getBundle().getLayer())
+                                    .map(v -> v.getLayer())
                                     .orElse("ERROR"),
                             target.getQualifiedName(),
                             Components.findComponent(model, target)
-                                    .map(v -> v.getBundle().getLayer())
+                                    .map(v -> v.getLayer())
                                     .orElse("ERROR")));
             violation.append(generateCause(source, target, graph.edgesConnecting(source, target)));
         }
