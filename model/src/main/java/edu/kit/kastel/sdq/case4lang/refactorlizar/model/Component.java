@@ -23,10 +23,6 @@ public class Component {
     public CtPackage getJavaPackage() {
         return javaPackage;
     }
-    /** @return the bundle */
-    public Bundle getBundle() {
-        return bundle;
-    }
 
     /**
      * @return

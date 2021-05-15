@@ -1,5 +1,7 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.dependencydirection;
 
+import java.util.Set;
+import java.util.stream.Collectors;
 import com.google.common.graph.MutableNetwork;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Edge;
@@ -7,8 +9,6 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import java.util.Set;
-import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtPackage;
 
 public class ComponentLevelReportGeneration {
@@ -43,10 +43,10 @@ public class ComponentLevelReportGeneration {
             violation.append(
                     String.format(
                             "Simulator package %s at layer %s uses the lower layer package %s at layer %s in\n",
-                            source.getBundle().getName(),
-                            source.getBundle().getLayer(),
-                            target.getBundle().getName(),
-                            target.getBundle().getLayer()));
+                            source.getName(),
+                            source.getLayer(),
+                            target.getName(),
+                            target.getLayer()));
             violation.append(generateCause(source, target, graph.edgesConnecting(source, target)));
         }
         return violation.toString();

@@ -33,7 +33,7 @@ public class ComponentLevelReportGeneration {
                 builder.append(
                         format(
                                 "Simulator Component:\n%s\nuses the language features:\n",
-                                source.getBundle().getName()));
+                                source.getName()));
                 graph.successors(source).stream()
                         .forEach(
                                 target ->
@@ -50,7 +50,7 @@ public class ComponentLevelReportGeneration {
             Component target, Set<Edge<Component, CtPackage>> set) {
         return format(
                 "\t%s at positions:\n %s\n\n",
-                target.getBundle().getName(), generateCauseString(set));
+                target.getName(), generateCauseString(set));
     }
 
     private static String generateCauseString(Set<Edge<Component, CtPackage>> set) {
