@@ -2,12 +2,11 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.dependencylayer;
 
 import com.google.common.graph.MutableNetwork;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Components;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Edge;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtType;
@@ -30,7 +29,7 @@ public class TypeLevelReportGeneration {
         description.append("There were " + count + " dependency layer violations found\n");
         graph.nodes().stream()
                 .filter(type -> JavaUtils.isSimulatorType(model, type))
-                .forEach(type -> description.append(generateUsage(graph, type, model)));
+                .forEach(type -> description.append(generateUsage(graph, type, model, language)));
         return new Report(
                 "Dependency layer Analyzer on type-level\n", description.toString(), true);
     }
@@ -38,30 +37,28 @@ public class TypeLevelReportGeneration {
     private static String generateUsage(
             MutableNetwork<CtType<?>, Edge<CtType<?>, CtTypeMember>> graph,
             CtType<?> source,
-            SimulatorModel model) {
+            SimulatorModel model,
+            ModularLanguage language) {
         Set<CtType<?>> successors = graph.successors(source);
         StringBuilder violation = new StringBuilder();
         for (CtType<?> target : successors) {
             violation.append(
                     String.format(
-                            "Simulator Type %s at layer %s uses the Type \n\t%s at layer %s in\n",
+                            "Simulator Type %s at layer %s uses%n\t the Language Type %s at layer %s in%n",
                             source.getQualifiedName(),
-                            findFeature(model, source)
+                            Components.findFeature(model, language, source)
                                     .map(v -> v.getBundle().getLayer())
                                     .orElse("ERROR"),
                             target.getQualifiedName(),
-                            findFeature(model, target)
+                            Components.findFeature(model, language, target)
                                     .map(v -> v.getBundle().getLayer())
                                     .orElse("ERROR")));
-            violation.append(generateCause(source, target, graph.edgesConnecting(source, target)));
+            violation.append(generateCause(graph.edgesConnecting(source, target)));
         }
         return violation.toString();
     }
 
-    private static String generateCause(
-            CtType<?> source,
-            CtType<?> target,
-            Set<Edge<CtType<?>, CtTypeMember>> edgesConnecting) {
+    private static String generateCause(Set<Edge<CtType<?>, CtTypeMember>> edgesConnecting) {
         return edgesConnecting.stream()
                 .map(Edge::getCause)
                 .map(
@@ -71,11 +68,5 @@ public class TypeLevelReportGeneration {
                                         + "#"
                                         + v.getSimpleName())
                 .collect(Collectors.joining("\n"));
-    }
-
-    private static Optional<Feature> findFeature(SimulatorModel model, CtType<?> type) {
-        return model.getLanguageFeature().stream()
-                .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), type.getPackage()))
-                .findFirst();
     }
 }

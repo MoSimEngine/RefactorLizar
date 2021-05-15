@@ -5,7 +5,6 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Edge;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Feature;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,9 +13,7 @@ import spoon.reflect.declaration.CtPackage;
 public class ComponentLevelReportGeneration {
 
     public static Report generateReport(
-            MutableNetwork<Feature, Edge<Feature, CtPackage>> graph,
-            SimulatorModel model,
-            ModularLanguage language) {
+            MutableNetwork<Feature, Edge<Feature, CtPackage>> graph, SimulatorModel model) {
         int count = graph.edges().size();
         if (count == 0) {
             return new Report(
@@ -25,35 +22,32 @@ public class ComponentLevelReportGeneration {
                     false);
         }
         StringBuilder description = new StringBuilder();
-        description.append("There were " + count + " dependency Layer violations found");
+        description.append("There were " + count + " dependency Layer violations found\n");
         graph.nodes().stream()
                 .filter(component -> JavaUtils.isSimulatorComponent(model, component))
-                .forEach(component -> description.append(generateUsage(graph, component, model)));
+                .forEach(component -> description.append(generateUsage(graph, component)));
         return new Report(
                 "Dependency Layer Analyzer on component-level", description.toString(), true);
     }
 
     private static String generateUsage(
-            MutableNetwork<Feature, Edge<Feature, CtPackage>> graph,
-            Feature source,
-            SimulatorModel model) {
+            MutableNetwork<Feature, Edge<Feature, CtPackage>> graph, Feature source) {
         Set<Feature> successors = graph.successors(source);
-        StringBuilder violation = new StringBuilder();
+        var violation = new StringBuilder();
         for (Feature target : successors) {
             violation.append(
                     String.format(
-                            "Simulator package %s at layer %s uses the package %s at layer %s in\n",
+                            "Simulator component %s at layer %s uses%n\t the Language component %s at layer %s in%n",
                             source.getBundle().getName(),
                             source.getBundle().getLayer(),
                             target.getBundle().getName(),
                             target.getBundle().getLayer()));
-            violation.append(generateCause(source, target, graph.edgesConnecting(source, target)));
+            violation.append(generateCause(graph.edgesConnecting(source, target)));
         }
         return violation.toString();
     }
 
-    private static String generateCause(
-            Feature source, Feature target, Set<Edge<Feature, CtPackage>> edgesConnecting) {
+    private static String generateCause(Set<Edge<Feature, CtPackage>> edgesConnecting) {
         return edgesConnecting.stream()
                 .map(Edge::getCause)
                 .map(v -> "\t\t" + v.getQualifiedName())

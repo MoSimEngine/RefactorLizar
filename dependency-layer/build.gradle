@@ -1,0 +1,6 @@
+plugins {
+	id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions'
+	id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions-analyzer'
+}
+
+description = 'dependency-layer'

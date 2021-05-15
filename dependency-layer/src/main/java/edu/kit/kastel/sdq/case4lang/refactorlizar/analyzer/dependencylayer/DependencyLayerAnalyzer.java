@@ -29,8 +29,18 @@ public class DependencyLayerAnalyzer extends AbstractAnalyzer {
     @Override
     protected Report fullAnalysis(
             ModularLanguage language, SimulatorModel simulatorModel, Settings settings) {
-        // TODO Auto-generated method stub
-        return null;
+        return new LevelAnalyzer(language, simulatorModel)
+                .fullAnalysis(SearchLevels.of(settings.getSetting("level").get().getValue()));
+    }
+
+    @Override
+    public Settings getSettings() {
+        return new Settings.SettingsBuilder()
+                .addSetting(
+                        "level",
+                        true,
+                        "defines the result level of the smell analyzer, available are: type, component and package")
+                .build();
     }
 
     @Override
