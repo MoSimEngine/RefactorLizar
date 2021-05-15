@@ -1,20 +1,20 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.core;
 
 import static java.util.stream.Collectors.toMap;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+
 import com.google.common.flogger.FluentLogger;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.core.javaparser.ModelBuilder;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.core.pluginparser.BundleParser;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Bundle;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import spoon.reflect.declaration.CtPackage;
 
 public class SimulatorParser {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-
 
     public static Collection<Component> parseSimulator(String path) {
         Collection<CtPackage> javaPackages = buildJavaPackages(path);

@@ -1,10 +1,5 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.dependencydirection;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.flogger.FluentLogger;
@@ -20,6 +15,11 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.TypeGr
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.declaration.CtTypeMember;
@@ -70,8 +70,10 @@ public class LevelAnalyzer {
                 model,
                 graph,
                 type ->
-                        Components.findComponent(model,type).map(component -> isUnknownLayer(component)).orElse(true));
-        removeNonBreaches(graph, type ->   Components.findComponent(model, type), valuesByLevel);
+                        Components.findComponent(model, type)
+                                .map(component -> isUnknownLayer(component))
+                                .orElse(true));
+        removeNonBreaches(graph, type -> Components.findComponent(model, type), valuesByLevel);
         return TypeLevelReportGeneration.generateReport(graph, model, language);
     }
 
@@ -97,8 +99,10 @@ public class LevelAnalyzer {
                 model,
                 graph,
                 packag ->
-                Components.findComponent(model, packag).map(component -> isUnknownLayer(component)).orElse(true));
-        removeNonBreaches(graph, packag ->  Components.findComponent(model, packag), valuesByLevel);
+                        Components.findComponent(model, packag)
+                                .map(component -> isUnknownLayer(component))
+                                .orElse(true));
+        removeNonBreaches(graph, packag -> Components.findComponent(model, packag), valuesByLevel);
         return PackageLevelReportGeneration.generateReport(graph, model, language);
     }
 
@@ -147,5 +151,4 @@ public class LevelAnalyzer {
     private String getLayer(Optional<Component> componentSource) {
         return componentSource.get().getBundle().getLayer();
     }
-
 }
