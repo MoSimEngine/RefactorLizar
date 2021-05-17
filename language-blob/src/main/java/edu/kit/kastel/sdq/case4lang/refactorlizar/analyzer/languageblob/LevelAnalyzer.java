@@ -23,16 +23,10 @@ public class LevelAnalyzer extends CtAbstractVisitor {
 
     private ModularLanguage language;
     private SimulatorModel model;
-    private Report report;
 
     public LevelAnalyzer(ModularLanguage language, SimulatorModel model) {
         this.language = language;
         this.model = model;
-    }
-
-    /** @return the report */
-    public Report getReport() {
-        return report;
     }
 
     public Report fullAnalysis(SearchLevels level) {
@@ -54,9 +48,8 @@ public class LevelAnalyzer extends CtAbstractVisitor {
         TypeGraphs.removeNonProjectNodes(language, model, graph);
         TypeGraphs.removeNonSimulatorToLanguageEdges(language, model, graph);
         TypeGraphs.removeEdgesWithSimulatorAsTarget(graph, model);
-        removeNonBlobs(graph, model, (v) -> JavaUtils.isSimulatorType(model, v));
+        removeNonBlobs(graph, type -> JavaUtils.isSimulatorType(model, type));
         return TypeLevelReportGeneration.generateReport(graph, model, language);
-        // remove simulator to simulator edges
     }
 
     private Report findPackageLanguageBlobs(ModularLanguage language, SimulatorModel model) {
@@ -65,10 +58,8 @@ public class LevelAnalyzer extends CtAbstractVisitor {
         PackageGraphs.removeNonProjectNodes(language, model, graph);
         PackageGraphs.removeNonSimulatorToLanguageEdges(language, model, graph);
         PackageGraphs.removeEdgesWithSimulatorAsTarget(graph, model);
-        removeNonBlobs(graph, model, (v) -> JavaUtils.isSimulatorPackage(model, v));
-
-        return PackageLevelReportGeneration.generateReport(graph, model, language);
-        // remove simulator to simulator edges
+        removeNonBlobs(graph, packag -> JavaUtils.isSimulatorPackage(model, packag));
+        return PackageLevelReportGeneration.generateReport(graph, model);
     }
 
     private Report findComponentLanguageBlobs(ModularLanguage language, SimulatorModel model) {
@@ -77,8 +68,8 @@ public class LevelAnalyzer extends CtAbstractVisitor {
         ComponentGraphs.removeNonProjectNodes(language, model, graph);
         ComponentGraphs.removeNonSimulatorToLanguageEdges(language, model, graph);
         ComponentGraphs.removeEdgesWithSimulatorAsTarget(graph, model);
-        removeNonBlobs(graph, model, (v) -> JavaUtils.isSimulatorComponent(model, v));
-        return ComponentLevelReportGeneration.generateReport(graph, model, language);
+        removeNonBlobs(graph, component -> JavaUtils.isSimulatorComponent(model, component));
+        return ComponentLevelReportGeneration.generateReport(graph, model);
     }
 
     private <T, R> boolean hasOneSuccessor(MutableNetwork<T, Edge<T, R>> graph, T type) {
@@ -86,9 +77,9 @@ public class LevelAnalyzer extends CtAbstractVisitor {
     }
 
     private <T, R> void removeNonBlobs(
-            MutableNetwork<T, Edge<T, R>> graph, SimulatorModel model, Predicate<T> isSimulator) {
+            MutableNetwork<T, Edge<T, R>> graph, Predicate<T> isSimulator) {
         graph.nodes().stream()
-                .filter(type -> isSimulator.test(type))
+                .filter(isSimulator::test)
                 .filter(type -> hasOneSuccessor(graph, type))
                 .collect(Collectors.toList())
                 .forEach(graph::removeNode);

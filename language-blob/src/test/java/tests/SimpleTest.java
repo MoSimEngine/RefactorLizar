@@ -1,6 +1,7 @@
 package tests;
 
 import com.google.common.truth.Truth;
+import org.junit.jupiter.api.Test;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.languageblob.LanguageBlobAnalyzer;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.Settings;
@@ -8,12 +9,11 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.core.LanguageParser;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.core.SimulatorParser;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import org.junit.jupiter.api.Test;
 
-public class SimpleTest {
+class SimpleTest {
 
     @Test
-    public void packageLevelReport() {
+    void packageLevelReport() {
         ModularLanguage lang =
                 new ModularLanguage(
                         LanguageParser.parseLanguage("src/test/resources/xppu/modular-language"));
@@ -29,7 +29,7 @@ public class SimpleTest {
     }
 
     @Test
-    public void componentLevelReport() {
+    void componentLevelReport() {
         ModularLanguage lang =
                 new ModularLanguage(
                         LanguageParser.parseLanguage("src/test/resources/xppu/modular-language"));
@@ -45,7 +45,7 @@ public class SimpleTest {
     }
 
     @Test
-    public void typeLevelReport() {
+    void typeLevelReport() {
         ModularLanguage lang =
                 new ModularLanguage(
                         LanguageParser.parseLanguage("src/test/resources/xppu/modular-language"));
