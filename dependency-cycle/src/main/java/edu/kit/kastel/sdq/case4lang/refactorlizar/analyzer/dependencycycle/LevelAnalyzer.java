@@ -77,9 +77,9 @@ public class LevelAnalyzer extends CtAbstractVisitor {
                             }
                             return cycle;
                         })
-                .map(v -> sort(v))
+                .map(this::sort)
                 .forEach(result::add);
-        return TypeLevelReportGeneration.createReport(language, model, result);
+        return TypeLevelReportGeneration.createReport(result);
     }
 
     private Report findDependencyCyclePackageLevel(ModularLanguage language, SimulatorModel model) {
@@ -109,9 +109,9 @@ public class LevelAnalyzer extends CtAbstractVisitor {
                             }
                             return cycle;
                         })
-                .map(v -> sort(v))
+                .map(this::sort)
                 .forEach(result::add);
-        return PackageLevelReportGeneration.createReport(language, model, result);
+        return PackageLevelReportGeneration.createReport(result);
     }
 
     private Report findDependencyCycleComponentLevel(
@@ -142,9 +142,9 @@ public class LevelAnalyzer extends CtAbstractVisitor {
                             }
                             return cycle;
                         })
-                .map(v -> sort(v))
+                .map(this::sort)
                 .forEach(result::add);
-        return ComponentLevelReportGeneration.createReport(language, model, result);
+        return ComponentLevelReportGeneration.createReport(result);
     }
 
     private <T, U> Set<U> getEdgeValues(MutableNetwork<T, Edge<T, U>> graph, T source, T target) {

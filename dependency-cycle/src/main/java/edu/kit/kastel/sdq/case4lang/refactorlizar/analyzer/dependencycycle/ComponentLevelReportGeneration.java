@@ -3,8 +3,6 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.dependencycycle;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Relation;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -12,10 +10,9 @@ import spoon.reflect.declaration.CtPackage;
 
 public class ComponentLevelReportGeneration {
 
-    public static Report createReport(
-            ModularLanguage language,
-            SimulatorModel model,
-            Set<List<Relation<Component, CtPackage>>> result) {
+    private ComponentLevelReportGeneration() {}
+
+    public static Report createReport(Set<List<Relation<Component, CtPackage>>> result) {
         if (result.isEmpty()) {
             return new Report(
                     "Dependency cycle analyzer on component level",
@@ -29,11 +26,11 @@ public class ComponentLevelReportGeneration {
             for (Relation<Component, CtPackage> relation : list) {
                 description.append(
                         String.format(
-                                "\t%s -> %s\n",
+                                "\t%s -> %s%n",
                                 relation.getSource().getName(), relation.getTarget().getName()));
                 description.append(
                         relation.getCauses().stream()
-                                .map(v -> generateUsageDescription(v))
+                                .map(ComponentLevelReportGeneration::generateUsageDescription)
                                 .collect(Collectors.joining("\n")));
             }
             description.append("<<<<<<<< Cycle end\n");
