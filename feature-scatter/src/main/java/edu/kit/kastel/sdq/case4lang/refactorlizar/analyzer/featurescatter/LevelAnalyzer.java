@@ -46,7 +46,7 @@ public class LevelAnalyzer extends CtAbstractVisitor {
         MutableNetwork<CtType<?>, Edge<CtType<?>, CtTypeMember>> graph =
                 DependencyGraphSupplier.getTypeGraph(language, model);
         TypeGraphs.removeNonProjectNodes(language, model, graph);
-        TypeGraphs.removeNonSimulatorToLanguageEdges(language, model, graph);
+        TypeGraphs.removeEdgesWithoutLanguageTarget(language, graph);
         TypeGraphs.removeEdgesWithSimulatorAsTarget(graph, model);
         removeNonScatter(graph, type -> JavaUtils.isLanguageType(language, type));
         return TypeLevelReportGeneration.generateReport(graph, model, language);
@@ -57,7 +57,7 @@ public class LevelAnalyzer extends CtAbstractVisitor {
         MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> graph =
                 DependencyGraphSupplier.getPackageGraph(language, model);
         PackageGraphs.removeNonProjectNodes(language, model, graph);
-        PackageGraphs.removeNonSimulatorToLanguageEdges(language, model, graph);
+        PackageGraphs.removeEdgesWithoutLanguageTarget(language, graph);
         PackageGraphs.removeEdgesWithSimulatorAsTarget(graph, model);
         removeNonScatter(graph, packag -> JavaUtils.isLanguagePackage(language, packag));
 
@@ -68,7 +68,7 @@ public class LevelAnalyzer extends CtAbstractVisitor {
         MutableNetwork<Component, Edge<Component, CtPackage>> graph =
                 DependencyGraphSupplier.getComponentGraph(language, model);
         ComponentGraphs.removeNonProjectNodes(language, model, graph);
-        ComponentGraphs.removeNonSimulatorToLanguageEdges(language, model, graph);
+        ComponentGraphs.removeEdgesWithoutLanguageTarget(language, graph);
         ComponentGraphs.removeEdgesWithSimulatorAsTarget(graph, model);
         removeNonScatter(graph, component -> JavaUtils.isLanguageComponent(language, component));
         return ComponentLevelReportGeneration.generateReport(graph, model, language);

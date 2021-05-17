@@ -31,7 +31,7 @@ public class DependencyGraphSupplier {
     private static MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> packageGraph;
     private static MutableNetwork<Component, Edge<Component, CtPackage>> componentGraph;
 
-    /** RReturns the type graph */
+    /** Returns the type graph */
     public static MutableNetwork<CtType<?>, Edge<CtType<?>, CtTypeMember>> getTypeGraph(
             ModularLanguage language, SimulatorModel model) {
         if (checkIfCacheIsStale(model, language) && graphIsPresent(typeGraph)) {
