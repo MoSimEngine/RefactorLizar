@@ -1,7 +1,6 @@
 package tests;
 
 import com.google.common.truth.Truth;
-import org.junit.jupiter.api.Test;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.languageblob.LanguageBlobAnalyzer;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.Settings;
@@ -9,7 +8,7 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.core.LanguageParser;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.core.SimulatorParser;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-
+import org.junit.jupiter.api.Test;
 class SimpleTest {
 
     @Test
