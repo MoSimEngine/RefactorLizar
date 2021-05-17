@@ -14,23 +14,25 @@ public class Edge<T, R> {
         this.target = target;
         this.cause = cause;
     }
-    /* (non-Javadoc)
+    /**
+     * (non-Javadoc)
+     *
      * @see java.lang.Object#hashCode()
      */
-
     @Override
     public int hashCode() {
         return Objects.hash(cause, source, target);
     }
-    /* (non-Javadoc)
+    /**
+     * (non-Javadoc)
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof Edge)) return false;
-        Edge other = (Edge) obj;
+        Edge<?, ?> other = (Edge<?, ?>) obj;
         return Objects.equals(cause, other.cause)
                 && Objects.equals(source, other.source)
                 && Objects.equals(target, other.target);

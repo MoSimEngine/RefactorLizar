@@ -20,6 +20,8 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public class CycleDetection {
+
+    private CycleDetection() {}
     /**
      * Guarantees: the graph will be directed and forest-like without self loops.
      *
@@ -58,14 +60,11 @@ public class CycleDetection {
             result.addNode(connectedComponent);
             hitExistingNodes.forEach(
                     n -> {
-                        // We encounterd a connection between connected components
+                        // We encountered a connection between connected components
                         Set<T> existingCC = ccStore.get(n);
                         result.putEdge(existingCC, connectedComponent);
                     });
-            connectedComponent.forEach(
-                    n -> {
-                        ccStore.put(n, connectedComponent);
-                    });
+            connectedComponent.forEach(n -> ccStore.put(n, connectedComponent));
         }
 
         return result;
@@ -133,7 +132,7 @@ public class CycleDetection {
             }
 
             private PostOrderNode<T> expand(T t) {
-                return new PostOrderNode<T>(t, graph.successors(t).iterator());
+                return new PostOrderNode<>(t, graph.successors(t).iterator());
             }
         }
 

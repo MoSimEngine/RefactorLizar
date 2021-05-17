@@ -7,10 +7,13 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtPackage;
 
 public class ComponentGraphs {
+
+    private ComponentGraphs() {}
 
     public static void removeEdgesWithSimulatorAsTarget(
             MutableNetwork<Component, Edge<Component, CtPackage>> graph, SimulatorModel model) {
@@ -19,21 +22,19 @@ public class ComponentGraphs {
                 graph.successors(source).stream()
                         .filter(target -> JavaUtils.isSimulatorComponent(model, target))
                         .map(target -> graph.edgesConnecting(source, target))
-                        .flatMap(v -> v.stream())
+                        .flatMap(Set<Edge<Component, CtPackage>>::stream)
                         .collect(Collectors.toList())
                         .forEach(graph::removeEdge);
             }
         }
     }
 
-    public static void removeNonSimulatorToLanguageEdges(
-            ModularLanguage language,
-            SimulatorModel model,
-            MutableNetwork<Component, Edge<Component, CtPackage>> graph) {
+    public static void removeEdgesWithoutLanguageTarget(
+            ModularLanguage language, MutableNetwork<Component, Edge<Component, CtPackage>> graph) {
         graph.nodes().stream()
                 .filter(packag -> JavaUtils.isLanguageComponent(language, packag))
-                .map(packag -> graph.outEdges(packag))
-                .flatMap(v -> v.stream())
+                .map(graph::outEdges)
+                .flatMap(Set<Edge<Component, CtPackage>>::stream)
                 .collect(Collectors.toList())
                 .forEach(graph::removeEdge);
     }

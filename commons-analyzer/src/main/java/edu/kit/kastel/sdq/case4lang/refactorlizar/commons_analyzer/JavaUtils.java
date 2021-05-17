@@ -8,6 +8,8 @@ import spoon.reflect.declaration.CtType;
 
 public class JavaUtils {
 
+    private JavaUtils() {}
+
     public static boolean isVoidType(CtType<?> v) {
         return v.getQualifiedName().equals("void");
     }
