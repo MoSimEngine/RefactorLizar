@@ -14,8 +14,8 @@ import spoon.reflect.declaration.CtType;
 
 public class PackageLevelReportGeneration {
 
-        private PackageLevelReportGeneration() {
-        }
+    private PackageLevelReportGeneration() {}
+
     public static Report generateReport(
             MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> graph, SimulatorModel model) {
         int count = graph.edges().size();

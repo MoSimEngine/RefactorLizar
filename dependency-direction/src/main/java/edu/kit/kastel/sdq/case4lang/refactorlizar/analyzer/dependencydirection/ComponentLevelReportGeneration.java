@@ -12,8 +12,7 @@ import spoon.reflect.declaration.CtPackage;
 
 public class ComponentLevelReportGeneration {
 
-    private ComponentLevelReportGeneration() {
-    }
+    private ComponentLevelReportGeneration() {}
 
     public static Report generateReport(
             MutableNetwork<Component, Edge<Component, CtPackage>> graph, SimulatorModel model) {
