@@ -14,8 +14,7 @@ public class DependencyDirectionAnalyzer extends AbstractAnalyzer {
 
     @Override
     public String getDescription() {
-        // TODO Auto-generated method stub
-        return null;
+        return "TODO";
     }
 
     @Override
@@ -28,7 +27,7 @@ public class DependencyDirectionAnalyzer extends AbstractAnalyzer {
         if (SearchLevels.of(settings.getSetting("level").get().getValue()) == null) {
             throw new IllegalArgumentException("No level setting was set");
         }
-        if (settings.getSetting("layers") == null) {
+        if (settings.getSetting("layers").isEmpty()) {
             throw new IllegalArgumentException("No layer input was given");
         }
     }
@@ -42,11 +41,11 @@ public class DependencyDirectionAnalyzer extends AbstractAnalyzer {
     public boolean supportsFullAnalysisLevel(SearchLevels level) {
         switch (level) {
             case TYPE:
-                return false;
+                return true;
             case COMPONENT:
-                return false;
+                return true;
             case PACKAGE:
-                return false;
+                return true;
             default:
                 return false;
         }

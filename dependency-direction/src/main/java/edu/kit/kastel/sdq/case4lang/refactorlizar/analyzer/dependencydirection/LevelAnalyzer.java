@@ -1,7 +1,5 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.dependencydirection;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.flogger.FluentLogger;
 import com.google.common.graph.MutableNetwork;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
@@ -19,6 +17,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
@@ -55,8 +55,8 @@ public class LevelAnalyzer {
                 DependencyGraphSupplier.getComponentGraph(language, model);
         ComponentGraphs.removeNonProjectNodes(language, model, graph);
         ComponentGraphs.removeLanguageNodes(language, graph);
-        removeNodesWithoutLayer(graph, component -> isUnknownLayer(component));
-        removeNonBreaches(graph, v -> Optional.of(v), valuesByLevel);
+        removeNodesWithoutLayer(graph, this::isUnknownLayer);
+        removeNonBreaches(graph, Optional::of, valuesByLevel);
         return ComponentLevelReportGeneration.generateReport(graph, model);
     }
 
@@ -70,7 +70,7 @@ public class LevelAnalyzer {
                 graph,
                 type ->
                         Components.findComponent(model, type)
-                                .map(component -> isUnknownLayer(component))
+                                .map(this::isUnknownLayer)
                                 .orElse(true));
         removeNonBreaches(graph, type -> Components.findComponent(model, type), valuesByLevel);
         return TypeLevelReportGeneration.generateReport(graph, model);
@@ -83,7 +83,7 @@ public class LevelAnalyzer {
     private <T, U> void removeNodesWithoutLayer(
             MutableNetwork<T, Edge<T, U>> graph, Predicate<T> hasLayer) {
         graph.nodes().stream()
-                .filter(v -> hasLayer.test(v))
+                .filter(hasLayer)
                 .collect(Collectors.toList())
                 .forEach(graph::removeNode);
     }
@@ -98,7 +98,7 @@ public class LevelAnalyzer {
                 graph,
                 packag ->
                         Components.findComponent(model, packag)
-                                .map(component -> isUnknownLayer(component))
+                                .map(this::isUnknownLayer)
                                 .orElse(true));
         removeNonBreaches(graph, packag -> Components.findComponent(model, packag), valuesByLevel);
         return PackageLevelReportGeneration.generateReport(graph, model);

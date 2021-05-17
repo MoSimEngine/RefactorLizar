@@ -5,6 +5,7 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Components;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Edge;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -12,6 +13,8 @@ import spoon.reflect.declaration.CtType;
 import spoon.reflect.declaration.CtTypeMember;
 
 public class TypeLevelReportGeneration {
+
+    private TypeLevelReportGeneration() {}
 
     public static Report generateReport(
             MutableNetwork<CtType<?>, Edge<CtType<?>, CtTypeMember>> graph, SimulatorModel model) {
@@ -40,14 +43,14 @@ public class TypeLevelReportGeneration {
         for (CtType<?> target : successors) {
             violation.append(
                     String.format(
-                            "Simulator Type %s at layer %s uses the lower layer Type \n\t%s at layer %s in\n",
+                            "Simulator Type %s at layer %s uses the lower layer Type %n\t%s at layer %s in%n",
                             source.getQualifiedName(),
                             Components.findComponent(model, source)
-                                    .map(v -> v.getLayer())
+                                    .map(Component::getLayer)
                                     .orElse("ERROR"),
                             target.getQualifiedName(),
                             Components.findComponent(model, target)
-                                    .map(v -> v.getLayer())
+                                    .map(Component::getLayer)
                                     .orElse("ERROR")));
             violation.append(generateCause(graph.edgesConnecting(source, target)));
         }
