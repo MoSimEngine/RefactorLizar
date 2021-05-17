@@ -8,11 +8,7 @@ public class Edge<T, R> {
     private final T source;
     private final T target;
     private final R cause;
-    /**
-     * @param source
-     * @param target
-     * @param cause
-     */
+
     public Edge(T source, T target, R cause) {
         this.source = source;
         this.target = target;
@@ -40,7 +36,7 @@ public class Edge<T, R> {
                 && Objects.equals(target, other.target);
     }
 
-    /** @return the cause */
+    /** Returns the cause */
     public R getCause() {
         return cause;
     }

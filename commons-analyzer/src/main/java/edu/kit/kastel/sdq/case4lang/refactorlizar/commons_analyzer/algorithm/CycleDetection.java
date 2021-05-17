@@ -23,7 +23,6 @@ public class CycleDetection {
     /**
      * Guarantees: the graph will be directed and forest-like without self loops.
      *
-     * @param graph
      * @return the SCC graph. each node contains all the nodes in the CC of the original graph
      */
     public static <T> Graph<Set<T>> findStronglyConnectedComponents(Graph<T> graph) {
@@ -159,7 +158,6 @@ public class CycleDetection {
          * @param rootNodes the nodes to start traversal at
          * @param ignoredNodes nodes that will be ignored, i.e. not recursively traversed
          * @param ignoredNodeMet might be null for no callback
-         * @return
          */
         public FluentIterable<T> postOrderTraversal(
                 Collection<T> rootNodes, Set<T> ignoredNodes, Consumer<T> ignoredNodeMet) {

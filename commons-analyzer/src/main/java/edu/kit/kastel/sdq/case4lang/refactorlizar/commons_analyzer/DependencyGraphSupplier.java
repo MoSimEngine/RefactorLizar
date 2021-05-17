@@ -23,7 +23,7 @@ import spoon.reflect.reference.CtTypeReference;
 
 public class DependencyGraphSupplier {
 
-    private static final String REUSING_TYPE_GRAPH = "Reusing type graph";
+    private static final String REUSING_GRAPH = "Reusing type graph";
     private static final FluentLogger LOGGER = FluentLogger.forEnclosingClass();
     private static ModularLanguage cachedLanguage;
     private static SimulatorModel cachedModel;
@@ -31,11 +31,11 @@ public class DependencyGraphSupplier {
     private static MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> packageGraph;
     private static MutableNetwork<Component, Edge<Component, CtPackage>> componentGraph;
 
-    /** @return the typeGraph */
+    /** RReturns the type graph */
     public static MutableNetwork<CtType<?>, Edge<CtType<?>, CtTypeMember>> getTypeGraph(
             ModularLanguage language, SimulatorModel model) {
         if (checkIfCacheIsStale(model, language) && graphIsPresent(typeGraph)) {
-            LOGGER.atInfo().log(REUSING_TYPE_GRAPH);
+            LOGGER.atInfo().log(REUSING_GRAPH);
             return Graphs.copyOf(typeGraph);
         }
         clearCache();
@@ -44,11 +44,11 @@ public class DependencyGraphSupplier {
         return Graphs.copyOf(typeGraph);
     }
 
-    /** @return the typeGraph */
+    /** Returns the package graph */
     public static MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> getPackageGraph(
             ModularLanguage language, SimulatorModel model) {
         if (checkIfCacheIsStale(model, language) && graphIsPresent(packageGraph)) {
-            LOGGER.atInfo().log(REUSING_TYPE_GRAPH);
+            LOGGER.atInfo().log(REUSING_GRAPH);
             return Graphs.copyOf(packageGraph);
         }
         clearCache();
@@ -57,11 +57,11 @@ public class DependencyGraphSupplier {
         return Graphs.copyOf(packageGraph);
     }
 
-    /** @return the typeGraph */
+    /** Returns the component graph */
     public static MutableNetwork<Component, Edge<Component, CtPackage>> getComponentGraph(
             ModularLanguage language, SimulatorModel model) {
         if (checkIfCacheIsStale(model, language) && graphIsPresent(componentGraph)) {
-            LOGGER.atInfo().log(REUSING_TYPE_GRAPH);
+            LOGGER.atInfo().log(REUSING_GRAPH);
             return Graphs.copyOf(componentGraph);
         }
         clearCache();

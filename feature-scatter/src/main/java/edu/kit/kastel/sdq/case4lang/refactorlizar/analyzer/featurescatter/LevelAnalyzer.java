@@ -48,7 +48,7 @@ public class LevelAnalyzer extends CtAbstractVisitor {
         TypeGraphs.removeNonProjectNodes(language, model, graph);
         TypeGraphs.removeNonSimulatorToLanguageEdges(language, model, graph);
         TypeGraphs.removeEdgesWithSimulatorAsTarget(graph, model);
-        removeNonScatter(graph, model, type -> JavaUtils.isLanguageType(language, type));
+        removeNonScatter(graph, type -> JavaUtils.isLanguageType(language, type));
         return TypeLevelReportGeneration.generateReport(graph, model, language);
         // remove simulator to simulator edges
     }
@@ -59,7 +59,7 @@ public class LevelAnalyzer extends CtAbstractVisitor {
         PackageGraphs.removeNonProjectNodes(language, model, graph);
         PackageGraphs.removeNonSimulatorToLanguageEdges(language, model, graph);
         PackageGraphs.removeEdgesWithSimulatorAsTarget(graph, model);
-        removeNonScatter(graph, model, packag -> JavaUtils.isLanguagePackage(language, packag));
+        removeNonScatter(graph, packag -> JavaUtils.isLanguagePackage(language, packag));
 
         return PackageLevelReportGeneration.generateReport(graph, model, language);
     }
@@ -70,8 +70,7 @@ public class LevelAnalyzer extends CtAbstractVisitor {
         ComponentGraphs.removeNonProjectNodes(language, model, graph);
         ComponentGraphs.removeNonSimulatorToLanguageEdges(language, model, graph);
         ComponentGraphs.removeEdgesWithSimulatorAsTarget(graph, model);
-        removeNonScatter(
-                graph, model, component -> JavaUtils.isLanguageComponent(language, component));
+        removeNonScatter(graph, component -> JavaUtils.isLanguageComponent(language, component));
         return ComponentLevelReportGeneration.generateReport(graph, model, language);
     }
 
@@ -80,9 +79,9 @@ public class LevelAnalyzer extends CtAbstractVisitor {
     }
 
     private <T, R> void removeNonScatter(
-            MutableNetwork<T, Edge<T, R>> graph, SimulatorModel model, Predicate<T> isLanguage) {
+            MutableNetwork<T, Edge<T, R>> graph, Predicate<T> isLanguage) {
         graph.nodes().stream()
-                .filter(type -> isLanguage.test(type))
+                .filter(isLanguage)
                 .filter(type -> hasOnePredecessor(graph, type))
                 .collect(Collectors.toList())
                 .forEach(graph::removeNode);

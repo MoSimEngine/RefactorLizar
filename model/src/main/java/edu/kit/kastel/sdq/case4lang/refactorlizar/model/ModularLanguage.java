@@ -5,20 +5,21 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.SelfRefreshingLookupBu
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.visitor.filter.TypeFilter;
 
 public class ModularLanguage {
 
-    private Collection<Component> languageComponents;
+    private Set<Component> languageComponents;
     private Lookup<String, CtType<?>> typeByQNameLookup;
 
-    public Collection<Component> getLanguageComponents() {
+    public Set<Component> getLanguageComponents() {
         return languageComponents;
     }
 
-    public ModularLanguage(Collection<Component> languageComponents) {
+    public ModularLanguage(Set<Component> languageComponents) {
         this.languageComponents = languageComponents;
         typeByQNameLookup = createTypeByQNameLookup(languageComponents);
     }
@@ -55,32 +56,34 @@ public class ModularLanguage {
         return component.getJavaPackage().getElements(new TypeFilter<>(CtType.class));
     }
 
-    /* (non-Javadoc)
+    /**
+     * (non-Javadoc)
+     *
      * @see java.lang.Object#hashCode()
      */
-
     @Override
     public int hashCode() {
-        return Objects.hash(languageComponents, typeByQNameLookup);
+        return Objects.hash(languageComponents);
     }
 
-    /* (non-Javadoc)
+    /**
+     * (non-Javadoc)
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof ModularLanguage)) return false;
         ModularLanguage other = (ModularLanguage) obj;
-        return Objects.equals(languageComponents, other.languageComponents)
-                && Objects.equals(typeByQNameLookup, other.typeByQNameLookup);
+        return Objects.equals(languageComponents, other.languageComponents);
     }
 
-    /* (non-Javadoc)
+    /**
+     * (non-Javadoc)
+     *
      * @see java.lang.Object#toString()
      */
-
     @Override
     public String toString() {
         return "ModularLanguage [languageComponents=" + languageComponents + "]";

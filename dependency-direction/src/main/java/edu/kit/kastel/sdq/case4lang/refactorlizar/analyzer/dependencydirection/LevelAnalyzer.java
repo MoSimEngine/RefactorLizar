@@ -55,9 +55,9 @@ public class LevelAnalyzer {
                 DependencyGraphSupplier.getComponentGraph(language, model);
         ComponentGraphs.removeNonProjectNodes(language, model, graph);
         ComponentGraphs.removeLanguageNodes(language, graph);
-        removeNodesWithoutLayer(model, graph, component -> isUnknownLayer(component));
+        removeNodesWithoutLayer(graph, component -> isUnknownLayer(component));
         removeNonBreaches(graph, v -> Optional.of(v), valuesByLevel);
-        return ComponentLevelReportGeneration.generateReport(graph, model, language);
+        return ComponentLevelReportGeneration.generateReport(graph, model);
     }
 
     private Report findTypeDependencyDirectionBreach(
@@ -67,14 +67,13 @@ public class LevelAnalyzer {
         TypeGraphs.removeNonProjectNodes(language, model, graph);
         TypeGraphs.removeLanguageNodes(language, graph);
         removeNodesWithoutLayer(
-                model,
                 graph,
                 type ->
                         Components.findComponent(model, type)
                                 .map(component -> isUnknownLayer(component))
                                 .orElse(true));
         removeNonBreaches(graph, type -> Components.findComponent(model, type), valuesByLevel);
-        return TypeLevelReportGeneration.generateReport(graph, model, language);
+        return TypeLevelReportGeneration.generateReport(graph, model);
     }
 
     private boolean isUnknownLayer(Component component) {
@@ -82,7 +81,7 @@ public class LevelAnalyzer {
     }
 
     private <T, U> void removeNodesWithoutLayer(
-            SimulatorModel model, MutableNetwork<T, Edge<T, U>> graph, Predicate<T> hasLayer) {
+            MutableNetwork<T, Edge<T, U>> graph, Predicate<T> hasLayer) {
         graph.nodes().stream()
                 .filter(v -> hasLayer.test(v))
                 .collect(Collectors.toList())
@@ -90,20 +89,19 @@ public class LevelAnalyzer {
     }
 
     private Report findPackageDependencyDirectionBreach(
-            ModularLanguage language2, SimulatorModel model2, Map<String, Integer> valuesByLevel) {
+            ModularLanguage language, SimulatorModel model, Map<String, Integer> valuesByLevel) {
         MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> graph =
                 DependencyGraphSupplier.getPackageGraph(language, model);
         PackageGraphs.removeNonProjectNodes(language, model, graph);
         PackageGraphs.removeLanguageNodes(language, graph);
         removeNodesWithoutLayer(
-                model,
                 graph,
                 packag ->
                         Components.findComponent(model, packag)
                                 .map(component -> isUnknownLayer(component))
                                 .orElse(true));
         removeNonBreaches(graph, packag -> Components.findComponent(model, packag), valuesByLevel);
-        return PackageLevelReportGeneration.generateReport(graph, model, language);
+        return PackageLevelReportGeneration.generateReport(graph, model);
     }
 
     private <T, U> void removeNonBreaches(
@@ -114,14 +112,14 @@ public class LevelAnalyzer {
         for (T source : graph.nodes()) {
             Optional<Component> sourceComponent = findComponent.apply(source);
             if (sourceComponent.isEmpty()) {
-                logger.atInfo().log("Ignoring element %s", source.toString());
+                logger.atInfo().log("Ignoring element %s", source);
                 continue;
             }
             Set<T> targets = graph.successors(source);
             for (T target : targets) {
                 Optional<Component> targetComponent = findComponent.apply(target);
                 if (targetComponent.isEmpty()) {
-                    logger.atInfo().log("Ignoring type %s", target.toString());
+                    logger.atInfo().log("Ignoring type %s", target);
                     continue;
                 }
                 if (isDirectionBreach(valuesByLevel, sourceComponent, targetComponent)) {

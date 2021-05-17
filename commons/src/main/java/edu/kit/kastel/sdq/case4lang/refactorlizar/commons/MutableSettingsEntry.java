@@ -9,9 +9,10 @@ public class MutableSettingsEntry implements SettingsEntry {
     /**
      * Creates a new settingsentry from the given configuration.
      *
-     * @param value
-     * @param defaultValue
-     * @param mandatory
+     * @param value the name and key of the setting.
+     * @param defaultValue the default string for the setting.
+     * @param mandatory true if the setting must be set.
+     * @param description a textual explanation for the setting
      */
     private MutableSettingsEntry(
             String value, boolean defaultValue, boolean mandatory, String description) {
@@ -21,16 +22,19 @@ public class MutableSettingsEntry implements SettingsEntry {
         this.description = description;
     }
 
+    @Override
     /** @return true if the setting is mandatory and must have a value, false otherwise */
     public boolean isMandatory() {
         return mandatory;
     }
 
+    @Override
     /** @return the set value as string */
     public String getValue() {
         return value;
     }
 
+    @Override
     /** @return true if the current value is the default value, false otherwise */
     public boolean isDefaultValue() {
         return defaultValue;
