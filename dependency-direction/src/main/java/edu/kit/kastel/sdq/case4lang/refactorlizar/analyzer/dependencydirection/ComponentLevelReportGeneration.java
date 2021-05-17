@@ -12,6 +12,9 @@ import spoon.reflect.declaration.CtPackage;
 
 public class ComponentLevelReportGeneration {
 
+    private ComponentLevelReportGeneration() {
+    }
+
     public static Report generateReport(
             MutableNetwork<Component, Edge<Component, CtPackage>> graph, SimulatorModel model) {
         int count = graph.edges().size();
@@ -37,7 +40,7 @@ public class ComponentLevelReportGeneration {
         for (Component target : successors) {
             violation.append(
                     String.format(
-                            "Simulator package %s at layer %s uses the lower layer package %s at layer %s in\n",
+                            "Simulator package %s at layer %s uses the lower layer package %s at layer %s in%n",
                             source.getName(),
                             source.getLayer(),
                             target.getName(),

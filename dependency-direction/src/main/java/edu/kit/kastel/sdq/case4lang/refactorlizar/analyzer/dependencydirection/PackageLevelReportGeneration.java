@@ -5,6 +5,7 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Components;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Edge;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -13,6 +14,8 @@ import spoon.reflect.declaration.CtType;
 
 public class PackageLevelReportGeneration {
 
+        private PackageLevelReportGeneration() {
+        }
     public static Report generateReport(
             MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> graph, SimulatorModel model) {
         int count = graph.edges().size();
@@ -43,11 +46,11 @@ public class PackageLevelReportGeneration {
                             "Simulator package %s at layer %s uses the lower layer package %s at layer %s in%n",
                             source.getQualifiedName(),
                             Components.findComponent(model, source)
-                                    .map(v -> v.getLayer())
+                                    .map(Component::getLayer)
                                     .orElse("ERROR"),
                             target.getQualifiedName(),
                             Components.findComponent(model, target)
-                                    .map(v -> v.getLayer())
+                                    .map(Component::getLayer)
                                     .orElse("ERROR")));
             violation.append(generateCause(graph.edgesConnecting(source, target)));
         }
