@@ -12,8 +12,6 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 @AutoService(IAnalyzer.class)
 public class DependencyCycleAnalyzer extends AbstractAnalyzer {
 
-    public DependencyCycleAnalyzer() {}
-
     @Override
     public String getDescription() {
         return "";
