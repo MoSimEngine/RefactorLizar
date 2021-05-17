@@ -6,7 +6,6 @@ import com.google.common.graph.MutableNetwork;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Edge;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -15,10 +14,10 @@ import spoon.reflect.declaration.CtType;
 
 public class PackageLevelReportGeneration {
 
+    private PackageLevelReportGeneration() {}
+
     public static Report generateReport(
-            MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> graph,
-            SimulatorModel model,
-            ModularLanguage language) {
+            MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> graph, SimulatorModel model) {
         long count =
                 graph.nodes().stream()
                         .filter(type -> JavaUtils.isSimulatorPackage(model, type))
@@ -27,12 +26,12 @@ public class PackageLevelReportGeneration {
             return new Report("Language Blob Analyze", "No language blob was found", false);
         }
         StringBuilder builder = new StringBuilder();
-        builder.append(format("Found %d language blobs \n", count));
+        builder.append(format("Found %d language blobs %n", count));
         for (CtPackage source : graph.nodes()) {
             if (JavaUtils.isSimulatorPackage(model, source)) {
                 builder.append(
                         format(
-                                "\nSimulator Package:\n%s\n uses the language packages:\n",
+                                "%nSimulator Package:%n%s%n uses the language packages:%n",
                                 source.getQualifiedName()));
                 graph.successors(source).stream()
                         .forEach(
@@ -49,7 +48,7 @@ public class PackageLevelReportGeneration {
     private static String generateTypeUsage(
             CtPackage target, Set<Edge<CtPackage, CtType<?>>> causes) {
         return format(
-                "\t%s at classes:\n %s\n\n",
+                "\t%s at classes:%n %s%n%n",
                 target.getQualifiedName(), generatePositionStringMemberLevel(causes));
     }
 
