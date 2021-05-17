@@ -1,124 +1,85 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.model;
 
-import java.util.*;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.Lookup;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.SelfRefreshingLookupBuilder;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import spoon.reflect.declaration.CtElement;
-import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
-import spoon.reflect.declaration.CtTypeInformation;
-import spoon.reflect.reference.CtTypeReference;
 import spoon.reflect.visitor.filter.TypeFilter;
 
 /** SimulatorModel */
 public class SimulatorModel {
 
-    private Collection<Feature> languageFeatures;
+    private Collection<Component> simulatorComponents;
+    private Lookup<String, CtType<?>> typeByQNameLookup;
 
     public <T extends CtElement> Collection<T> getAllElements(Class<? extends T> clazz) {
-        return languageFeatures.stream()
-                .filter(
-                        v ->
-                                v.getJavaPackage().getParent(CtPackage.class) != null
-                                        && v.getJavaPackage()
-                                                .getParent(CtPackage.class)
-                                                .isUnnamedPackage())
+        return simulatorComponents.stream()
                 .flatMap(v -> v.getJavaPackage().getElements(new TypeFilter<>(clazz)).stream())
                 .collect(Collectors.toList());
     }
-    /** @return the bundles */
-    public Collection<Feature> getLanguageFeature() {
-        return languageFeatures;
+
+    public Collection<Component> getSimulatorComponents() {
+        return simulatorComponents;
     }
 
-    private Collection<CtPackage> getTopLevelCtPackages() {
-        return getAllElements(CtPackage.class).stream()
-                .filter(ctPackage -> ctPackage.getParent() != null || !ctPackage.isUnnamedPackage())
-                .collect(Collectors.toList());
+    public SimulatorModel(Collection<Component> languageComponents) {
+        this.simulatorComponents = languageComponents;
+        typeByQNameLookup = createTypeByQNameLookup(languageComponents);
     }
 
-    private List<CtType<?>> getSimulatorClassesForComponent(String componentFqn) {
-
-        return getTopLevelCtPackages().stream()
-                .filter(ctPackage -> ctPackage.getQualifiedName().equals(componentFqn))
-                .findFirst()
-                .get()
-                .getElements(new TypeFilter<>(CtType.class));
+    private Lookup<String, CtType<?>> createTypeByQNameLookup(
+            Collection<Component> languageComponents) {
+        return new SelfRefreshingLookupBuilder<Collection<Component>, String, CtType<?>>(
+                        languageComponents)
+                .rebuildFunction(
+                        component ->
+                                component.stream()
+                                        .map(this::getAllTypes)
+                                        .flatMap(List::stream)
+                                        .collect(
+                                                Collectors.toMap(
+                                                        CtType::getQualifiedName,
+                                                        v -> v,
+                                                        (u, v) -> u)))
+                .build();
     }
 
-    public Collection<String> getClassesForSimulatorComponent(String componentFqn) {
-
-        return getSimulatorClassesForComponent(componentFqn).stream()
-                .map(CtTypeInformation::getQualifiedName)
-                .collect(Collectors.toSet());
-    }
-
-    public Set<ClassRelation> getClassToClassRelations(String componentFqn) {
-
-        Set<ClassRelation> result = new HashSet<>();
-        HashSet<CtType<?>> simulatorClassesForComponent =
-                new HashSet<>(getSimulatorClassesForComponent(componentFqn));
-
-        for (CtType<?> origin : simulatorClassesForComponent) {
-
-            origin.getReferencedTypes().stream()
-                    .map(CtTypeReference::getTypeDeclaration)
-                    .filter(Objects::nonNull)
-                    .filter(simulatorClassesForComponent::contains)
-                    .filter(target -> !target.equals(origin))
-                    .forEach(
-                            target ->
-                                    result.add(
-                                            new ClassRelation(
-                                                    origin.getQualifiedName(),
-                                                    target.getQualifiedName())));
-        }
-
-        return result;
-    }
-
-    public Collection<SimulatorComponent> getSimulatorComponents() {
-        return getTopLevelCtPackages().stream()
-                .map(
-                        ctPackage ->
-                                SimulatorComponent.of(
-                                        ctPackage.getQualifiedName(),
-                                        ctPackage.getSimpleName(),
-                                        "todo"))
-                .collect(Collectors.toList());
-    }
-
-    public Collection<String> findEdges(CtPackage ctPackage) {
-
-        Stream<? extends CtType<?>> referencedTypes =
-                ctPackage.getReferencedTypes().stream()
-                        .map(CtTypeReference::getDeclaration)
-                        .filter(Objects::nonNull);
-
-        Set<String> result = new HashSet<>();
-
-        referencedTypes.forEach(
-                referencedType ->
-                        getTopLevelCtPackages().stream()
-                                .filter(referencedType::hasParent)
-                                .map(CtPackage::getQualifiedName)
-                                .filter(c -> !ctPackage.getQualifiedName().equals(c))
-                                .forEach(result::add));
-
-        return result;
-    }
-
-    /** @param languageFeatures */
-    public SimulatorModel(Collection<Feature> languageFeatures) {
-        this.languageFeatures = languageFeatures;
+    private List<CtType<?>> getAllTypes(Component v) {
+        return v.getJavaPackage().getElements(new TypeFilter<>(CtType.class));
     }
 
     public CtType<?> getTypeWithQualifiedName(String qName) {
-        return languageFeatures.stream()
-                .map(v -> v.getJavaPackage().getElements(new TypeFilter<>(CtType.class)))
-                .flatMap(v -> v.stream())
-                .filter(v -> v.getQualifiedName().equals(qName))
-                .findFirst()
-                .orElse(null);
+        return typeByQNameLookup.lookup(qName);
+    }
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(simulatorComponents);
+    }
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof SimulatorModel)) return false;
+        SimulatorModel other = (SimulatorModel) obj;
+        return Objects.equals(simulatorComponents, other.simulatorComponents);
+    }
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+
+    @Override
+    public String toString() {
+        return "SimulatorModel [simulatorComponents=" + simulatorComponents + "]";
     }
 }

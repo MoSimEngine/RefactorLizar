@@ -1,39 +1,22 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.featurescatter;
 
 import com.google.auto.service.AutoService;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.ElementVisitor;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.AbstractAnalyzer;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.IAnalyzer;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.SearchLevels;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.Settings;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import spoon.reflect.declaration.CtElement;
-import spoon.reflect.declaration.CtPackage;
 
 @AutoService(IAnalyzer.class)
-public class FeatureScatterAnalyzer implements IAnalyzer {
-
-    private ModularLanguage language;
-    private SimulatorModel model;
+public class FeatureScatterAnalyzer extends AbstractAnalyzer {
 
     public FeatureScatterAnalyzer() {}
 
     @Override
-    public Report analyze(CtElement element) {
-        PackageVisitor visitor = new PackageVisitor(language, model);
-        element.accept(visitor);
-        return visitor.getReport();
-    }
-
-    @Override
-    public void init(ModularLanguage language, SimulatorModel simulatorAST) {
-        this.language = language;
-        this.model = simulatorAST;
-    }
-
-    @Override
     public String getDescription() {
-        return "";
+        return "A feature scatter is defined as the usage of a language feature in multiple simulator components";
     }
 
     @Override
@@ -42,34 +25,44 @@ public class FeatureScatterAnalyzer implements IAnalyzer {
     }
 
     @Override
-    public boolean canAnalyze(CtElement element) {
-        ElementVisitor visitor =
-                new ElementVisitor() {
-                    @Override
-                    public void visitCtPackage(CtPackage arg0) {
-                        this.setResult(true);
-                    }
-                };
-        element.accept(visitor);
-        return visitor.canVisit();
-    }
-
-    @Override
-    public Report fullAnalysis() {
-        PackageVisitor visitor = new PackageVisitor(language, model);
-        visitor.fullAnalysis();
-        return visitor.getReport();
-    }
-
-    @Override
-    public Report fullAnalysis(SearchLevels level) {
-        PackageVisitor visitor = new PackageVisitor(language, model);
-        visitor.fullAnalysis(level);
-        return visitor.getReport();
-    }
-
-    @Override
     public boolean supportsFullAnalysis() {
         return true;
+    }
+
+    public boolean supportsFullAnalysisLevel(SearchLevels level) {
+        switch (level) {
+            case TYPE:
+                return true;
+            case COMPONENT:
+                return true;
+            case PACKAGE:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @Override
+    protected void checkSettings(Settings settings) {
+        if (SearchLevels.of(settings.getSetting("level").get().getValue()) == null) {
+            throw new IllegalArgumentException("No level setting was set");
+        }
+    }
+
+    @Override
+    public Settings getSettings() {
+        return new Settings.SettingsBuilder()
+                .addSetting(
+                        "level",
+                        true,
+                        "defines the result level of the smell analyzer, available are: type, component and package")
+                .build();
+    }
+
+    @Override
+    protected Report fullAnalysis(
+            ModularLanguage language, SimulatorModel simulatorAST, Settings settings) {
+        return new LevelAnalyzer(language, simulatorAST)
+                .fullAnalysis(SearchLevels.of(settings.getSetting("level").get().getValue()));
     }
 }

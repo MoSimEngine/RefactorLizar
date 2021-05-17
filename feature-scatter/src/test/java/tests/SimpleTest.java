@@ -1,9 +1,9 @@
 package tests;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.SearchLevels;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.featurescatter.PackageVisitor;
+import com.google.common.truth.Truth;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.featurescatter.FeatureScatterAnalyzer;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.Settings;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.core.LanguageParser;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.core.SimulatorParser;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
@@ -16,38 +16,44 @@ public class SimpleTest {
     public void typeLevelReport() {
         ModularLanguage lang =
                 new ModularLanguage(
-                        new LanguageParser().parseLanguage("src/test/resources/modular-language"));
+                        LanguageParser.parseLanguage("src/test/resources/modular-language"));
         SimulatorModel model =
-                new SimulatorModel(
-                        new SimulatorParser().parseLanguage("src/test/resources/simulator"));
-        PackageVisitor visitor = new PackageVisitor(lang, model);
-        visitor.fullAnalysis(SearchLevels.TYPE);
-        assertNotNull(visitor.getReport());
+                new SimulatorModel(SimulatorParser.parseSimulator("src/test/resources/simulator"));
+        FeatureScatterAnalyzer fca = new FeatureScatterAnalyzer();
+        Settings settings = fca.getSettings();
+        settings.setValue("level", "type");
+        Report report = fca.analyze(lang, model, settings);
+        Truth.assertThat(report).isNotNull();
+        Truth.assertThat(report.getDescription()).contains("Found 2 feature scatter");
     }
 
     @Test
     public void packageLevelReport() {
         ModularLanguage lang =
                 new ModularLanguage(
-                        new LanguageParser().parseLanguage("src/test/resources/modular-language"));
+                        LanguageParser.parseLanguage("src/test/resources/modular-language"));
         SimulatorModel model =
-                new SimulatorModel(
-                        new SimulatorParser().parseLanguage("src/test/resources/simulator"));
-        PackageVisitor visitor = new PackageVisitor(lang, model);
-        visitor.fullAnalysis(SearchLevels.PACKAGE);
-        assertNotNull(visitor.getReport());
+                new SimulatorModel(SimulatorParser.parseSimulator("src/test/resources/simulator"));
+        FeatureScatterAnalyzer fca = new FeatureScatterAnalyzer();
+        Settings settings = fca.getSettings();
+        settings.setValue("level", "package");
+        Report report = fca.analyze(lang, model, settings);
+        Truth.assertThat(report).isNotNull();
+        Truth.assertThat(report.getDescription()).contains("Found 1 feature scatter");
     }
 
     @Test
     public void componentLevelReport() {
         ModularLanguage lang =
                 new ModularLanguage(
-                        new LanguageParser().parseLanguage("src/test/resources/modular-language"));
+                        LanguageParser.parseLanguage("src/test/resources/modular-language"));
         SimulatorModel model =
-                new SimulatorModel(
-                        new SimulatorParser().parseLanguage("src/test/resources/simulator"));
-        PackageVisitor visitor = new PackageVisitor(lang, model);
-        visitor.fullAnalysis(SearchLevels.COMPONENT);
-        assertNotNull(visitor.getReport());
+                new SimulatorModel(SimulatorParser.parseSimulator("src/test/resources/simulator"));
+        FeatureScatterAnalyzer fca = new FeatureScatterAnalyzer();
+        Settings settings = fca.getSettings();
+        settings.setValue("level", "component");
+        Report report = fca.analyze(lang, model, settings);
+        Truth.assertThat(report).isNotNull();
+        Truth.assertThat(report.getDescription()).contains("Found 1 feature scatter");
     }
 }

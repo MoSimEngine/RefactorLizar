@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: User
+Bundle-SymbolicName: user
+Layer: domain
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: user
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Require-Bundle: mtest.domain.aps;bundle-version="0.1.0",
+ mtest.paradigm.identifier;bundle-version="0.1.0"

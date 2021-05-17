@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Xppu
+Bundle-SymbolicName: xppu
+Bundle-Version: 1.0.0.qualifier
+Layer: domain
+Automatic-Module-Name: xppu
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Require-Bundle: mtest.domain.aps;bundle-version="0.1.0",
+ mtest.paradigm.identifier;bundle-version="0.1.0"
