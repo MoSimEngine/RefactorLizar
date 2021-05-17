@@ -9,6 +9,7 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.core.SimulatorParser;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import org.junit.jupiter.api.Test;
+
 class SimpleTest {
 
     @Test
