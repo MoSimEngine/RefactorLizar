@@ -18,6 +18,7 @@ public class RegexManifestParser implements ManifestParser {
 
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
+    @Override
     public Optional<Bundle> parseManifest(File manifestFile) {
         try {
             Manifest manifest = new Manifest(new FileInputStream(manifestFile));
@@ -94,7 +95,7 @@ public class RegexManifestParser implements ManifestParser {
         BUNDLE_VERSION("Bundle-Version"),
         BUNDLE_SYMBOLIC_NAME("Bundle-SymbolicName"),
         LAYER_NAME("Layer");
-        private String keyName;
+        private final String keyName;
 
         OSGIKeys(String keyName) {
             this.keyName = keyName;

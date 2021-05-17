@@ -5,7 +5,6 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Components;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Edge;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -15,9 +14,7 @@ import spoon.reflect.declaration.CtType;
 public class PackageLevelReportGeneration {
 
     public static Report generateReport(
-            MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> graph,
-            SimulatorModel model,
-            ModularLanguage language) {
+            MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> graph, SimulatorModel model) {
         int count = graph.edges().size();
         if (count == 0) {
             return new Report(
@@ -52,13 +49,12 @@ public class PackageLevelReportGeneration {
                             Components.findComponent(model, target)
                                     .map(v -> v.getLayer())
                                     .orElse("ERROR")));
-            violation.append(generateCause(source, target, graph.edgesConnecting(source, target)));
+            violation.append(generateCause(graph.edgesConnecting(source, target)));
         }
         return violation.toString();
     }
 
-    private static String generateCause(
-            CtPackage source, CtPackage target, Set<Edge<CtPackage, CtType<?>>> edgesConnecting) {
+    private static String generateCause(Set<Edge<CtPackage, CtType<?>>> edgesConnecting) {
         return edgesConnecting.stream()
                 .map(Edge::getCause)
                 .map(v -> "\t\t" + v.getQualifiedName())

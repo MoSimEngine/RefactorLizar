@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.ServiceLoader;
-import java.util.ServiceLoader.Provider;
 import java.util.stream.Collectors;
 
 /** IAnalyzer */
@@ -27,7 +26,7 @@ public interface IAnalyzer {
     private static Collection<IAnalyzer> getAllAnalyzerFromClasspath() {
 
         return ServiceLoader.load(IAnalyzer.class).stream()
-                .map(Provider::get)
+                .map(ServiceLoader.Provider::get)
                 .collect(Collectors.toList());
     }
 
@@ -44,7 +43,7 @@ public interface IAnalyzer {
         IAnalyzer.class.getClassLoader();
         ClassLoader cl = new URLClassLoader(array, ClassLoader.getSystemClassLoader());
         return ServiceLoader.load(IAnalyzer.class, cl).stream()
-                .map(Provider::get)
+                .map(ServiceLoader.Provider::get)
                 .collect(Collectors.toList());
     }
 

@@ -1,5 +1,6 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.dependencydirection;
 
+import com.google.common.base.Splitter;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.AbstractAnalyzer;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.SearchLevels;
@@ -71,7 +72,7 @@ public class DependencyDirectionAnalyzer extends AbstractAnalyzer {
         Map<String, Integer> levelValues = new HashMap<>();
         String layers = settings.getSetting("layers").get().getValue();
         int value = 0;
-        for (String layer : layers.split(",")) {
+        for (String layer : Splitter.on(',').split(layers)) {
             levelValues.put(layer.trim().toLowerCase(), value++);
         }
         return new LevelAnalyzer(language, simulatorAST)

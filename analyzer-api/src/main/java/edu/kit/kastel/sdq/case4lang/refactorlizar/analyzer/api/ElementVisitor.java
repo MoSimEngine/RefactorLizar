@@ -529,7 +529,7 @@ public class ElementVisitor implements CtVisitor {
         result = false;
     }
 
-    /** @param result the result to set */
+    /** Set the result to the given boolean value */
     public void setResult(boolean result) {
         this.result = result;
     }

@@ -5,7 +5,6 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.Edge;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.JavaUtils;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,9 +13,7 @@ import spoon.reflect.declaration.CtPackage;
 public class ComponentLevelReportGeneration {
 
     public static Report generateReport(
-            MutableNetwork<Component, Edge<Component, CtPackage>> graph,
-            SimulatorModel model,
-            ModularLanguage language) {
+            MutableNetwork<Component, Edge<Component, CtPackage>> graph, SimulatorModel model) {
         int count = graph.edges().size();
         if (count == 0) {
             return new Report(
@@ -28,15 +25,13 @@ public class ComponentLevelReportGeneration {
         description.append("There were " + count + " dependency direction violations found");
         graph.nodes().stream()
                 .filter(component -> JavaUtils.isSimulatorComponent(model, component))
-                .forEach(component -> description.append(generateUsage(graph, component, model)));
+                .forEach(component -> description.append(generateUsage(graph, component)));
         return new Report(
                 "Dependency Direction Analyzer on component-level", description.toString(), true);
     }
 
     private static String generateUsage(
-            MutableNetwork<Component, Edge<Component, CtPackage>> graph,
-            Component source,
-            SimulatorModel model) {
+            MutableNetwork<Component, Edge<Component, CtPackage>> graph, Component source) {
         Set<Component> successors = graph.successors(source);
         StringBuilder violation = new StringBuilder();
         for (Component target : successors) {
@@ -47,13 +42,12 @@ public class ComponentLevelReportGeneration {
                             source.getLayer(),
                             target.getName(),
                             target.getLayer()));
-            violation.append(generateCause(source, target, graph.edgesConnecting(source, target)));
+            violation.append(generateCause(graph.edgesConnecting(source, target)));
         }
         return violation.toString();
     }
 
-    private static String generateCause(
-            Component source, Component target, Set<Edge<Component, CtPackage>> edgesConnecting) {
+    private static String generateCause(Set<Edge<Component, CtPackage>> edgesConnecting) {
         return edgesConnecting.stream()
                 .map(Edge::getCause)
                 .map(v -> "\t\t" + v.getQualifiedName())

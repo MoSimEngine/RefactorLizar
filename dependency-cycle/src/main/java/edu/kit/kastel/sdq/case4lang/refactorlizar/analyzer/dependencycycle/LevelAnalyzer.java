@@ -14,11 +14,12 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer.graphs.TypeGr
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtPackage;
@@ -30,7 +31,6 @@ public class LevelAnalyzer extends CtAbstractVisitor {
 
     private ModularLanguage language;
     private SimulatorModel model;
-    private Report report;
 
     public LevelAnalyzer(ModularLanguage language, SimulatorModel model) {
         this.language = language;
@@ -60,12 +60,12 @@ public class LevelAnalyzer extends CtAbstractVisitor {
         Set<List<Relation<CtType<?>, CtTypeMember>>> result = new HashSet<>();
         cycles.nodes().stream()
                 .filter(v -> v.size() > 1)
-                .map(LinkedList::new)
+                .map(ArrayDeque::new)
                 .map(
                         stack -> {
                             List<Relation<CtType<?>, CtTypeMember>> cycle = new ArrayList<>();
                             CtType<?> firstElement = stack.peekFirst();
-                            LinkedList<CtType<?>> types = stack;
+                            Queue<CtType<?>> types = stack;
                             while (!types.isEmpty()) {
                                 CtType<?> source = types.poll();
                                 CtType<?> target = types.isEmpty() ? firstElement : types.peek();
@@ -92,12 +92,12 @@ public class LevelAnalyzer extends CtAbstractVisitor {
         Set<List<Relation<CtPackage, CtType<?>>>> result = new HashSet<>();
         cycles.nodes().stream()
                 .filter(v -> v.size() > 1)
-                .map(LinkedList::new)
+                .map(ArrayDeque::new)
                 .map(
                         stack -> {
                             List<Relation<CtPackage, CtType<?>>> cycle = new ArrayList<>();
                             CtPackage firstElement = stack.peekFirst();
-                            LinkedList<CtPackage> types = stack;
+                            Queue<CtPackage> types = stack;
                             while (!types.isEmpty()) {
                                 CtPackage source = types.poll();
                                 CtPackage target = types.isEmpty() ? firstElement : types.peek();
@@ -125,12 +125,12 @@ public class LevelAnalyzer extends CtAbstractVisitor {
         Set<List<Relation<Component, CtPackage>>> result = new HashSet<>();
         cycles.nodes().stream()
                 .filter(v -> v.size() > 1)
-                .map(LinkedList::new)
+                .map(ArrayDeque::new)
                 .map(
                         stack -> {
                             List<Relation<Component, CtPackage>> cycle = new ArrayList<>();
                             Component firstElement = stack.peekFirst();
-                            LinkedList<Component> types = stack;
+                            Queue<Component> types = stack;
                             while (!types.isEmpty()) {
                                 Component source = types.poll();
                                 Component target = types.isEmpty() ? firstElement : types.peek();
@@ -147,8 +147,7 @@ public class LevelAnalyzer extends CtAbstractVisitor {
         return ComponentLevelReportGeneration.createReport(language, model, result);
     }
 
-    private <T, U> Collection<U> getEdgeValues(
-            MutableNetwork<T, Edge<T, U>> graph, T source, T target) {
+    private <T, U> Set<U> getEdgeValues(MutableNetwork<T, Edge<T, U>> graph, T source, T target) {
         return graph.edgesConnecting(source, target).stream()
                 .map(Edge::getCause)
                 .collect(Collectors.toSet());
@@ -158,8 +157,8 @@ public class LevelAnalyzer extends CtAbstractVisitor {
         if (dependencyEdges.size() < 2) {
             return dependencyEdges;
         }
-        List<Relation<T, U>> edges = new LinkedList<>();
-        LinkedList<Relation<T, U>> availableEdges = new LinkedList<>(dependencyEdges);
+        List<Relation<T, U>> edges = new ArrayList<>();
+        ArrayDeque<Relation<T, U>> availableEdges = new ArrayDeque<>(dependencyEdges);
         Relation<T, U> firstEdge = availableEdges.pollFirst();
         Relation<T, U> currentEdge = firstEdge;
         while (!availableEdges.isEmpty()) {
@@ -175,7 +174,7 @@ public class LevelAnalyzer extends CtAbstractVisitor {
     }
 
     private <T, U> Relation<T, U> findSuccessor(
-            List<Relation<T, U>> edges, Relation<T, U> currentEdge) {
+            Collection<Relation<T, U>> edges, Relation<T, U> currentEdge) {
         return edges.stream().filter(v -> isSuccessor(currentEdge, v)).findAny().orElse(null);
     }
 

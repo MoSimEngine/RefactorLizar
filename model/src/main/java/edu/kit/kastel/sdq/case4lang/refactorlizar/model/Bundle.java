@@ -37,52 +37,21 @@ public class Bundle {
         this.layer = layer;
     }
 
-    /** @return the name */
+    /** Returns the name */
     public String getName() {
         return name;
     }
 
-    /** @param name the name to set */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /** @return the version */
+    /** Returns the version */
     public String getVersion() {
         return version;
     }
 
-    /** @param version the version to set */
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    /** @return the exportedPackage */
-    public Collection<String> getExportedPackage() {
-        return exportedPackage;
-    }
-
-    /** @param exportedPackage the exportedPackage to set */
-    public void setExportedPackage(Collection<String> exportedPackage) {
-        this.exportedPackage = exportedPackage;
-    }
-
-    /** @return the requiredBundle */
-    public Collection<String> getRequiredBundle() {
-        return requiredBundle;
-    }
-
-    /** @param requiredBundle the requiredBundle to set */
-    public void setRequiredBundle(Collection<String> requiredBundle) {
-        this.requiredBundle = requiredBundle;
-    }
-
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see java.lang.Object#toString()
      */
-
     @Override
     public String toString() {
         return "Bundle [exportedPackage="
@@ -95,13 +64,28 @@ public class Bundle {
                 + version
                 + "]";
     }
-    /** @return the internalRequiredBundles */
+
+    /**
+     * Sets the internalRequiredBundles to the given bundles.
+     *
+     * @param internalRequiredBundles the internalRequiredBundles to set
+     */
+    public void setInternalRequiredBundles(Collection<String> internalRequiredBundles) {
+        this.internalRequiredBundles = internalRequiredBundles;
+    }
+
+    /** Returns the exportedPackage names */
+    public Collection<String> getExportedPackage() {
+        return exportedPackage;
+    }
+    /** Returns the internalRequiredBundles names */
     public Collection<String> getInternalRequiredBundles() {
         return internalRequiredBundles;
     }
-    /** @param internalRequiredBundles the internalRequiredBundles to set */
-    public void setInternalRequiredBundles(Collection<String> internalRequiredBundles) {
-        this.internalRequiredBundles = internalRequiredBundles;
+
+    /** Returns the requiredBundle names */
+    public Collection<String> getRequiredBundle() {
+        return requiredBundle;
     }
 
     public String getSimpleName() {

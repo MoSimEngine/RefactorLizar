@@ -19,39 +19,43 @@ public class Component {
         this.bundle = bundle;
     }
 
-    /** @return the javaPackage */
+    /** Returns the java package */
     public CtPackage getJavaPackage() {
         return javaPackage;
     }
 
     /**
-     * @return
+     * Returns the component name
+     *
      * @see edu.kit.kastel.sdq.case4lang.refactorlizar.model.Bundle#getName()
      */
     public String getName() {
         return bundle.getName();
     }
     /**
-     * @return the layer name of the given simulator feature or UNKOWN if it`s not set.
+     * Returns the layer name of the given simulator feature or UNKNOWN if it`s not set.
+     *
      * @see edu.kit.kastel.sdq.case4lang.refactorlizar.model.Bundle#getLayer()
      */
     public String getLayer() {
         return bundle.getLayer();
     }
 
-    /* (non-Javadoc)
+    /**
+     * (non-Javadoc)
+     *
      * @see java.lang.Object#hashCode()
      */
-
     @Override
     public int hashCode() {
         return Objects.hash(bundle, javaPackage);
     }
 
-    /* (non-Javadoc)
+    /**
+     * (non-Javadoc)
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -61,10 +65,11 @@ public class Component {
                 && Objects.equals(javaPackage, other.javaPackage);
     }
 
-    /* (non-Javadoc)
+    /**
+     * (non-Javadoc)
+     *
      * @see java.lang.Object#toString()
      */
-
     @Override
     public String toString() {
         return "Component [bundle=" + bundle + ", javaPackage=" + javaPackage + "]";

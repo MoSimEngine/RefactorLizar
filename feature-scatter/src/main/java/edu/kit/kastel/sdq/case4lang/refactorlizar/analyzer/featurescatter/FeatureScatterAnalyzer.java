@@ -29,6 +29,7 @@ public class FeatureScatterAnalyzer extends AbstractAnalyzer {
         return true;
     }
 
+    @Override
     public boolean supportsFullAnalysisLevel(SearchLevels level) {
         switch (level) {
             case TYPE:

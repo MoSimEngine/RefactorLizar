@@ -2,14 +2,15 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.commons_analyzer;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Set;
 
 public class Relation<T, U> {
 
     private T source;
     private T target;
-    private Collection<U> causes;
+    private Set<U> causes;
 
-    public Relation(T source, T target, Collection<U> causes) {
+    public Relation(T source, T target, Set<U> causes) {
         this.source = source;
         this.target = target;
         this.causes = causes;

@@ -4,16 +4,14 @@ import java.util.Arrays;
 
 /**
  * This defines different search level for analyzer. A finer search level results in finer grained
- * results, but slower performance.
+ * results, but slower performance. Currently there exists three levels. Component,Package and Type.
  */
-// TODO: Add members to doc
 public enum SearchLevels {
     COMPONENT("component"),
     PACKAGE("package"),
     TYPE("type");
-    // TYPE_MEMBER("type_member");
 
-    private String levelName;
+    private final String levelName;
 
     SearchLevels(String levelName) {
         this.levelName = levelName;

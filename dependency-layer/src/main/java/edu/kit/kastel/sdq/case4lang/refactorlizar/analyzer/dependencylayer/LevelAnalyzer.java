@@ -1,6 +1,5 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.dependencylayer;
 
-import com.google.common.flogger.FluentLogger;
 import com.google.common.graph.MutableNetwork;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.SearchLevels;
@@ -26,7 +25,6 @@ import spoon.reflect.declaration.CtTypeMember;
 
 public class LevelAnalyzer {
     private static final String UNKNOWN_LAYER_IDENTIFIER = "UNKNOWN";
-    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private ModularLanguage language;
     private SimulatorModel model;
 

@@ -79,7 +79,7 @@ public class LevelAnalyzer extends CtAbstractVisitor {
     private <T, R> void removeNonBlobs(
             MutableNetwork<T, Edge<T, R>> graph, Predicate<T> isSimulator) {
         graph.nodes().stream()
-                .filter(isSimulator::test)
+                .filter(isSimulator)
                 .filter(type -> hasOneSuccessor(graph, type))
                 .collect(Collectors.toList())
                 .forEach(graph::removeNode);

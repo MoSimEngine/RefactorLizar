@@ -40,7 +40,7 @@ public class ModelBuilder {
         return model.getAllPackages();
     }
 
-    private final class SpoonProgressImplementation implements SpoonProgress {
+    private static final class SpoonProgressImplementation implements SpoonProgress {
 
         @Override
         public void end(Process process) {
