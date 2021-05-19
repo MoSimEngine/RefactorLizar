@@ -1,7 +1,4 @@
-# This workflow will build a Java project with Maven
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
-
-name: Codestyle Checks
+name: Test Project
 
 on:
   push:
@@ -26,4 +23,4 @@ jobs:
           token: ${{ secrets.ACCESS_TOKEN }}
           submodules: true
     - name: Test with gradle
-      run: ./gradlew spotlessCheck
+      run: ./gradlew test -x spotlessCheck
