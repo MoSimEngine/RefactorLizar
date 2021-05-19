@@ -26,4 +26,4 @@ jobs:
           token: ${{ secrets.ACCESS_TOKEN }}
           submodules: true
     - name: Test with gradle
-      run: ./gradlew build -x spotlessCheck -x tests
+      run: ./gradlew build -x spotlessCheck -x test
