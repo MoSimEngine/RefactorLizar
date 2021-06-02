@@ -1,11 +1,11 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.core.pluginparser;
 
-import com.google.common.flogger.FluentLogger;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Bundle;
 import java.io.File;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import com.google.common.flogger.FluentLogger;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Bundle;
 
 /**
  * This class defines the main entry point for the manifest analysis. It analyses the given paths
@@ -33,5 +33,12 @@ public class BundleParser {
         filter.process(bundles);
         bundles.forEach(v -> logger.atFinest().log("%s", v));
         return bundles;
+    }
+
+    public Collection<Bundle> analyzeFeatureFiles(String... paths) {
+        InputReader reader = new InputReader(paths);
+        FeatureFileParser parser = new FeatureFileParser();
+        return null;
+
     }
 }
