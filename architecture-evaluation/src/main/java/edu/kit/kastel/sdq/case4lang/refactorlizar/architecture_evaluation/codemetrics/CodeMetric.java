@@ -7,10 +7,11 @@ public abstract class CodeMetric {
     protected CodeMetric(double value) {
         this.value = value;
     }
+
     /** @return the value */
     public double getValue() {
         return value;
     }
-
+    
     abstract String getName();
 }
