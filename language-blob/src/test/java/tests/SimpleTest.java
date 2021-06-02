@@ -15,11 +15,8 @@ class SimpleTest {
     @Test
     void packageLevelReport() {
         ModularLanguage lang =
-                new ModularLanguage(
-                        LanguageParser.parseLanguage("src/test/resources/xppu/modular-language"));
-        SimulatorModel model =
-                new SimulatorModel(
-                        SimulatorParser.parseSimulator("src/test/resources/xppu/simulator"));
+                LanguageParser.parseLanguage("src/test/resources/xppu/modular-language");
+        SimulatorModel model = SimulatorParser.parseSimulator("src/test/resources/xppu/simulator");
         LanguageBlobAnalyzer lba = new LanguageBlobAnalyzer();
         Settings settings = lba.getSettings();
         settings.setValue("level", "package");
@@ -31,11 +28,8 @@ class SimpleTest {
     @Test
     void componentLevelReport() {
         ModularLanguage lang =
-                new ModularLanguage(
-                        LanguageParser.parseLanguage("src/test/resources/xppu/modular-language"));
-        SimulatorModel model =
-                new SimulatorModel(
-                        SimulatorParser.parseSimulator("src/test/resources/xppu/simulator"));
+                LanguageParser.parseLanguage("src/test/resources/xppu/modular-language");
+        SimulatorModel model = SimulatorParser.parseSimulator("src/test/resources/xppu/simulator");
         LanguageBlobAnalyzer lba = new LanguageBlobAnalyzer();
         Settings settings = lba.getSettings();
         settings.setValue("level", "component");
@@ -47,11 +41,8 @@ class SimpleTest {
     @Test
     void typeLevelReport() {
         ModularLanguage lang =
-                new ModularLanguage(
-                        LanguageParser.parseLanguage("src/test/resources/xppu/modular-language"));
-        SimulatorModel model =
-                new SimulatorModel(
-                        SimulatorParser.parseSimulator("src/test/resources/xppu/simulator"));
+                LanguageParser.parseLanguage("src/test/resources/xppu/modular-language");
+        SimulatorModel model = SimulatorParser.parseSimulator("src/test/resources/xppu/simulator");
         LanguageBlobAnalyzer lba = new LanguageBlobAnalyzer();
         Settings settings = lba.getSettings();
         settings.setValue("level", "type");

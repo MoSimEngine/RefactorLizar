@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import spoon.Launcher;
+import spoon.OutputType;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.visitor.filter.TypeFilter;
@@ -16,6 +18,7 @@ public class SimulatorModel {
 
     private Set<Component> simulatorComponents;
     private Lookup<String, CtType<?>> typeByQNameLookup;
+    private Launcher launcher;
 
     public <T extends CtElement> Collection<T> getAllElements(Class<? extends T> clazz) {
         return simulatorComponents.stream()
@@ -30,6 +33,16 @@ public class SimulatorModel {
     public SimulatorModel(Set<Component> languageComponents) {
         this.simulatorComponents = languageComponents;
         typeByQNameLookup = createTypeByQNameLookup(languageComponents);
+    }
+
+    public SimulatorModel(Set<Component> languageComponents, Launcher launcher) {
+        this(languageComponents);
+        this.launcher = launcher;
+    }
+
+    public void print(String path) {
+        launcher.getEnvironment().setOutputType(OutputType.CLASSES);
+        launcher.setSourceOutputDirectory(path);
     }
 
     private Lookup<String, CtType<?>> createTypeByQNameLookup(

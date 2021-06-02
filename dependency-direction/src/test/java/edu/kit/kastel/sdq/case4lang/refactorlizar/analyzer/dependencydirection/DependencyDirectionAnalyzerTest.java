@@ -29,11 +29,9 @@ public class DependencyDirectionAnalyzerTest {
              Bar uses an lower layer and breaches the strict layering.
              */
             ModularLanguage language =
-                    new ModularLanguage(
-                            LanguageParser.parseLanguage("src/test/resources/modular_language"));
+                    LanguageParser.parseLanguage("src/test/resources/modular_language");
             SimulatorModel simulator =
-                    new SimulatorModel(
-                            SimulatorParser.parseSimulator("src/test/resources/wrong_direction"));
+                    SimulatorParser.parseSimulator("src/test/resources/wrong_direction");
             DependencyDirectionAnalyzer dda = new DependencyDirectionAnalyzer();
             Settings settings = dda.getSettings();
             settings.setValue("level", "type");
@@ -57,11 +55,9 @@ public class DependencyDirectionAnalyzerTest {
              ----------
              */
             ModularLanguage language =
-                    new ModularLanguage(
-                            LanguageParser.parseLanguage("src/test/resources/modular_language"));
+                    LanguageParser.parseLanguage("src/test/resources/modular_language");
             SimulatorModel simulator =
-                    new SimulatorModel(
-                            SimulatorParser.parseSimulator("src/test/resources/correct_direction"));
+                    SimulatorParser.parseSimulator("src/test/resources/correct_direction");
             DependencyDirectionAnalyzer dda = new DependencyDirectionAnalyzer();
             Settings settings = dda.getSettings();
             settings.setValue("level", "type");
@@ -89,11 +85,9 @@ public class DependencyDirectionAnalyzerTest {
              Bar uses an lower layer and breaches the strict layering.
              */
             ModularLanguage language =
-                    new ModularLanguage(
-                            LanguageParser.parseLanguage("src/test/resources/modular_language"));
+                    LanguageParser.parseLanguage("src/test/resources/modular_language");
             SimulatorModel simulator =
-                    new SimulatorModel(
-                            SimulatorParser.parseSimulator("src/test/resources/wrong_direction"));
+                    SimulatorParser.parseSimulator("src/test/resources/wrong_direction");
             DependencyDirectionAnalyzer dda = new DependencyDirectionAnalyzer();
             Settings settings = dda.getSettings();
             settings.setValue("level", "package");
@@ -117,11 +111,9 @@ public class DependencyDirectionAnalyzerTest {
              ----------
              */
             ModularLanguage language =
-                    new ModularLanguage(
-                            LanguageParser.parseLanguage("src/test/resources/modular_language"));
+                    LanguageParser.parseLanguage("src/test/resources/modular_language");
             SimulatorModel simulator =
-                    new SimulatorModel(
-                            SimulatorParser.parseSimulator("src/test/resources/correct_direction"));
+                    SimulatorParser.parseSimulator("src/test/resources/correct_direction");
             DependencyDirectionAnalyzer dda = new DependencyDirectionAnalyzer();
             Settings settings = dda.getSettings();
             settings.setValue("level", "package");
@@ -149,11 +141,9 @@ public class DependencyDirectionAnalyzerTest {
              Bar uses an lower layer and breaches the strict layering.
              */
             ModularLanguage language =
-                    new ModularLanguage(
-                            LanguageParser.parseLanguage("src/test/resources/modular_language"));
+                    LanguageParser.parseLanguage("src/test/resources/modular_language");
             SimulatorModel simulator =
-                    new SimulatorModel(
-                            SimulatorParser.parseSimulator("src/test/resources/wrong_direction"));
+                    SimulatorParser.parseSimulator("src/test/resources/wrong_direction");
             DependencyDirectionAnalyzer dda = new DependencyDirectionAnalyzer();
             Settings settings = dda.getSettings();
             settings.setValue("level", "component");
@@ -177,11 +167,9 @@ public class DependencyDirectionAnalyzerTest {
              ----------
              */
             ModularLanguage language =
-                    new ModularLanguage(
-                            LanguageParser.parseLanguage("src/test/resources/modular_language"));
+                    LanguageParser.parseLanguage("src/test/resources/modular_language");
             SimulatorModel simulator =
-                    new SimulatorModel(
-                            SimulatorParser.parseSimulator("src/test/resources/correct_direction"));
+                    SimulatorParser.parseSimulator("src/test/resources/correct_direction");
             DependencyDirectionAnalyzer dda = new DependencyDirectionAnalyzer();
             Settings settings = dda.getSettings();
             settings.setValue("level", "component");

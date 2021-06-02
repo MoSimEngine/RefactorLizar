@@ -15,11 +15,9 @@ public class SimpleTest {
     @Test
     public void typeLevelReport() {
         ModularLanguage lang =
-                new ModularLanguage(
-                        LanguageParser.parseLanguage("src/test/resources/xppu/modular-language"));
-        SimulatorModel model =
-                new SimulatorModel(
-                        SimulatorParser.parseSimulator("src/test/resources/xppu/simulator"));
+                LanguageParser.parseLanguage("src/test/resources/xppu/modular-language");
+        SimulatorModel model = SimulatorParser.parseSimulator("src/test/resources/xppu/simulator");
+
         DependencyCycleAnalyzer dca = new DependencyCycleAnalyzer();
         Settings settings = dca.getSettings();
         settings.setValue("level", "type");
@@ -31,11 +29,9 @@ public class SimpleTest {
     @Test
     public void packageLevelReport() {
         ModularLanguage lang =
-                new ModularLanguage(
-                        LanguageParser.parseLanguage("src/test/resources/xppu/modular-language"));
-        SimulatorModel model =
-                new SimulatorModel(
-                        SimulatorParser.parseSimulator("src/test/resources/xppu/simulator"));
+                LanguageParser.parseLanguage("src/test/resources/xppu/modular-language");
+        SimulatorModel model = SimulatorParser.parseSimulator("src/test/resources/xppu/simulator");
+
         DependencyCycleAnalyzer dca = new DependencyCycleAnalyzer();
         Settings settings = dca.getSettings();
         settings.setValue("level", "package");
@@ -47,11 +43,8 @@ public class SimpleTest {
     @Test
     public void componentLevelReport() {
         ModularLanguage lang =
-                new ModularLanguage(
-                        LanguageParser.parseLanguage("src/test/resources/xppu/modular-language"));
-        SimulatorModel model =
-                new SimulatorModel(
-                        SimulatorParser.parseSimulator("src/test/resources/xppu/simulator"));
+                LanguageParser.parseLanguage("src/test/resources/xppu/modular-language");
+        SimulatorModel model = SimulatorParser.parseSimulator("src/test/resources/xppu/simulator");
         DependencyCycleAnalyzer dca = new DependencyCycleAnalyzer();
         Settings settings = dca.getSettings();
         settings.setValue("level", "component");
