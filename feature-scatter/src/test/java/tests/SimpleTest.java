@@ -14,11 +14,8 @@ public class SimpleTest {
 
     @Test
     public void typeLevelReport() {
-        ModularLanguage lang =
-                new ModularLanguage(
-                        LanguageParser.parseLanguage("src/test/resources/modular-language"));
-        SimulatorModel model =
-                new SimulatorModel(SimulatorParser.parseSimulator("src/test/resources/simulator"));
+        ModularLanguage lang = LanguageParser.parseLanguage("src/test/resources/modular-language");
+        SimulatorModel model = SimulatorParser.parseSimulator("src/test/resources/simulator");
         FeatureScatterAnalyzer fca = new FeatureScatterAnalyzer();
         Settings settings = fca.getSettings();
         settings.setValue("level", "type");
@@ -29,11 +26,8 @@ public class SimpleTest {
 
     @Test
     public void packageLevelReport() {
-        ModularLanguage lang =
-                new ModularLanguage(
-                        LanguageParser.parseLanguage("src/test/resources/modular-language"));
-        SimulatorModel model =
-                new SimulatorModel(SimulatorParser.parseSimulator("src/test/resources/simulator"));
+        ModularLanguage lang = LanguageParser.parseLanguage("src/test/resources/modular-language");
+        SimulatorModel model = SimulatorParser.parseSimulator("src/test/resources/simulator");
         FeatureScatterAnalyzer fca = new FeatureScatterAnalyzer();
         Settings settings = fca.getSettings();
         settings.setValue("level", "package");
@@ -44,11 +38,8 @@ public class SimpleTest {
 
     @Test
     public void componentLevelReport() {
-        ModularLanguage lang =
-                new ModularLanguage(
-                        LanguageParser.parseLanguage("src/test/resources/modular-language"));
-        SimulatorModel model =
-                new SimulatorModel(SimulatorParser.parseSimulator("src/test/resources/simulator"));
+        ModularLanguage lang = LanguageParser.parseLanguage("src/test/resources/modular-language");
+        SimulatorModel model = SimulatorParser.parseSimulator("src/test/resources/simulator");
         FeatureScatterAnalyzer fca = new FeatureScatterAnalyzer();
         Settings settings = fca.getSettings();
         settings.setValue("level", "component");

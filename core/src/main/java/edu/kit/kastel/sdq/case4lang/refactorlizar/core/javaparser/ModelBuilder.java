@@ -15,10 +15,11 @@ public class ModelBuilder {
 
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private CtModel model;
+    private Launcher launcher;
 
     public void buildModel(String path) {
         logger.atInfo().log("start building model for path %s", path);
-        Launcher launcher = new Launcher();
+        launcher = new Launcher();
         Environment env = launcher.getEnvironment();
         env.setComplianceLevel(11);
         env.setOutputType(OutputType.NO_OUTPUT);
@@ -30,6 +31,10 @@ public class ModelBuilder {
         logger.atInfo().log(
                 "finished building model for path %s, with model size: %d, in %d packages",
                 path, model.getAllTypes().size(), model.getAllPackages().size());
+    }
+
+    public Launcher getLauncher() {
+        return launcher;
     }
 
     public Collection<CtType<?>> getAllTypes() {

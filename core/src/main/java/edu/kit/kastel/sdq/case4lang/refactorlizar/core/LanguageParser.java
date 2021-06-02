@@ -7,6 +7,7 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.core.javaparser.ModelBuilder;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.core.pluginparser.BundleParser;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Bundle;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,7 +18,7 @@ import spoon.reflect.declaration.CtPackage;
 public class LanguageParser {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
-    public static Set<Component> parseLanguage(String path) {
+    public static ModularLanguage parseLanguage(String path) {
         Collection<CtPackage> javaPackages = buildJavaPackages(path);
         Collection<Bundle> bundles = new BundleParser().analyzeManifests(path);
         Map<String, CtPackage> packageByQName = convertPackagesToMap(javaPackages);
@@ -30,7 +31,7 @@ public class LanguageParser {
             }
             languageComponents.add(new Component(bundlePackage, bundle));
         }
-        return languageComponents;
+        return new ModularLanguage(languageComponents);
     }
 
     private static Collection<CtPackage> buildJavaPackages(String path) {
