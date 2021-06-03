@@ -1,0 +1,8 @@
+plugins {
+	id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions'
+}
+
+dependencies {
+}
+
+description = 'architecture-evaluation'

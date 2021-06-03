@@ -12,4 +12,4 @@ include(":commons-refactoring")
 include(":class-split")
 include(":commons-analyzer")
 include(":commons")
-
+include(":architecture-evaluation")
