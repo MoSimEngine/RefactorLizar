@@ -1,5 +1,9 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.projectfilter;
 
+import com.google.common.flogger.FluentLogger;
+import com.google.common.graph.Graph;
+import com.google.common.graph.Graphs;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,10 +12,6 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import com.google.common.flogger.FluentLogger;
-import com.google.common.graph.Graph;
-import com.google.common.graph.Graphs;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
 
 public class ObservedSystemFilter {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();

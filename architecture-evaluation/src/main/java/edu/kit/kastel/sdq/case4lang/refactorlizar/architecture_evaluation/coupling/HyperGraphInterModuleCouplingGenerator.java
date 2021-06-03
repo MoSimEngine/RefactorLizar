@@ -1,7 +1,5 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.coupling;
 
-import java.util.Objects;
-import java.util.stream.Collectors;
 import com.google.common.graph.EndpointPair;
 import com.google.common.graph.Graph;
 import com.google.common.graph.Graphs;
@@ -10,6 +8,8 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.Calcul
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.Coupling;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.complexity.HyperGraphComplexityCalculator;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtType;
 
 public class HyperGraphInterModuleCouplingGenerator {

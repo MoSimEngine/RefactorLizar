@@ -8,9 +8,8 @@ import spoon.reflect.declaration.CtType;
 
 public class SystemGraphs {
 
-    private SystemGraphs() {
-        
-    }
+    private SystemGraphs() {}
+
     public static MutableGraph<Node> convertToSystemGraph(Graph<Node> graph) {
         MutableGraph<Node> systemGraph = Graphs.copyOf(graph);
         // add empty node as system node

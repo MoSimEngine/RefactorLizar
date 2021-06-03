@@ -12,6 +12,6 @@ public abstract class CodeMetric {
     public double getValue() {
         return value;
     }
-    
+
     abstract String getName();
 }

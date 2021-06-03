@@ -1,11 +1,11 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs;
 
+import com.google.common.graph.GraphBuilder;
+import com.google.common.graph.MutableGraph;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import com.google.common.graph.GraphBuilder;
-import com.google.common.graph.MutableGraph;
 import spoon.reflect.code.CtConstructorCall;
 import spoon.reflect.code.CtFieldAccess;
 import spoon.reflect.code.CtInvocation;
@@ -20,14 +20,16 @@ import spoon.support.reflect.declaration.CtConstructorImpl;
 public class HyperGraphGenerator {
 
     public MutableGraph<Node> createHyperGraph(Collection<CtType<?>> types) {
-        MutableGraph<Node> graph =
-                createGraph();
+        MutableGraph<Node> graph = createGraph();
 
         for (CtType<?> type : types) {
             for (CtTypeMember executable : getMethodsAndConstructorAndFields(type)) {
                 graph.addNode(new Node(executable));
                 getReferencedMembers(executable)
-                        .forEach(calledMethod -> graph.putEdge(new Node(calledMethod), new Node(executable)));
+                        .forEach(
+                                calledMethod ->
+                                        graph.putEdge(
+                                                new Node(calledMethod), new Node(executable)));
             }
         }
         return graph;
@@ -57,11 +59,11 @@ public class HyperGraphGenerator {
                 .map(CtMethod.class::cast)
                 .forEach(result::add);
         executable.getElements(new TypeFilter<>(CtFieldAccess.class)).stream()
-        .map(v -> v.getVariable())
-        .filter(Objects::nonNull)
-        .map(v -> v.getDeclaration())
-        .filter(Objects::nonNull)
-        .forEach(result::add);
+                .map(v -> v.getVariable())
+                .filter(Objects::nonNull)
+                .map(v -> v.getDeclaration())
+                .filter(Objects::nonNull)
+                .forEach(result::add);
         // getDeclaration() removes non input calls
         return result;
     }

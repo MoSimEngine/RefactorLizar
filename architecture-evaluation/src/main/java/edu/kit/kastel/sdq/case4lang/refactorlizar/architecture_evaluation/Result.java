@@ -7,7 +7,6 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codeme
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.LinesOfCode;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.SizeOfSystem;
 
-
 public class Result {
 
     private SizeOfSystem sizeOfSystem;
@@ -18,7 +17,12 @@ public class Result {
     private HyperGraphSize size;
 
     public Result(
-            LinesOfCode loc, SizeOfSystem sos, HyperGraphSize size, Complexity graphComplexity, Coupling coupling, Cohesion cohesion) {
+            LinesOfCode loc,
+            SizeOfSystem sos,
+            HyperGraphSize size,
+            Complexity graphComplexity,
+            Coupling coupling,
+            Cohesion cohesion) {
         this.size = size;
         this.complexity = graphComplexity;
         this.coupling = coupling;
@@ -43,18 +47,12 @@ public class Result {
     public HyperGraphSize getSize() {
         return size;
     }
-    /**
-     * @return the loc
-     */
+    /** @return the loc */
     public LinesOfCode getLoc() {
-      return loc;
+        return loc;
     }
-    /**
-     * @return the sizeOfSystem
-     */
+    /** @return the sizeOfSystem */
     public SizeOfSystem getSizeOfSystem() {
-      return sizeOfSystem;
+        return sizeOfSystem;
     }
-
-    
 }

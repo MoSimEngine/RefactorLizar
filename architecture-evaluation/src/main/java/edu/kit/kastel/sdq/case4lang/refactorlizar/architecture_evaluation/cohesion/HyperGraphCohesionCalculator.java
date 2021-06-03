@@ -1,8 +1,5 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.cohesion;
 
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 import com.google.common.collect.Sets;
 import com.google.common.graph.EndpointPair;
 import com.google.common.graph.Graph;
@@ -12,6 +9,9 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.Calcul
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.Cohesion;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.complexity.HyperGraphComplexityCalculator;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtType;
 
 public class HyperGraphCohesionCalculator {
@@ -34,8 +34,7 @@ public class HyperGraphCohesionCalculator {
         return new Cohesion(interModuleGraphComplexity / fullyConnectedGraphComplexity);
     }
 
-    private MutableGraph<Node> transformToFullyConnectedGraph(
-            Graph<Node> graph) {
+    private MutableGraph<Node> transformToFullyConnectedGraph(Graph<Node> graph) {
         MutableGraph<Node> fullyConnectedGraph = Graphs.copyOf(graph);
         Sets.combinations(fullyConnectedGraph.nodes(), 2).stream()
                 .map(Set::iterator)
@@ -43,8 +42,7 @@ public class HyperGraphCohesionCalculator {
         return fullyConnectedGraph;
     }
 
-    private MutableGraph<Node> transformToIntraModuleGraph(
-            Graph<Node> graph) {
+    private MutableGraph<Node> transformToIntraModuleGraph(Graph<Node> graph) {
         MutableGraph<Node> intraModuleGraph = Graphs.copyOf(graph);
         graph.edges().stream()
                 .filter(this::hasEndpointsNotInSameTypes)

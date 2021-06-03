@@ -1,14 +1,13 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.size;
 
+import com.google.common.graph.Graph;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.CalculationMode;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import com.google.common.graph.Graph;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.CalculationMode;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
-import spoon.reflect.declaration.CtTypeMember;
 
 public class HyperGraphSizeCalculator {
 

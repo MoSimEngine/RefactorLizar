@@ -1,6 +1,5 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation;
 
-import java.util.Collection;
 import com.google.common.flogger.FluentLogger;
 import com.google.common.graph.Graph;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.Cohesion;
@@ -18,6 +17,7 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.projectfilter.DataTypesFilter;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.projectfilter.ObservedSystemFilter;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.size.HyperGraphSizeCalculator;
+import java.util.Collection;
 import spoon.Launcher;
 import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtType;
@@ -25,10 +25,12 @@ import spoon.reflect.declaration.CtType;
 public class Application {
 
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
+
     @Api
     public Result evaluate(String path, CalculationMode mode) {
         return evaluate(path, mode, "", "");
     }
+
     @Api
     public Result evaluate(
             String path, CalculationMode mode, String dataPatternsPath, String observedSystemPath) {
@@ -42,11 +44,10 @@ public class Application {
         Complexity graphComplexity = new HyperGraphComplexityCalculator(mode).calculate(graph);
         Coupling graphCoupling = new HyperGraphInterModuleCouplingGenerator(mode).calculate(graph);
         Cohesion cohesion = new HyperGraphCohesionCalculator(mode).calculate(graph);
-        return new Result(loc,sos,size, graphComplexity, graphCoupling, cohesion);
+        return new Result(loc, sos, size, graphComplexity, graphCoupling, cohesion);
     }
 
-    private HyperGraphSize calculateHyperGraphSize(
-            CalculationMode mode, Graph<Node> graph) {
+    private HyperGraphSize calculateHyperGraphSize(CalculationMode mode, Graph<Node> graph) {
         return new HyperGraphSize(
                 new HyperGraphSizeCalculator(mode)
                         .calculate(SystemGraphs.convertToSystemGraph(graph)));
@@ -60,8 +61,7 @@ public class Application {
         return model.getAllTypes();
     }
 
-    private Graph<Node> removeNotObservedSystem(
-            Graph<Node> graph, String observedSystemPath) {
+    private Graph<Node> removeNotObservedSystem(Graph<Node> graph, String observedSystemPath) {
         if (observedSystemPath.isBlank()) {
             return graph;
         }
@@ -80,7 +80,9 @@ public class Application {
     }
 
     private int sumLinesOfCode(Collection<CtType<?>> types) {
-        return types.stream().map(type -> type.getPosition().getEndLine()).reduce(0, (a, b) -> a + b);
+        return types.stream()
+                .map(type -> type.getPosition().getEndLine())
+                .reduce(0, (a, b) -> a + b);
     }
 
     private SizeOfSystem calculateSizeOfSystem(Collection<CtType<?>> types) {
