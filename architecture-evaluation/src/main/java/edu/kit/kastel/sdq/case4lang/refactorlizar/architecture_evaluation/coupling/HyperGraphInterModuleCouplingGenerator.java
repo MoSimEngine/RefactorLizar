@@ -1,5 +1,7 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.coupling;
 
+import java.util.Objects;
+import java.util.stream.Collectors;
 import com.google.common.graph.EndpointPair;
 import com.google.common.graph.Graph;
 import com.google.common.graph.Graphs;
@@ -7,9 +9,7 @@ import com.google.common.graph.MutableGraph;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.CalculationMode;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.Coupling;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.complexity.HyperGraphComplexityCalculator;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import spoon.reflect.declaration.CtExecutable;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
 import spoon.reflect.declaration.CtType;
 
 public class HyperGraphInterModuleCouplingGenerator {
@@ -21,8 +21,8 @@ public class HyperGraphInterModuleCouplingGenerator {
         this.mode = Objects.requireNonNull(mode);
     }
 
-    public Coupling calculate(Graph<CtExecutable<?>> graph) {
-        MutableGraph<CtExecutable<?>> interModuleGraph = Graphs.copyOf(graph);
+    public Coupling calculate(Graph<Node> graph) {
+        MutableGraph<Node> interModuleGraph = Graphs.copyOf(graph);
         graph.edges().stream()
                 .filter(this::hasEndpointsInSameTypes)
                 .collect(Collectors.toSet())
@@ -31,15 +31,15 @@ public class HyperGraphInterModuleCouplingGenerator {
                 new HyperGraphComplexityCalculator(mode).calculate(interModuleGraph).getValue());
     }
 
-    private boolean hasEndpointsInSameTypes(EndpointPair<CtExecutable<?>> edge) {
+    private boolean hasEndpointsInSameTypes(EndpointPair<Node> edge) {
         return isSameType(edge.nodeU(), edge.nodeV());
     }
 
-    private boolean isSameType(CtExecutable<?> u, CtExecutable<?> v) {
+    private boolean isSameType(Node u, Node v) {
         return getType(u).equals(getType(v));
     }
 
-    private CtType<?> getType(CtExecutable<?> executable) {
-        return executable.getReference().getDeclaringType().getTypeDeclaration();
+    private CtType<?> getType(Node executable) {
+        return executable.getDeclaringType();
     }
 }

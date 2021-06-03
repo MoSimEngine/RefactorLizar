@@ -13,15 +13,14 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.cohesi
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.complexity.HyperGraphComplexityCalculator;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.coupling.HyperGraphInterModuleCouplingGenerator;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.HyperGraphGenerator;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.SystemGraphs;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.projectfilter.DataTypesFilter;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.projectfilter.ObservedSystemFilter;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.size.HyperGraphSizeCalculator;
 import spoon.Launcher;
 import spoon.reflect.CtModel;
-import spoon.reflect.declaration.CtExecutable;
 import spoon.reflect.declaration.CtType;
-import spoon.reflect.declaration.CtTypeMember;
 
 public class Application {
 
@@ -37,8 +36,7 @@ public class Application {
         removeDataTypes(types, dataPatternsPath);
         LinesOfCode loc = calculateLoC(types);
         SizeOfSystem sos = calculateSizeOfSystem(types);
-        // Collection<CodeMetric> complexity = calculateMethodComplexity(types);
-        Graph<CtTypeMember> graph = new HyperGraphGenerator().createHyperGraph(types);
+        Graph<Node> graph = new HyperGraphGenerator().createHyperGraph(types);
         graph = removeNotObservedSystem(graph, observedSystemPath);
         HyperGraphSize size = calculateHyperGraphSize(mode, graph);
         Complexity graphComplexity = new HyperGraphComplexityCalculator(mode).calculate(graph);
@@ -48,7 +46,7 @@ public class Application {
     }
 
     private HyperGraphSize calculateHyperGraphSize(
-            CalculationMode mode, Graph<CtExecutable<?>> graph) {
+            CalculationMode mode, Graph<Node> graph) {
         return new HyperGraphSize(
                 new HyperGraphSizeCalculator(mode)
                         .calculate(SystemGraphs.convertToSystemGraph(graph)));
@@ -62,12 +60,12 @@ public class Application {
         return model.getAllTypes();
     }
 
-    private Graph<CtExecutable<?>> removeNotObservedSystem(
-            Graph<CtExecutable<?>> graph, String observedSystemPath) {
+    private Graph<Node> removeNotObservedSystem(
+            Graph<Node> graph, String observedSystemPath) {
         if (observedSystemPath.isBlank()) {
             return graph;
         }
-        return ObservedSystemFilter.removeNonObservedSytem(graph, observedSystemPath);
+        return ObservedSystemFilter.removeNonObservedSystem(graph, observedSystemPath);
     }
 
     private void removeDataTypes(Collection<CtType<?>> types, String dataPatternsPath) {

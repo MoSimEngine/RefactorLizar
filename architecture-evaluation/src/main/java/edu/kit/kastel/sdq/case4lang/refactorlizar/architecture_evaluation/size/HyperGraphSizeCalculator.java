@@ -1,13 +1,14 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.size;
 
-import com.google.common.graph.Graph;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.CalculationMode;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import spoon.reflect.declaration.CtExecutable;
+import com.google.common.graph.Graph;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.CalculationMode;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
+import spoon.reflect.declaration.CtTypeMember;
 
 public class HyperGraphSizeCalculator {
 
@@ -21,7 +22,7 @@ public class HyperGraphSizeCalculator {
         this.mode = mode;
     }
 
-    public double calculate(Graph<CtExecutable<?>> systemGraph) {
+    public double calculate(Graph<Node> systemGraph) {
         /*
         Schau für jeden Knoten an zu welcher HyperEdge er verbunden ist.
         Das gibt ein Pattern.
@@ -32,8 +33,8 @@ public class HyperGraphSizeCalculator {
         */
         Map<BitSet, Integer> patterns = new HashMap<>();
         PatternGenerator generator = new PatternGenerator();
-        Set<CtExecutable<?>> nodes = systemGraph.nodes();
-        for (CtExecutable<?> node : nodes) {
+        Set<Node> nodes = systemGraph.nodes();
+        for (Node node : nodes) {
             BitSet pattern = generator.createPattern(new ArrayList<>(systemGraph.edges()), node);
             if (patterns.get(pattern) == null) {
                 patterns.put(pattern, 1);
@@ -42,7 +43,7 @@ public class HyperGraphSizeCalculator {
             }
         }
         double size = 0;
-        for (CtExecutable<?> node : nodes) {
+        for (Node node : nodes) {
             BitSet pattern = generator.createPattern(new ArrayList<>(systemGraph.edges()), node);
             double prob = patterns.get(pattern);
             size += log2(prob / getSystemSize(nodes));
@@ -50,7 +51,7 @@ public class HyperGraphSizeCalculator {
         return size;
     }
 
-    private int getSystemSize(Set<CtExecutable<?>> nodes) {
+    private int getSystemSize(Set<Node> nodes) {
         return mode == CalculationMode.REINER ? nodes.size() + 1 : nodes.size();
     }
 

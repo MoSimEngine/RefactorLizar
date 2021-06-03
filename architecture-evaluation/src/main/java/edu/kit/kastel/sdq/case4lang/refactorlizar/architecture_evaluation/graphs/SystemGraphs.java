@@ -4,17 +4,20 @@ import com.google.common.graph.Graph;
 import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
 import spoon.Launcher;
-import spoon.reflect.declaration.CtExecutable;
+import spoon.reflect.declaration.CtType;
 
 public class SystemGraphs {
 
     private SystemGraphs() {
         
     }
-    public static MutableGraph<CtExecutable<?>> convertToSystemGraph(Graph<CtExecutable<?>> graph) {
-        MutableGraph<CtExecutable<?>> systemGraph = Graphs.copyOf(graph);
+    public static MutableGraph<Node> convertToSystemGraph(Graph<Node> graph) {
+        MutableGraph<Node> systemGraph = Graphs.copyOf(graph);
         // add empty node as system node
-        systemGraph.addNode(new Launcher().createFactory().createMethod());
+        CtType<?> type = Launcher.parseClass("class ThIsIsRiskant {}");
+        var method = new Launcher().createFactory().createMethod();
+        type.addMethod(method);
+        systemGraph.addNode(new Node(method));
         return systemGraph;
     }
 }
