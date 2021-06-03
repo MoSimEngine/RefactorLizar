@@ -27,7 +27,7 @@ public class DataTypesFilter {
                             .reduce(v -> false, (a, b) -> a.or(b));
             types.removeIf(type -> pattern.test(type.getQualifiedName()));
         } catch (IOException e) {
-            logger.atWarning().withCause(e);
+            logger.atWarning().withCause(e).log();
         }
     }
 

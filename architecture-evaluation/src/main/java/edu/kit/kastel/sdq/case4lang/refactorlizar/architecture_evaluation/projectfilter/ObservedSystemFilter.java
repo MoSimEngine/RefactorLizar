@@ -30,7 +30,7 @@ public class ObservedSystemFilter {
             removableNodes.forEach(result::removeNode);
             return result;
         } catch (IOException e) {
-            logger.atWarning().withCause(e);
+            logger.atWarning().withCause(e).log();
         }
         return graph;
     }
