@@ -3,7 +3,6 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation;
 import java.util.Collection;
 import com.google.common.flogger.FluentLogger;
 import com.google.common.graph.Graph;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.CodeMetric;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.Cohesion;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.Complexity;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.Coupling;
@@ -22,29 +21,30 @@ import spoon.Launcher;
 import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtExecutable;
 import spoon.reflect.declaration.CtType;
+import spoon.reflect.declaration.CtTypeMember;
 
 public class Application {
 
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-
+    @Api
     public Result evaluate(String path, CalculationMode mode) {
         return evaluate(path, mode, "", "");
     }
-
+    @Api
     public Result evaluate(
             String path, CalculationMode mode, String dataPatternsPath, String observedSystemPath) {
         Collection<CtType<?>> types = parseTypes(path);
         removeDataTypes(types, dataPatternsPath);
         LinesOfCode loc = calculateLoC(types);
-        CodeMetric sos = calculateSizeOfSystem(types);
+        SizeOfSystem sos = calculateSizeOfSystem(types);
         // Collection<CodeMetric> complexity = calculateMethodComplexity(types);
-        Graph<CtExecutable<?>> graph = new HyperGraphGenerator().createHyperGraph(types);
+        Graph<CtTypeMember> graph = new HyperGraphGenerator().createHyperGraph(types);
         graph = removeNotObservedSystem(graph, observedSystemPath);
         HyperGraphSize size = calculateHyperGraphSize(mode, graph);
         Complexity graphComplexity = new HyperGraphComplexityCalculator(mode).calculate(graph);
         Coupling graphCoupling = new HyperGraphInterModuleCouplingGenerator(mode).calculate(graph);
         Cohesion cohesion = new HyperGraphCohesionCalculator(mode).calculate(graph);
-        return new Result(size, graphComplexity, graphCoupling, cohesion);
+        return new Result(loc,sos,size, graphComplexity, graphCoupling, cohesion);
     }
 
     private HyperGraphSize calculateHyperGraphSize(
@@ -57,6 +57,7 @@ public class Application {
     private Collection<CtType<?>> parseTypes(String path) {
         Launcher launcher = new Launcher();
         launcher.addInputResource(path);
+        launcher.getEnvironment().setCommentEnabled(false);
         CtModel model = launcher.buildModel();
         return model.getAllTypes();
     }
@@ -77,12 +78,11 @@ public class Application {
     }
 
     private LinesOfCode calculateLoC(Collection<CtType<?>> types) {
-        types.iterator().next().accept(null);
         return new LinesOfCode(sumLinesOfCode(types));
     }
 
     private int sumLinesOfCode(Collection<CtType<?>> types) {
-        return types.stream().map(v -> v.getPosition().getEndLine()).reduce(0, (a, b) -> a + b);
+        return types.stream().map(type -> type.getPosition().getEndLine()).reduce(0, (a, b) -> a + b);
     }
 
     private SizeOfSystem calculateSizeOfSystem(Collection<CtType<?>> types) {

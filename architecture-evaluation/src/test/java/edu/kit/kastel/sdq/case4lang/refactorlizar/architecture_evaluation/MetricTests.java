@@ -1,7 +1,13 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation;
 
+import static com.google.common.truth.Truth.assertThat;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
 class MetricTests {
-    /*
+
+        @Nested
+        class HypergraphSize {
     @Test
     void sizeTest1() {
         assertThat(
@@ -9,7 +15,7 @@ class MetricTests {
                                 .evaluate(
                                         "src/test/resources/smallProject/Foo.java",
                                         CalculationMode.MARTIN)
-                                .getSize())
+                                        .getSize().getValue())
                 .isWithin(0.1)
                 .of(2.75);
         assertThat(
@@ -17,7 +23,7 @@ class MetricTests {
                                 .evaluate(
                                         "src/test/resources/smallProject/Foo.java",
                                         CalculationMode.REINER)
-                                .get())
+                                        .getSize().getValue())
                 .isEqualTo(4.0);
     }
 
@@ -26,17 +32,19 @@ class MetricTests {
         assertThat(
                         new Application()
                                 .evaluate("src/test/resources/smallProject", CalculationMode.MARTIN)
-                                .getSize())
+                                .getSize().getValue())
                 .isWithin(0.1)
                 .of(4.0);
         assertThat(
                         new Application()
                                 .evaluate("src/test/resources/smallProject", CalculationMode.REINER)
-                                .getSize())
+                                .getSize().getValue())
                 .isWithin(0.1)
                 .of(5.2);
     }
-
+}
+@Nested
+class GraphComplexity {
     @Test
     void complexityTest1() {
         assertThat(
@@ -44,7 +52,7 @@ class MetricTests {
                                 .evaluate(
                                         "src/test/resources/smallProject/Foo.java",
                                         CalculationMode.MARTIN)
-                                .getGraphComplexity())
+                                        .getComplexity().getValue())
                 .isWithin(0.1)
                 .of(2.75);
         assertThat(
@@ -52,7 +60,7 @@ class MetricTests {
                                 .evaluate(
                                         "src/test/resources/smallProject/Foo.java",
                                         CalculationMode.REINER)
-                                .getGraphComplexity())
+                                        .getComplexity().getValue())
                 .isEqualTo(4.0);
     }
 
@@ -62,17 +70,19 @@ class MetricTests {
                         new Application()
                                 .evaluate(
                                         "src/test/resources/smallProject/", CalculationMode.MARTIN)
-                                .getGraphComplexity())
+                                        .getComplexity().getValue())
                 .isWithin(0.1)
                 .of(2.75);
         assertThat(
                         new Application()
                                 .evaluate(
                                         "src/test/resources/smallProject/", CalculationMode.REINER)
-                                .getGraphComplexity())
+                                .getComplexity().getValue())
                 .isEqualTo(4.0);
     }
-
+}
+@Nested
+class Coupling {
     @Test
     void couplingTest1() {
         assertThat(
@@ -80,7 +90,7 @@ class MetricTests {
                                 .evaluate(
                                         "src/test/resources/smallProject/Foo.java",
                                         CalculationMode.MARTIN)
-                                .getGraphCoupling())
+                                        .getCoupling().getValue())
                 .isWithin(0.1)
                 .of(0);
         assertThat(
@@ -88,7 +98,7 @@ class MetricTests {
                                 .evaluate(
                                         "src/test/resources/smallProject/Foo.java",
                                         CalculationMode.REINER)
-                                .getGraphCoupling())
+                                        .getCoupling().getValue())
                 .isEqualTo(-1.0);
     }
 
@@ -98,17 +108,19 @@ class MetricTests {
                         new Application()
                                 .evaluate(
                                         "src/test/resources/smallProject/", CalculationMode.MARTIN)
-                                .getGraphCoupling())
+                                        .getCoupling().getValue())
                 .isWithin(0.1)
                 .of(0);
         assertThat(
                         new Application()
                                 .evaluate(
                                         "src/test/resources/smallProject/", CalculationMode.REINER)
-                                .getGraphCoupling())
+                                .getCoupling().getValue())
                 .isEqualTo(-1.0);
     }
-
+}
+@Nested
+class Cohesion {
     @Test
     void cohesionTest1() {
         assertThat(
@@ -116,7 +128,7 @@ class MetricTests {
                                 .evaluate(
                                         "src/test/resources/smallProject/Foo.java",
                                         CalculationMode.MARTIN)
-                                .getGraphCohesion())
+                                        .getCohesion().getValue())
                 .isWithin(0.1)
                 .of(1);
         assertThat(
@@ -124,7 +136,7 @@ class MetricTests {
                                 .evaluate(
                                         "src/test/resources/smallProject/Foo.java",
                                         CalculationMode.REINER)
-                                .getGraphCohesion())
+                                        .getCohesion().getValue())
                 .isEqualTo(1.0);
     }
 
@@ -134,16 +146,16 @@ class MetricTests {
                         new Application()
                                 .evaluate(
                                         "src/test/resources/smallProject/", CalculationMode.MARTIN)
-                                .getGraphCohesion())
+                                .getCohesion().getValue())
                 .isWithin(0.1)
                 .of(0.17);
         assertThat(
                         new Application()
                                 .evaluate(
                                         "src/test/resources/smallProject/", CalculationMode.REINER)
-                                .getGraphCohesion())
+                                .getCohesion().getValue())
                 .isWithin(0.1)
                 .of(0.21);
     }
-    */
+}
 }
