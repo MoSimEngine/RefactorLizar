@@ -31,27 +31,27 @@ public class Result {
         this.sizeOfSystem = sos;
     }
 
-    /** @return the cohesion */
+    /** Returns the cohesion */
     public Cohesion getCohesion() {
         return cohesion;
     }
-    /** @return the complexity */
+    /** Returns the complexity */
     public Complexity getComplexity() {
         return complexity;
     }
-    /** @return the coupling */
+    /** Returns the coupling */
     public Coupling getCoupling() {
         return coupling;
     }
-    /** @return the size */
+    /** Returns the size */
     public HyperGraphSize getSize() {
         return size;
     }
-    /** @return the loc */
+    /** Returns the loc */
     public LinesOfCode getLoc() {
         return loc;
     }
-    /** @return the sizeOfSystem */
+    /** Returns the sizeOfSystem */
     public SizeOfSystem getSizeOfSystem() {
         return sizeOfSystem;
     }
