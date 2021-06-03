@@ -1,6 +1,5 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation;
 
-import com.google.common.flogger.FluentLogger;
 import com.google.common.graph.Graph;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.Cohesion;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.Complexity;
@@ -24,17 +23,18 @@ import spoon.reflect.declaration.CtType;
 
 public class Application {
 
-    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-
     @Api
-    public Result evaluate(String path, CalculationMode mode) {
-        return evaluate(path, mode, "", "");
+    public Result evaluate(CalculationMode mode, String... paths) {
+        return evaluate(mode, "", "", paths);
     }
 
     @Api
     public Result evaluate(
-            String path, CalculationMode mode, String dataPatternsPath, String observedSystemPath) {
-        Collection<CtType<?>> types = parseTypes(path);
+            CalculationMode mode,
+            String dataPatternsPath,
+            String observedSystemPath,
+            String... paths) {
+        Collection<CtType<?>> types = parseTypes(paths);
         removeDataTypes(types, dataPatternsPath);
         LinesOfCode loc = calculateLoC(types);
         SizeOfSystem sos = calculateSizeOfSystem(types);
@@ -53,9 +53,11 @@ public class Application {
                         .calculate(SystemGraphs.convertToSystemGraph(graph)));
     }
 
-    private Collection<CtType<?>> parseTypes(String path) {
+    private Collection<CtType<?>> parseTypes(String... paths) {
         Launcher launcher = new Launcher();
-        launcher.addInputResource(path);
+        for (String path : paths) {
+            launcher.addInputResource(path);
+        }
         launcher.getEnvironment().setCommentEnabled(false);
         CtModel model = launcher.buildModel();
         return model.getAllTypes();

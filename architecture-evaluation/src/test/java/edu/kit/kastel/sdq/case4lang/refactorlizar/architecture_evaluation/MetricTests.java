@@ -14,8 +14,8 @@ class MetricTests {
             assertThat(
                             new Application()
                                     .evaluate(
-                                            "src/test/resources/smallProject/Foo.java",
-                                            CalculationMode.MARTIN)
+                                            CalculationMode.MARTIN,
+                                            "src/test/resources/smallProject/Foo.java")
                                     .getSize()
                                     .getValue())
                     .isWithin(0.1)
@@ -23,8 +23,8 @@ class MetricTests {
             assertThat(
                             new Application()
                                     .evaluate(
-                                            "src/test/resources/smallProject/Foo.java",
-                                            CalculationMode.REINER)
+                                            CalculationMode.REINER,
+                                            "src/test/resources/smallProject/Foo.java")
                                     .getSize()
                                     .getValue())
                     .isEqualTo(4.0);
@@ -35,8 +35,8 @@ class MetricTests {
             assertThat(
                             new Application()
                                     .evaluate(
-                                            "src/test/resources/smallProject",
-                                            CalculationMode.MARTIN)
+                                            CalculationMode.MARTIN,
+                                            "src/test/resources/smallProject")
                                     .getSize()
                                     .getValue())
                     .isWithin(0.1)
@@ -44,8 +44,8 @@ class MetricTests {
             assertThat(
                             new Application()
                                     .evaluate(
-                                            "src/test/resources/smallProject",
-                                            CalculationMode.REINER)
+                                            CalculationMode.REINER,
+                                            "src/test/resources/smallProject")
                                     .getSize()
                                     .getValue())
                     .isWithin(0.1)
@@ -60,8 +60,8 @@ class MetricTests {
             assertThat(
                             new Application()
                                     .evaluate(
-                                            "src/test/resources/smallProject/Foo.java",
-                                            CalculationMode.MARTIN)
+                                            CalculationMode.MARTIN,
+                                            "src/test/resources/smallProject/Foo.java")
                                     .getComplexity()
                                     .getValue())
                     .isWithin(0.1)
@@ -69,8 +69,8 @@ class MetricTests {
             assertThat(
                             new Application()
                                     .evaluate(
-                                            "src/test/resources/smallProject/Foo.java",
-                                            CalculationMode.REINER)
+                                            CalculationMode.REINER,
+                                            "src/test/resources/smallProject/Foo.java")
                                     .getComplexity()
                                     .getValue())
                     .isEqualTo(4.0);
@@ -81,8 +81,8 @@ class MetricTests {
             assertThat(
                             new Application()
                                     .evaluate(
-                                            "src/test/resources/smallProject/",
-                                            CalculationMode.MARTIN)
+                                            CalculationMode.MARTIN,
+                                            "src/test/resources/smallProject/")
                                     .getComplexity()
                                     .getValue())
                     .isWithin(0.1)
@@ -90,8 +90,8 @@ class MetricTests {
             assertThat(
                             new Application()
                                     .evaluate(
-                                            "src/test/resources/smallProject/",
-                                            CalculationMode.REINER)
+                                            CalculationMode.REINER,
+                                            "src/test/resources/smallProject/")
                                     .getComplexity()
                                     .getValue())
                     .isEqualTo(4.0);
@@ -105,8 +105,8 @@ class MetricTests {
             assertThat(
                             new Application()
                                     .evaluate(
-                                            "src/test/resources/smallProject/Foo.java",
-                                            CalculationMode.MARTIN)
+                                            CalculationMode.MARTIN,
+                                            "src/test/resources/smallProject/Foo.java")
                                     .getCoupling()
                                     .getValue())
                     .isWithin(0.1)
@@ -114,8 +114,8 @@ class MetricTests {
             assertThat(
                             new Application()
                                     .evaluate(
-                                            "src/test/resources/smallProject/Foo.java",
-                                            CalculationMode.REINER)
+                                            CalculationMode.REINER,
+                                            "src/test/resources/smallProject/Foo.java")
                                     .getCoupling()
                                     .getValue())
                     .isEqualTo(-1.0);
@@ -126,8 +126,8 @@ class MetricTests {
             assertThat(
                             new Application()
                                     .evaluate(
-                                            "src/test/resources/smallProject/",
-                                            CalculationMode.MARTIN)
+                                            CalculationMode.MARTIN,
+                                            "src/test/resources/smallProject/")
                                     .getCoupling()
                                     .getValue())
                     .isWithin(0.1)
@@ -135,8 +135,8 @@ class MetricTests {
             assertThat(
                             new Application()
                                     .evaluate(
-                                            "src/test/resources/smallProject/",
-                                            CalculationMode.REINER)
+                                            CalculationMode.REINER,
+                                            "src/test/resources/smallProject/")
                                     .getCoupling()
                                     .getValue())
                     .isEqualTo(-1.0);
@@ -150,8 +150,8 @@ class MetricTests {
             assertThat(
                             new Application()
                                     .evaluate(
-                                            "src/test/resources/smallProject/Foo.java",
-                                            CalculationMode.MARTIN)
+                                            CalculationMode.MARTIN,
+                                            "src/test/resources/smallProject/Foo.java")
                                     .getCohesion()
                                     .getValue())
                     .isWithin(0.1)
@@ -159,8 +159,8 @@ class MetricTests {
             assertThat(
                             new Application()
                                     .evaluate(
-                                            "src/test/resources/smallProject/Foo.java",
-                                            CalculationMode.REINER)
+                                            CalculationMode.REINER,
+                                            "src/test/resources/smallProject/Foo.java")
                                     .getCohesion()
                                     .getValue())
                     .isEqualTo(1.0);
@@ -171,8 +171,8 @@ class MetricTests {
             assertThat(
                             new Application()
                                     .evaluate(
-                                            "src/test/resources/smallProject/",
-                                            CalculationMode.MARTIN)
+                                            CalculationMode.MARTIN,
+                                            "src/test/resources/smallProject/")
                                     .getCohesion()
                                     .getValue())
                     .isWithin(0.1)
@@ -180,8 +180,8 @@ class MetricTests {
             assertThat(
                             new Application()
                                     .evaluate(
-                                            "src/test/resources/smallProject/",
-                                            CalculationMode.REINER)
+                                            CalculationMode.REINER,
+                                            "src/test/resources/smallProject/")
                                     .getCohesion()
                                     .getValue())
                     .isWithin(0.1)
