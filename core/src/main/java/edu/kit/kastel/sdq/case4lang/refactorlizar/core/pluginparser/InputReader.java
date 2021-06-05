@@ -1,5 +1,6 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.core.pluginparser;
 
+import com.google.common.flogger.FluentLogger;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitOption;
@@ -11,7 +12,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
-import com.google.common.flogger.FluentLogger;
 
 public class InputReader {
     private static final String INFO_FEATURE_FILENAME = "info.feature";
@@ -33,7 +33,6 @@ public class InputReader {
         inputPaths = paths;
     }
 
-
     public Collection<File> findManifestFiles() {
         return findFilesWithNameMatcher(eclipsePluginFileMatcher);
     }
@@ -42,10 +41,13 @@ public class InputReader {
         return path.getFileName().toString().equalsIgnoreCase(MANIFEST_MF_FILENAME)
                 && fileAttributes.isRegularFile();
     }
+
     public Collection<File> findFeatureFiles() {
         return findFilesWithNameMatcher(featureInfoFileMatcher);
     }
-    private Collection<File> findFilesWithNameMatcher(BiPredicate<Path, BasicFileAttributes> fileMatcher) {
+
+    private Collection<File> findFilesWithNameMatcher(
+            BiPredicate<Path, BasicFileAttributes> fileMatcher) {
         Collection<File> result = new ArrayList<>();
         for (String string : inputPaths) {
             try (Stream<Path> files =
@@ -57,13 +59,15 @@ public class InputReader {
                 files.map(Path::toFile).forEach(result::add);
             } catch (IOException e) {
                 logger.atWarning().log(
-                        "Ignoring input path %s  because of IO error. See stacktrace for details. %s",
+                        "Ignoring input path %s because of IO error. See stacktrace for details. %s",
                         string, e.getMessage());
             }
         }
         return result;
     }
+
     private boolean isFeatureFile(Path path, BasicFileAttributes fileAttributes) {
         return path.getFileName().toString().equalsIgnoreCase(INFO_FEATURE_FILENAME)
                 && fileAttributes.isRegularFile();
-    }}
+    }
+}
