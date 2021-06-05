@@ -32,8 +32,8 @@ public class DependencyGraphSupplier {
     private static MutableNetwork<Component, Edge<Component, CtPackage>> componentGraph;
 
     /** Returns the type graph */
-    public static synchronized MutableNetwork<CtType<?>, Edge<CtType<?>, CtTypeMember>> getTypeGraph(
-            ModularLanguage language, SimulatorModel model) {
+    public static synchronized MutableNetwork<CtType<?>, Edge<CtType<?>, CtTypeMember>>
+            getTypeGraph(ModularLanguage language, SimulatorModel model) {
         if (checkIfCacheIsStale(model, language) && graphIsPresent(typeGraph)) {
             LOGGER.atInfo().log(REUSING_GRAPH);
             return Graphs.copyOf(typeGraph);
@@ -45,8 +45,8 @@ public class DependencyGraphSupplier {
     }
 
     /** Returns the package graph */
-    public static synchronized MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> getPackageGraph(
-            ModularLanguage language, SimulatorModel model) {
+    public static synchronized MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>>
+            getPackageGraph(ModularLanguage language, SimulatorModel model) {
         if (checkIfCacheIsStale(model, language) && graphIsPresent(packageGraph)) {
             LOGGER.atInfo().log(REUSING_GRAPH);
             return Graphs.copyOf(packageGraph);
@@ -58,8 +58,8 @@ public class DependencyGraphSupplier {
     }
 
     /** Returns the component graph */
-    public static synchronized MutableNetwork<Component, Edge<Component, CtPackage>> getComponentGraph(
-            ModularLanguage language, SimulatorModel model) {
+    public static synchronized MutableNetwork<Component, Edge<Component, CtPackage>>
+            getComponentGraph(ModularLanguage language, SimulatorModel model) {
         if (checkIfCacheIsStale(model, language) && graphIsPresent(componentGraph)) {
             LOGGER.atInfo().log(REUSING_GRAPH);
             return Graphs.copyOf(componentGraph);
