@@ -37,7 +37,7 @@ public class FeatureFile implements IMetaInformation {
 
     @Override
     public int hashCode() {
-        return Objects.hash(filePath, layerName);
+        return Objects.hash(filePath, layerName, "");
     }
 
     @Override
