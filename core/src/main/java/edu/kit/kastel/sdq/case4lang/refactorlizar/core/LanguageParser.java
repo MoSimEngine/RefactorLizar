@@ -13,12 +13,17 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import spoon.reflect.declaration.CtPackage;
+import spoon.reflect.declaration.CtType;
+import spoon.reflect.visitor.filter.TypeFilter;
 
 public class LanguageParser {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
+
+    private LanguageParser() {}
 
     public static ModularLanguage parseLanguage(String path, InputKind kind) {
         switch (kind) {
@@ -32,28 +37,62 @@ public class LanguageParser {
     }
 
     private static ModularLanguage parseLanguageFeatureFile(String inputPath) {
-        return parse(inputPath, path -> new MetaInformationParser().analyzeFeatureFiles(path));
+        return parseFeatureFile(inputPath);
     }
 
-    private static ModularLanguage parse(
-            String path, Function<String, Collection<IMetaInformation>> metaInformationParser) {
+    private static ModularLanguage parseEmfFile(String path) {
         Collection<CtPackage> javaPackages = buildJavaPackages(path);
-        Collection<IMetaInformation> featureFiles = metaInformationParser.apply(path);
+        MetaInformationParser parser = new MetaInformationParser();
+        Collection<IMetaInformation> emfFiles = parser.analyzeEmfFiles(path);
         Map<String, CtPackage> packageByQName = convertPackagesToMap(javaPackages);
-        Set<Component> languageComponents = new HashSet<>();
-        for (IMetaInformation featureFile : featureFiles) {
-            CtPackage bundlePackage = packageByQName.get(featureFile.getSimpleName());
-            if (bundlePackage == null) {
+        Set<Component> Components = new HashSet<>();
+        for (IMetaInformation featureFile : emfFiles) {
+            CtPackage packag = packageByQName.get(featureFile.getSimpleName());
+            if (packag == null) {
                 logger.atWarning().log("ignoring bundle %s", featureFile);
                 continue;
             }
-            languageComponents.add(new Component(bundlePackage, featureFile));
+            Components.add(new Component(packag, featureFile));
         }
-        return new ModularLanguage(languageComponents);
+        return new ModularLanguage(Components);
     }
 
     private static ModularLanguage parseLanguageEclipsePlugin(String inputPath) {
-        return parse(inputPath, path -> new MetaInformationParser().analyzeEmfFiles(path));
+        return parseEmfFile(inputPath);
+    }
+
+    private static ModularLanguage parseFeatureFile(String path) {
+        Collection<CtPackage> javaPackages = buildJavaPackages(path);
+        MetaInformationParser parser = new MetaInformationParser();
+        Collection<IMetaInformation> featureFiles = parser.analyzeFeatureFiles(path);
+        Map<Path, CtPackage> packageByPath = convertPackagesToPathMap(javaPackages);
+        Set<Component> components = new HashSet<>();
+        for (IMetaInformation featureFile : featureFiles) {
+            Optional<Entry<Path, CtPackage>> entry =
+                    packageByPath.entrySet().stream()
+                            .filter(v -> findMatchingPath(featureFile, v))
+                            .min(
+                                    (o1, o2) ->
+                                            Integer.compare(
+                                                    getLengthFofPath(o1), getLengthFofPath(o2)));
+            if (entry.isEmpty()) {
+                logger.atWarning().log("ignoring bundle %s", featureFile);
+                continue;
+            }
+            var bundlePackage = entry.get().getValue();
+            packageByPath.remove(entry.get().getKey());
+            components.add(new Component(bundlePackage, featureFile));
+        }
+        return new ModularLanguage(components);
+    }
+
+    private static boolean findMatchingPath(
+            IMetaInformation featureFile, Entry<Path, CtPackage> v) {
+        return v.getKey().toString().contains(featureFile.getFilePath().getParent().toString());
+    }
+
+    private static int getLengthFofPath(Entry<Path, CtPackage> entry) {
+        return entry.getKey().toString().length();
     }
 
     private static Collection<CtPackage> buildJavaPackages(String path) {
@@ -72,12 +111,19 @@ public class LanguageParser {
             Collection<CtPackage> javaPackages) {
         // we dont need a merge function here, because we have 0 duplicates
         return javaPackages.stream()
-                .filter(v -> v.getPosition().getFile() != null)
-                .collect(
-                        toMap(
-                                v -> v.getPosition().getFile().toPath(),
-                                v -> v,
-                                (v, w) -> v,
-                                HashMap::new));
+                .collect(toMap(v -> getPath(v), v -> v, (v, w) -> v, HashMap::new));
+    }
+
+    private static Path getPath(CtPackage packag) {
+        var typeInRoot =
+                packag.getElements(new TypeFilter<>(CtType.class)).stream()
+                        .filter(type -> type.getPosition().isValidPosition())
+                        .min((o1, o2) -> Integer.compare(getPathLength(o1), getPathLength(o2)));
+        return Path.of(typeInRoot.map(v -> v.getPosition().getFile().getPath()).orElse(""))
+                .getParent();
+    }
+
+    private static int getPathLength(CtType<?> type) {
+        return type.getPosition().getFile().getPath().length();
     }
 }

@@ -19,7 +19,7 @@ public class FeatureFileParser implements IMetaInformationParser {
         Gson gson = new Gson();
         try (Stream<String> lines = Files.lines(featureFile)) {
             String json = lines.collect(Collectors.joining("\n"));
-            String layer = gson.fromJson(json, FeatureFileJson.class).layer;
+            String layer = gson.fromJson(json, FeatureFileJson.class).Layer;
             if (layer.isBlank()) {
                 layer = "UNKNOWN";
             }
@@ -31,6 +31,6 @@ public class FeatureFileParser implements IMetaInformationParser {
     }
 
     static class FeatureFileJson {
-        private String layer;
+        private String Layer;
     }
 }
