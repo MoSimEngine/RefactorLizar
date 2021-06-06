@@ -1,6 +1,8 @@
 plugins {
 	id "com.diffplug.spotless" version "5.12.5"
 	id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions'
+	id "application"
+	id "maven-publish"
 }
 
 repositories {
@@ -13,12 +15,12 @@ repositories {
 	}
 }
 
-apply plugin: 'application'
-mainClassName = 'edu.kit.kastel.sdq.case4lang.refactorlizar.core.RefactorLizar'
+application {
+	mainClassName = 'edu.kit.kastel.sdq.case4lang.refactorlizar.core.RefactorLizar'
+}
 apply plugin: 'com.github.johnrengelman.shadow'
 version = "0.0.2"
 
-apply plugin: 'maven-publish'
 publishing {
 	repositories {
 		maven {
@@ -62,13 +64,6 @@ dependencies {
 	implementation project(':dependency-direction')
 	implementation project(':language-blob')
 	implementation project(":class-split")
-}
-jar {
-	manifest {
-		attributes(
-				'Main-Class': 'edu.kit.kastel.sdq.case4lang.refactorlizar.core.RefactorLizar'
-				)
-	}
 }
 shadowJar {
 	mergeServiceFiles()
