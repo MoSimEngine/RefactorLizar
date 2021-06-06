@@ -15,6 +15,7 @@ public class FeatureFileParser implements IMetaInformationParser {
 
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
+    @Override
     public Optional<IMetaInformation> parse(Path featureFile) {
         Gson gson = new Gson();
         try (Stream<String> lines = Files.lines(featureFile)) {
