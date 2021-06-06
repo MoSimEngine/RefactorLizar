@@ -1,5 +1,6 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.core.pluginparser;
 
+import com.google.common.collect.Lists;
 import com.google.common.flogger.FluentLogger;
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +32,10 @@ public class InputReader {
 
     public InputReader(Collection<String> paths) {
         inputPaths = paths;
+    }
+
+    public InputReader(Iterable<String> paths) {
+        this(Lists.newArrayList(paths));
     }
 
     public Collection<File> findManifestFiles() {
