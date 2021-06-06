@@ -12,7 +12,6 @@ dependencies {
 	implementation 'com.google.code.gson:gson:+'
 }
 application {
-	mainClass = 'edu.kit.kastel.sdq.case4lang.refactorlizar.core.RefactorLizar'
 	mainClassName 'edu.kit.kastel.sdq.case4lang.refactorlizar.core.RefactorLizar'
 }
 description = 'core'
@@ -33,12 +32,4 @@ runtime {
 		'--no-header-files',
 		'--no-man-pages'
 	]
-}
-
-task unzip(type: Copy) {
-	def zipFile = file('build/distributions/refactorlizar-1.0-SNAPSHOT.zip')
-	def outputDir = file("${rootDir}")
-
-	from zipTree(zipFile)
-	into outputDir
 }
