@@ -52,7 +52,4 @@ tasks.withType(JavaCompile) {
 }
 test {
 	useJUnitPlatform()
-  testLogging {
-        showStandardStreams = true
-    }
 }
