@@ -32,8 +32,8 @@ public class DependencyGraphSupplier {
     private static MutableNetwork<Component, Edge<Component, CtPackage>> componentGraph;
 
     /** Returns the type graph */
-    public static MutableNetwork<CtType<?>, Edge<CtType<?>, CtTypeMember>> getTypeGraph(
-            ModularLanguage language, SimulatorModel model) {
+    public static synchronized MutableNetwork<CtType<?>, Edge<CtType<?>, CtTypeMember>>
+            getTypeGraph(ModularLanguage language, SimulatorModel model) {
         if (checkIfCacheIsStale(model, language) && graphIsPresent(typeGraph)) {
             LOGGER.atInfo().log(REUSING_GRAPH);
             return Graphs.copyOf(typeGraph);
@@ -45,8 +45,8 @@ public class DependencyGraphSupplier {
     }
 
     /** Returns the package graph */
-    public static MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> getPackageGraph(
-            ModularLanguage language, SimulatorModel model) {
+    public static synchronized MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>>
+            getPackageGraph(ModularLanguage language, SimulatorModel model) {
         if (checkIfCacheIsStale(model, language) && graphIsPresent(packageGraph)) {
             LOGGER.atInfo().log(REUSING_GRAPH);
             return Graphs.copyOf(packageGraph);
@@ -58,8 +58,8 @@ public class DependencyGraphSupplier {
     }
 
     /** Returns the component graph */
-    public static MutableNetwork<Component, Edge<Component, CtPackage>> getComponentGraph(
-            ModularLanguage language, SimulatorModel model) {
+    public static synchronized MutableNetwork<Component, Edge<Component, CtPackage>>
+            getComponentGraph(ModularLanguage language, SimulatorModel model) {
         if (checkIfCacheIsStale(model, language) && graphIsPresent(componentGraph)) {
             LOGGER.atInfo().log(REUSING_GRAPH);
             return Graphs.copyOf(componentGraph);
@@ -94,7 +94,7 @@ public class DependencyGraphSupplier {
     }
 
     private static boolean checkIfCacheIsStale(SimulatorModel model, ModularLanguage language) {
-        return checkIfLanguageIsSame(language) || checkIfSimulatorIsSame(model);
+        return checkIfLanguageIsSame(language) && checkIfSimulatorIsSame(model);
     }
 
     private boolean isInnerClass(CtTypeMember member, CtType<?> type) {
@@ -160,7 +160,7 @@ public class DependencyGraphSupplier {
         return graph;
     }
 
-    public MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> createPackageGraph(
+    private MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> createPackageGraph(
             ModularLanguage language, SimulatorModel model) {
         MutableNetwork<CtPackage, Edge<CtPackage, CtType<?>>> graph =
                 NetworkBuilder.directed().allowsParallelEdges(true).build();
@@ -193,7 +193,7 @@ public class DependencyGraphSupplier {
         return graph;
     }
 
-    public MutableNetwork<Component, Edge<Component, CtPackage>> createComponentGraph(
+    private MutableNetwork<Component, Edge<Component, CtPackage>> createComponentGraph(
             ModularLanguage language, SimulatorModel model) {
         MutableNetwork<Component, Edge<Component, CtPackage>> graph =
                 NetworkBuilder.directed().allowsParallelEdges(true).build();

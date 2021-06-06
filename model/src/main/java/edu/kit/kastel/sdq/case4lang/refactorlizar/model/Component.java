@@ -6,17 +6,17 @@ import spoon.reflect.declaration.CtPackage;
 public class Component {
 
     private CtPackage javaPackage;
-    private Bundle bundle;
+    private IMetaInformation metaInformation;
 
     /**
-     * Creates a new simulator component for the given package and bundle.
+     * Create a new component for the given package and metaInformation.
      *
-     * @param javaPackage a java package containing the source
-     * @param bundle a bundle containing the meta information
+     * @param javaPackage the java files
+     * @param metaInformation meta informations containing layer and path
      */
-    public Component(CtPackage javaPackage, Bundle bundle) {
+    public Component(CtPackage javaPackage, IMetaInformation metaInformation) {
         this.javaPackage = javaPackage;
-        this.bundle = bundle;
+        this.metaInformation = metaInformation;
     }
 
     /** Returns the java package */
@@ -27,18 +27,20 @@ public class Component {
     /**
      * Returns the component name
      *
-     * @see edu.kit.kastel.sdq.case4lang.refactorlizar.model.Bundle#getName()
+     * @see edu.kit.kastel.sdq.case4lang.refactorlizar.model.IMetaInformation#getName()
      */
     public String getName() {
-        return bundle.getName();
+        return metaInformation.getName().isBlank()
+                ? javaPackage.getSimpleName()
+                : metaInformation.getName();
     }
     /**
      * Returns the layer name of the given simulator feature or UNKNOWN if it`s not set.
      *
-     * @see edu.kit.kastel.sdq.case4lang.refactorlizar.model.Bundle#getLayer()
+     * @see edu.kit.kastel.sdq.case4lang.refactorlizar.model.IMetaInformation#getLayer()
      */
     public String getLayer() {
-        return bundle.getLayer();
+        return metaInformation.getLayer();
     }
 
     /**
@@ -48,7 +50,7 @@ public class Component {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(bundle, javaPackage);
+        return Objects.hash(metaInformation, javaPackage);
     }
 
     /**
@@ -61,7 +63,7 @@ public class Component {
         if (this == obj) return true;
         if (!(obj instanceof Component)) return false;
         Component other = (Component) obj;
-        return Objects.equals(bundle, other.bundle)
+        return Objects.equals(metaInformation, other.metaInformation)
                 && Objects.equals(javaPackage, other.javaPackage);
     }
 
@@ -72,6 +74,10 @@ public class Component {
      */
     @Override
     public String toString() {
-        return "Component [bundle=" + bundle + ", javaPackage=" + javaPackage + "]";
+        return "Component [MetaInformation="
+                + metaInformation
+                + ", javaPackage="
+                + javaPackage
+                + "]";
     }
 }

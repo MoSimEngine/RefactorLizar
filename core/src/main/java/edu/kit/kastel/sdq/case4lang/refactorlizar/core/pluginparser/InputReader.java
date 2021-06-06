@@ -14,13 +14,16 @@ import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 public class InputReader {
+    private static final String INFO_FEATURE_FILENAME = "info.feature";
+
     private static final String MANIFEST_MF_FILENAME = "MANIFEST.mf";
 
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
     private Collection<String> inputPaths;
     private BiPredicate<Path, BasicFileAttributes> filter = (a, b) -> true;
-    private BiPredicate<Path, BasicFileAttributes> nameMatcher = this::isManifestFile;
+    private BiPredicate<Path, BasicFileAttributes> eclipsePluginFileMatcher = this::isManifestFile;
+    private BiPredicate<Path, BasicFileAttributes> featureInfoFileMatcher = this::isFeatureFile;
 
     public InputReader(String... paths) {
         this(Arrays.asList(paths));
@@ -30,34 +33,41 @@ public class InputReader {
         inputPaths = paths;
     }
 
-    public InputReader(
-            Collection<BiPredicate<Path, BasicFileAttributes>> filter, Collection<String> paths) {
-        this(paths);
-        // combine filter
-        filter.forEach(v -> this.filter = this.filter.and(v));
+    public Collection<File> findManifestFiles() {
+        return findFilesWithNameMatcher(eclipsePluginFileMatcher);
     }
 
-    public Collection<File> findManifestFiles() {
-        Collection<File> manifestFiles = new ArrayList<>();
+    private boolean isManifestFile(Path path, BasicFileAttributes fileAttributes) {
+        return path.getFileName().toString().equalsIgnoreCase(MANIFEST_MF_FILENAME)
+                && fileAttributes.isRegularFile();
+    }
+
+    public Collection<File> findFeatureFiles() {
+        return findFilesWithNameMatcher(featureInfoFileMatcher);
+    }
+
+    private Collection<File> findFilesWithNameMatcher(
+            BiPredicate<Path, BasicFileAttributes> fileMatcher) {
+        Collection<File> result = new ArrayList<>();
         for (String string : inputPaths) {
             try (Stream<Path> files =
                     Files.find(
                             Path.of(string),
                             Integer.MAX_VALUE,
-                            nameMatcher.and(filter),
+                            fileMatcher.and(filter),
                             FileVisitOption.FOLLOW_LINKS)) {
-                files.map(Path::toFile).forEach(manifestFiles::add);
+                files.map(Path::toFile).forEach(result::add);
             } catch (IOException e) {
                 logger.atWarning().log(
-                        "Ignoring input path %s  because of IO error. See stacktrace for details. %s",
-                        string, e.getCause());
+                        "Ignoring input path %s because of IO error. See stacktrace for details. %s",
+                        string, e.getMessage());
             }
         }
-        return manifestFiles;
+        return result;
     }
 
-    private boolean isManifestFile(Path path, BasicFileAttributes fileAttributes) {
-        return path.getFileName().toString().equalsIgnoreCase(MANIFEST_MF_FILENAME)
+    private boolean isFeatureFile(Path path, BasicFileAttributes fileAttributes) {
+        return path.getFileName().toString().equalsIgnoreCase(INFO_FEATURE_FILENAME)
                 && fileAttributes.isRegularFile();
     }
 }

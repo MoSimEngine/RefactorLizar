@@ -4,6 +4,7 @@ import com.google.common.truth.Truth;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.api.Report;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.analyzer.featurescatter.FeatureScatterAnalyzer;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.Settings;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.core.InputKind;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.core.LanguageParser;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.core.SimulatorParser;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
@@ -14,8 +15,12 @@ public class SimpleTest {
 
     @Test
     public void typeLevelReport() {
-        ModularLanguage lang = LanguageParser.parseLanguage("src/test/resources/modular-language");
-        SimulatorModel model = SimulatorParser.parseSimulator("src/test/resources/simulator");
+        ModularLanguage lang =
+                LanguageParser.parseLanguage(
+                        "src/test/resources/modular-language", InputKind.ECLIPSE_PLUGIN);
+        SimulatorModel model =
+                SimulatorParser.parseSimulator(
+                        "src/test/resources/simulator", InputKind.ECLIPSE_PLUGIN);
         FeatureScatterAnalyzer fca = new FeatureScatterAnalyzer();
         Settings settings = fca.getSettings();
         settings.setValue("level", "type");
@@ -26,8 +31,12 @@ public class SimpleTest {
 
     @Test
     public void packageLevelReport() {
-        ModularLanguage lang = LanguageParser.parseLanguage("src/test/resources/modular-language");
-        SimulatorModel model = SimulatorParser.parseSimulator("src/test/resources/simulator");
+        ModularLanguage lang =
+                LanguageParser.parseLanguage(
+                        "src/test/resources/modular-language", InputKind.ECLIPSE_PLUGIN);
+        SimulatorModel model =
+                SimulatorParser.parseSimulator(
+                        "src/test/resources/simulator", InputKind.ECLIPSE_PLUGIN);
         FeatureScatterAnalyzer fca = new FeatureScatterAnalyzer();
         Settings settings = fca.getSettings();
         settings.setValue("level", "package");
@@ -38,8 +47,12 @@ public class SimpleTest {
 
     @Test
     public void componentLevelReport() {
-        ModularLanguage lang = LanguageParser.parseLanguage("src/test/resources/modular-language");
-        SimulatorModel model = SimulatorParser.parseSimulator("src/test/resources/simulator");
+        ModularLanguage lang =
+                LanguageParser.parseLanguage(
+                        "src/test/resources/modular-language", InputKind.ECLIPSE_PLUGIN);
+        SimulatorModel model =
+                SimulatorParser.parseSimulator(
+                        "src/test/resources/simulator", InputKind.ECLIPSE_PLUGIN);
         FeatureScatterAnalyzer fca = new FeatureScatterAnalyzer();
         Settings settings = fca.getSettings();
         settings.setValue("level", "component");
