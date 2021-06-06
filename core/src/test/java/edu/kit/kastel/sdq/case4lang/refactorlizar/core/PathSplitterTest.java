@@ -11,6 +11,8 @@ public class PathSplitterTest {
         Path simulatorPath = Path.of("src/test/resources/simulatorInLanguage/SimuA");
         Path languagePath = Path.of("src/test/resources/simulatorInLanguage");
         var splitter = new PathSplitter(simulatorPath, languagePath).simulatorInLanguage().split();
+        splitter.getLanguagePaths().forEach(System.out::println);
+        splitter.getSimulatorPaths().forEach(System.out::println);
         assertThat(splitter.getLanguagePaths()).hasSize(4);
         assertThat(splitter.getSimulatorPaths()).hasSize(1);
     }
