@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  */
 public class MetaInformationParser {
 
-    public Collection<IMetaInformation> analyzeFeatureFiles(String... paths) {
+    public Collection<IMetaInformation> analyzeFeatureFiles(Iterable<String> paths) {
         InputReader reader = new InputReader(paths);
         IMetaInformationParser parser = new FeatureFileParser();
         return reader.findFeatureFiles().stream()
@@ -22,7 +22,7 @@ public class MetaInformationParser {
                 .collect(Collectors.toList());
     }
 
-    public Collection<IMetaInformation> analyzeEmfFiles(String... paths) {
+    public Collection<IMetaInformation> analyzeEmfFiles(Iterable<String> paths) {
         InputReader reader = new InputReader(paths);
         IMetaInformationParser parser = new EmfFileParser();
         return reader.findManifestFiles().stream()

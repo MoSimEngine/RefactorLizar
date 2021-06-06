@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -26,45 +27,49 @@ public class LanguageParser {
     private LanguageParser() {}
 
     public static ModularLanguage parseLanguage(String path, InputKind kind) {
+        return parseLanguage(List.of(path), kind);
+    }
+
+    public static ModularLanguage parseLanguage(Iterable<String> paths, InputKind kind) {
         switch (kind) {
             case ECLIPSE_PLUGIN:
-                return parseLanguageEclipsePlugin(path);
+                return parseLanguageEclipsePlugin(paths);
             case FEATURE_FILE:
-                return parseLanguageFeatureFile(path);
+                return parseLanguageFeatureFile(paths);
             default:
                 throw new IllegalArgumentException(String.format("Kind %s not implemented", kind));
         }
     }
 
-    private static ModularLanguage parseLanguageFeatureFile(String inputPath) {
-        return parseFeatureFile(inputPath);
+    private static ModularLanguage parseLanguageFeatureFile(Iterable<String> inputPaths) {
+        return parseFeatureFile(inputPaths);
     }
 
-    private static ModularLanguage parseEmfFile(String path) {
-        Collection<CtPackage> javaPackages = buildJavaPackages(path);
+    private static ModularLanguage parseEmfFile(Iterable<String> paths) {
+        Collection<CtPackage> javaPackages = buildJavaPackages(paths);
         MetaInformationParser parser = new MetaInformationParser();
-        Collection<IMetaInformation> emfFiles = parser.analyzeEmfFiles(path);
+        Collection<IMetaInformation> emfFiles = parser.analyzeEmfFiles(paths);
         Map<String, CtPackage> packageByQName = convertPackagesToMap(javaPackages);
-        Set<Component> Components = new HashSet<>();
+        Set<Component> components = new HashSet<>();
         for (IMetaInformation featureFile : emfFiles) {
             CtPackage packag = packageByQName.get(featureFile.getSimpleName());
             if (packag == null) {
                 logger.atWarning().log("ignoring bundle %s", featureFile);
                 continue;
             }
-            Components.add(new Component(packag, featureFile));
+            components.add(new Component(packag, featureFile));
         }
-        return new ModularLanguage(Components);
+        return new ModularLanguage(components);
     }
 
-    private static ModularLanguage parseLanguageEclipsePlugin(String inputPath) {
-        return parseEmfFile(inputPath);
+    private static ModularLanguage parseLanguageEclipsePlugin(Iterable<String> inputPaths) {
+        return parseEmfFile(inputPaths);
     }
 
-    private static ModularLanguage parseFeatureFile(String path) {
-        Collection<CtPackage> javaPackages = buildJavaPackages(path);
+    private static ModularLanguage parseFeatureFile(Iterable<String> paths) {
+        Collection<CtPackage> javaPackages = buildJavaPackages(paths);
         MetaInformationParser parser = new MetaInformationParser();
-        Collection<IMetaInformation> featureFiles = parser.analyzeFeatureFiles(path);
+        Collection<IMetaInformation> featureFiles = parser.analyzeFeatureFiles(paths);
         Map<Path, CtPackage> packageByPath = convertPackagesToPathMap(javaPackages);
         Set<Component> components = new HashSet<>();
         for (IMetaInformation featureFile : featureFiles) {
@@ -95,9 +100,9 @@ public class LanguageParser {
         return entry.getKey().toString().length();
     }
 
-    private static Collection<CtPackage> buildJavaPackages(String path) {
+    private static Collection<CtPackage> buildJavaPackages(Iterable<String> paths) {
         ModelBuilder builder = new ModelBuilder();
-        builder.buildModel(path);
+        builder.buildModel(paths);
         return builder.getAllPackages();
     }
 

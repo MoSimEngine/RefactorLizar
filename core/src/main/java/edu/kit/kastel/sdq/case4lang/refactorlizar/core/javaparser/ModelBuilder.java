@@ -17,20 +17,22 @@ public class ModelBuilder {
     private CtModel model;
     private Launcher launcher;
 
-    public void buildModel(String path) {
-        logger.atInfo().log("start building model for path %s", path);
+    public void buildModel(Iterable<String> paths) {
+        logger.atInfo().log("start building model for path %s", paths);
         launcher = new Launcher();
         Environment env = launcher.getEnvironment();
         env.setComplianceLevel(11);
         env.setOutputType(OutputType.NO_OUTPUT);
         env.setNoClasspath(true);
         env.setShouldCompile(false);
-        launcher.addInputResource(path);
+        for (String path : paths) {
+            launcher.addInputResource(path);
+        }
         launcher.getEnvironment().setSpoonProgress(new SpoonProgressImplementation());
         model = launcher.buildModel();
         logger.atInfo().log(
                 "finished building model for path %s, with model size: %d, in %d packages",
-                path, model.getAllTypes().size(), model.getAllPackages().size());
+                paths, model.getAllTypes().size(), model.getAllPackages().size());
     }
 
     public Launcher getLauncher() {
