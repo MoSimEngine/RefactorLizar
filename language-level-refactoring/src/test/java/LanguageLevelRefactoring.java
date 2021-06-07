@@ -18,7 +18,6 @@ public class LanguageLevelRefactoring {
         ModularLanguage lang =
                 LanguageParser.parseLanguage("src/test/resources/TestProject/demo/src/main/java/com/example/instance/paradigm/letters", InputKind.FEATURE_FILE);
         assertTrue(lang.getLanguageComponents().size() > 0);
-        LOGGER.atInfo().log("START");
         lang.getLanguageComponents().stream().forEach(component -> {
             component.getJavaPackage().getTypes().forEach(type -> {
                 LOGGER.atInfo().log("####################" + type.getQualifiedName());
