@@ -65,36 +65,20 @@ public class SimulatorParser {
     private static SimulatorModel parseSimulatorFeatureFile(Iterable<String> paths) {
         Collection<CtPackage> javaPackages = buildJavaPackages(paths);
         MetaInformationParser parser = new MetaInformationParser();
-        Collection<IMetaInformation> featureFiles = parser.analyzeFeatureFiles(paths);
-        Map<Path, CtPackage> packageByPath = convertPackagesToPathMap(javaPackages);
+        Collection<IMetaInformation> emfFiles = parser.analyzeFeatureFiles(paths);
+        Map<String, CtPackage> packageByQName = convertPackagesToMap(javaPackages);
         Set<Component> components = new HashSet<>();
-        for (IMetaInformation featureFile : featureFiles) {
-            Optional<Entry<Path, CtPackage>> entry =
-                    packageByPath.entrySet().stream()
-                            .filter(v -> findMatchingPath(featureFile, v))
-                            .min(
-                                    (o1, o2) ->
-                                            Integer.compare(
-                                                    getLengthFofPath(o1), getLengthFofPath(o2)));
-            if (entry.isEmpty()) {
+        for (IMetaInformation featureFile : emfFiles) {
+            CtPackage packag = packageByQName.get(featureFile.getName());
+            if (packag == null) {
                 logger.atWarning().log("ignoring bundle %s", featureFile);
                 continue;
             }
-            var bundlePackage = entry.get().getValue();
-            packageByPath.remove(entry.get().getKey());
-            components.add(new Component(bundlePackage, featureFile));
+            components.add(new Component(packag, featureFile));
         }
         return new SimulatorModel(components, builder.getLauncher());
     }
 
-    private static boolean findMatchingPath(
-            IMetaInformation featureFile, Entry<Path, CtPackage> v) {
-        return v.getKey().toString().contains(featureFile.getFilePath().getParent().toString());
-    }
-
-    private static int getLengthFofPath(Entry<Path, CtPackage> entry) {
-        return entry.getKey().toString().length();
-    }
 
     private static SimulatorModel parseEmfFile(Iterable<String> paths) {
         Collection<CtPackage> javaPackages = buildJavaPackages(paths);
@@ -117,23 +101,5 @@ public class SimulatorParser {
         return parseEmfFile(inputPaths);
     }
 
-    private static Map<Path, CtPackage> convertPackagesToPathMap(
-            Collection<CtPackage> javaPackages) {
-        // we dont need a merge function here, because we have 0 duplicates
-        return javaPackages.stream()
-                .collect(toMap(v -> getPath(v), v -> v, (v, w) -> v, HashMap::new));
-    }
 
-    private static Path getPath(CtPackage packag) {
-        var typeInRoot =
-                packag.getElements(new TypeFilter<>(CtType.class)).stream()
-                        .filter(type -> type.getPosition().isValidPosition())
-                        .min((o1, o2) -> Integer.compare(getPathLength(o1), getPathLength(o2)));
-        return Path.of(typeInRoot.map(v -> v.getPosition().getFile().getPath()).orElse(""))
-                .getParent();
-    }
-
-    private static int getPathLength(CtType<?> type) {
-        return type.getPosition().getFile().getPath().length();
-    }
 }

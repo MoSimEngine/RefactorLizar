@@ -9,10 +9,12 @@ public class FeatureFile implements IMetaInformation {
 
     private Path filePath;
     private String layerName;
+    private String name;
 
-    public FeatureFile(Path filePath, String layerName) {
+    public FeatureFile(Path filePath, String layerName, String name) {
         this.filePath = Objects.requireNonNull(filePath);
         this.layerName = Objects.requireNonNull(layerName);
+        this.name = Objects.requireNonNull(name);
     }
 
     @Override
@@ -22,7 +24,7 @@ public class FeatureFile implements IMetaInformation {
 
     @Override
     public String getName() {
-        return "";
+        return name;
     }
 
     @Override

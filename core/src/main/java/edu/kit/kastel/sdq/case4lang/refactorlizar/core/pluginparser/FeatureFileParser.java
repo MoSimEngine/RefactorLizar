@@ -21,10 +21,11 @@ public class FeatureFileParser implements IMetaInformationParser {
         try (Stream<String> lines = Files.lines(featureFile)) {
             String json = lines.collect(Collectors.joining("\n"));
             String layer = gson.fromJson(json, FeatureFileJson.class).Layer;
+            String name = gson.fromJson(json, FeatureFileJson.class).Name;
             if (layer.isBlank()) {
                 layer = "UNKNOWN";
             }
-            return Optional.of(new FeatureFile(featureFile, layer));
+            return Optional.of(new FeatureFile(featureFile, layer, name));
         } catch (IOException | JsonSyntaxException e) {
             logger.atWarning().withCause(e).log();
             return Optional.empty();
@@ -33,5 +34,7 @@ public class FeatureFileParser implements IMetaInformationParser {
 
     static class FeatureFileJson {
         private String Layer;
+        private String Name;
+        private String SimpleName;
     }
 }

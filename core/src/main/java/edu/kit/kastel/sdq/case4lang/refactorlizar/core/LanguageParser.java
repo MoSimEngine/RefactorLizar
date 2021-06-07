@@ -70,34 +70,17 @@ public class LanguageParser {
         Collection<CtPackage> javaPackages = buildJavaPackages(paths);
         MetaInformationParser parser = new MetaInformationParser();
         Collection<IMetaInformation> featureFiles = parser.analyzeFeatureFiles(paths);
-        Map<Path, CtPackage> packageByPath = convertPackagesToPathMap(javaPackages);
+        Map<String, CtPackage> packageByQName = convertPackagesToMap(javaPackages);
         Set<Component> components = new HashSet<>();
         for (IMetaInformation featureFile : featureFiles) {
-            Optional<Entry<Path, CtPackage>> entry =
-                    packageByPath.entrySet().stream()
-                            .filter(v -> findMatchingPath(featureFile, v))
-                            .min(
-                                    (o1, o2) ->
-                                            Integer.compare(
-                                                    getLengthFofPath(o1), getLengthFofPath(o2)));
-            if (entry.isEmpty()) {
+            CtPackage packag = packageByQName.get(featureFile.getName());
+            if (packag == null) {
                 logger.atWarning().log("ignoring bundle %s", featureFile);
                 continue;
             }
-            var bundlePackage = entry.get().getValue();
-            packageByPath.remove(entry.get().getKey());
-            components.add(new Component(bundlePackage, featureFile));
+            components.add(new Component(packag, featureFile));
         }
         return new ModularLanguage(components);
-    }
-
-    private static boolean findMatchingPath(
-            IMetaInformation featureFile, Entry<Path, CtPackage> v) {
-        return v.getKey().toString().contains(featureFile.getFilePath().getParent().toString());
-    }
-
-    private static int getLengthFofPath(Entry<Path, CtPackage> entry) {
-        return entry.getKey().toString().length();
     }
 
     private static Collection<CtPackage> buildJavaPackages(Iterable<String> paths) {
@@ -109,26 +92,6 @@ public class LanguageParser {
     private static Map<String, CtPackage> convertPackagesToMap(Collection<CtPackage> javaPackages) {
         // we dont need a merge function here, because we have 0 duplicates
         return javaPackages.stream()
-                .collect(toMap(CtPackage::getSimpleName, v -> v, (v, w) -> v, HashMap::new));
-    }
-
-    private static Map<Path, CtPackage> convertPackagesToPathMap(
-            Collection<CtPackage> javaPackages) {
-        // we dont need a merge function here, because we have 0 duplicates
-        return javaPackages.stream()
-                .collect(toMap(v -> getPath(v), v -> v, (v, w) -> v, HashMap::new));
-    }
-
-    private static Path getPath(CtPackage packag) {
-        var typeInRoot =
-                packag.getElements(new TypeFilter<>(CtType.class)).stream()
-                        .filter(type -> type.getPosition().isValidPosition())
-                        .min((o1, o2) -> Integer.compare(getPathLength(o1), getPathLength(o2)));
-        return Path.of(typeInRoot.map(v -> v.getPosition().getFile().getPath()).orElse(""))
-                .getParent();
-    }
-
-    private static int getPathLength(CtType<?> type) {
-        return type.getPosition().getFile().getPath().length();
+                .collect(toMap(CtPackage::getQualifiedName, v -> v, (v, w) -> v, HashMap::new));
     }
 }

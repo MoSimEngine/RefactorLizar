@@ -20,13 +20,11 @@ public class LanguageLevelAnalysis extends AbstractAnalyzer {
 
     @Override
     protected Report fullAnalysis(ModularLanguage language, SimulatorModel simulatorModel, Settings settings) {
-        var types = new ArrayList<CtType>();
+        var types = new ArrayList<CtType<?>>();
         language.getLanguageComponents().forEach(component -> {
             var t = getAllTypes(component);
             t.forEach(types::add);
         });
-
-
         return null;
     }
 

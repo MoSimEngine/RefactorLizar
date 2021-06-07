@@ -1,3 +1,4 @@
 {
+  "FeatureName" : "componentA"
   "Layer": "test"
 }
