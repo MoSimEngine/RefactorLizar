@@ -64,6 +64,7 @@ dependencies {
 	implementation project(':dependency-direction')
 	implementation project(':language-blob')
 	implementation project(":class-split")
+	implementation project(":language-level-refactoring")
 }
 shadowJar {
 	mergeServiceFiles()
