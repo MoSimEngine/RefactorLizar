@@ -43,6 +43,7 @@ public class SimulatorModel {
     public void print(String path) {
         launcher.getEnvironment().setOutputType(OutputType.CLASSES);
         launcher.setSourceOutputDirectory(path);
+        launcher.prettyprint();
     }
 
     private Lookup<String, CtType<?>> createTypeByQNameLookup(
