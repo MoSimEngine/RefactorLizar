@@ -1,7 +1,6 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.model;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.Lookup;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.SelfRefreshingLookup;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.SelfRefreshingLookupBuilder;
 import java.util.Collection;
 import java.util.List;
@@ -11,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import spoon.Launcher;
 import spoon.OutputType;
+import spoon.compiler.Environment.PRETTY_PRINTING_MODE;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.visitor.filter.TypeFilter;
@@ -40,6 +40,7 @@ public class SimulatorModel {
     public SimulatorModel(Set<Component> languageComponents, Launcher launcher) {
         this(languageComponents);
         this.launcher = launcher;
+        launcher.getEnvironment().setPrettyPrintingMode(PRETTY_PRINTING_MODE.AUTOIMPORT);
     }
 
     public void print(String path) {
