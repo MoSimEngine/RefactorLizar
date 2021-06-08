@@ -6,6 +6,8 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.core.LanguageParser;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.core.SimulatorParser;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
+import spoon.refactoring.Refactoring;
+import spoon.reflect.declaration.CtType;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -47,10 +49,9 @@ public class LanguageLevelRefactoring {
         LanguageLevelAnalysis llr = new LanguageLevelAnalysis();
         llr.analyze(lang, model, null);
 
-        model = SimulatorParser.parseSimulator("src/test/resources/Test/demo/src/main/java/com/example/impl/instance", InputKind.FEATURE_FILE);
+        model = SimulatorParser.parseSimulator("src/test/resources/Test2/demo/src/main/java/com/example/impl/instance", InputKind.FEATURE_FILE);
         assumeTrue(model.getSimulatorComponents().size() > 0, "Parsing Error, no simulator component found");
-
-        assertTrue(model.getTypeWithQualifiedName("com.example.impl.instance.paradigm.letters") != null);
+        assertTrue(model.getTypeWithQualifiedName("com.example.impl.instance.paradigm.letters.AImpl") != null);
     }
 
 

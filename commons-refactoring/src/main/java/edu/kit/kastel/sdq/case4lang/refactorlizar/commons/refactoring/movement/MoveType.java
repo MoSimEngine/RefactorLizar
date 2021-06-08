@@ -1,5 +1,6 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.commons.refactoring.movement;
 
+import spoon.refactoring.Refactoring;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 
@@ -12,7 +13,8 @@ public class MoveType {
 
     public static void movePackage(CtType<?> type, CtPackage ctPackage) {
         if (type.isTopLevel()) {
-            type.setParent(ctPackage);
+            type.getPackage().removeType(type);
+            ctPackage.addType(type);
         }
     }
 }
