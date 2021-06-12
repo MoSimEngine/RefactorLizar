@@ -20,16 +20,17 @@ public class LanguageLevelRefactoring {
 
     @Test
     public void languageLevelRefactoring() throws IOException {
-        var sourceTestProject = "src/test/resources/MinimalProject";
+        var sourceMinimalProject = "src/test/resources/MinimalProject";
+        var targetTestProject = "src/test/resources/Test";
         var simulatorPath = "src/test/resources/Test/demo/src/main/java/com/example";
         var languagePath = "src/test/resources/Test/demo/src/main/java/com/example/instance";
-        var targetPath = "src/test/resources/Test";
-        var targetSimulatorPath =
+        var refactoredSimulatorPath =
                 "src/test/resources/TestRefactored/demo/src/main/java/com/example";
-        var targetLanguagePath =
+        var refactoredLanguagePath =
                 "src/test/resources/TestRefactored/demo/src/main/java/com/example/instance";
+        var rootRefactoredProject = "src/test/resources/TestRefactored/";
 
-        projectSetup(sourceTestProject, targetPath);
+        projectSetup(sourceMinimalProject, targetTestProject);
 
         var splitter =
                 new PathSplitter(Path.of(simulatorPath), Path.of(languagePath))
@@ -50,18 +51,18 @@ public class LanguageLevelRefactoring {
 
         var llr = new LanguageLevelAnalysis();
         var settings = llr.getSettings();
-        settings.setValue("targetSimulatorPath", targetSimulatorPath);
-        settings.setValue("targetLanguagePath", targetLanguagePath);
+        settings.setValue("targetSimulatorPath",  refactoredSimulatorPath);
+        settings.setValue("targetLanguagePath", refactoredLanguagePath);
         llr.analyze(lang, model, settings);
 
-        model = SimulatorParser.parseSimulator(targetSimulatorPath, InputKind.FEATURE_FILE);
+        model = SimulatorParser.parseSimulator( refactoredSimulatorPath, InputKind.FEATURE_FILE);
         assumeTrue(
                 model.getSimulatorComponents().size() > 0,
                 "Parsing Error, no simulator component found");
         assertNotNull(
                 model.getTypeWithQualifiedName("com.example.impl.instance.paradigm.letters.AImpl"));
         projectCleanup(
-                Arrays.asList(new String[] {targetLanguagePath, targetPath, targetSimulatorPath}));
+                Arrays.asList(new String[] {rootRefactoredProject, targetTestProject}));
     }
 
     private void projectSetup(String sourceProject, String targetPath) throws IOException {
