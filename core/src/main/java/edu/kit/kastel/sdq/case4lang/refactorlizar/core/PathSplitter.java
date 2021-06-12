@@ -107,8 +107,10 @@ public class PathSplitter {
         }
     }
 
-    public Set<Path> getLanguagePaths() {
-        return languagePaths;
+    public Set<String> getLanguagePaths() {
+        var paths = new HashSet<String>();
+        languagePaths.forEach(path -> paths.add(path.toString()));
+        return paths;
     }
 
     public Set<Path> getSimulatorPaths() {
