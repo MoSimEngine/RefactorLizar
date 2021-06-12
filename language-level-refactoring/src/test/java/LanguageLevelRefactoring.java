@@ -51,18 +51,17 @@ public class LanguageLevelRefactoring {
 
         var llr = new LanguageLevelAnalysis();
         var settings = llr.getSettings();
-        settings.setValue("targetSimulatorPath",  refactoredSimulatorPath);
+        settings.setValue("targetSimulatorPath", refactoredSimulatorPath);
         settings.setValue("targetLanguagePath", refactoredLanguagePath);
         llr.analyze(lang, model, settings);
 
-        model = SimulatorParser.parseSimulator( refactoredSimulatorPath, InputKind.FEATURE_FILE);
+        model = SimulatorParser.parseSimulator(refactoredSimulatorPath, InputKind.FEATURE_FILE);
         assumeTrue(
                 model.getSimulatorComponents().size() > 0,
                 "Parsing Error, no simulator component found");
         assertNotNull(
                 model.getTypeWithQualifiedName("com.example.impl.instance.paradigm.letters.AImpl"));
-        projectCleanup(
-                Arrays.asList(new String[] {rootRefactoredProject, targetTestProject}));
+        projectCleanup(Arrays.asList(new String[] {rootRefactoredProject, targetTestProject}));
     }
 
     private void projectSetup(String sourceProject, String targetPath) throws IOException {
