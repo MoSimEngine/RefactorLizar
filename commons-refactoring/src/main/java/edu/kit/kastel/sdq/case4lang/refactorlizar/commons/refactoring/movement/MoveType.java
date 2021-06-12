@@ -1,6 +1,5 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.commons.refactoring.movement;
 
-import spoon.refactoring.Refactoring;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 

@@ -113,8 +113,10 @@ public class PathSplitter {
         return paths;
     }
 
-    public Set<Path> getSimulatorPaths() {
-        return simulatorPaths;
+    public Set<String> getSimulatorPaths() {
+        var paths = new HashSet<String>();
+        simulatorPaths.forEach(path -> paths.add(path.toString()));
+        return paths;
     }
 
     private enum SplitMode {

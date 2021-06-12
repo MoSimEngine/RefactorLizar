@@ -8,18 +8,13 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.core.pluginparser.MetaInformat
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.IMetaInformation;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import spoon.reflect.declaration.CtPackage;
-import spoon.reflect.declaration.CtType;
-import spoon.reflect.visitor.filter.TypeFilter;
 
 public class SimulatorParser {
 
@@ -79,7 +74,6 @@ public class SimulatorParser {
         return new SimulatorModel(components, builder.getLauncher());
     }
 
-
     private static SimulatorModel parseEmfFile(Iterable<String> paths) {
         Collection<CtPackage> javaPackages = buildJavaPackages(paths);
         MetaInformationParser parser = new MetaInformationParser();
@@ -100,6 +94,4 @@ public class SimulatorParser {
     private static SimulatorModel parseSimulatorEclipsePlugin(Iterable<String> inputPaths) {
         return parseEmfFile(inputPaths);
     }
-
-
 }

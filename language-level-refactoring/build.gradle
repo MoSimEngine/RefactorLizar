@@ -1,12 +1,12 @@
 plugins {
-    id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions'
-    id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions-analyzer'
+	id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions'
+	id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions-analyzer'
 }
 
 dependencies {
-    implementation project(':model')
-    implementation project(':commons-refactoring')
-    implementation project(':analyzer-api')
+	implementation project(':model')
+	implementation project(':commons-refactoring')
+	implementation project(':analyzer-api')
 }
 
 description = "language-level-refactoring"

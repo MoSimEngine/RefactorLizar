@@ -49,8 +49,7 @@ public class SimulatorModel {
         launcher.prettyprint();
     }
 
-    private Lookup<String, Node> createTypeByQNameLookup(
-            Collection<Component> languageComponents) {
+    private Lookup<String, Node> createTypeByQNameLookup(Collection<Component> languageComponents) {
         return new SelfRefreshingLookupBuilder<Collection<Component>, String, Node>(
                         languageComponents)
                 .rebuildFunction(
@@ -107,7 +106,6 @@ public class SimulatorModel {
     private static class Node {
         private CtType<?> type;
 
-        
         public Node(CtType<?> type) {
             this.type = type;
         }
@@ -116,20 +114,17 @@ public class SimulatorModel {
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + Objects.hash(type,type.getPackage());
+            result = prime * result + Objects.hash(type, type.getPackage());
             return result;
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (!(obj instanceof Node))
-                return false;
+            if (this == obj) return true;
+            if (!(obj instanceof Node)) return false;
             Node other = (Node) obj;
-            return Objects.equals(type, other.type) && Objects.equals(type.getPackage(), other.type.getPackage());
+            return Objects.equals(type, other.type)
+                    && Objects.equals(type.getPackage(), other.type.getPackage());
         }
-
-        
-    } 
+    }
 }
