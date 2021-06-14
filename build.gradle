@@ -9,7 +9,6 @@ repositories {
 	mavenLocal()
 	mavenCentral()
 	gradlePluginPortal()
-	jcenter()
 	maven {
 		url = uri('https://repo.maven.apache.org/maven2/')
 	}
