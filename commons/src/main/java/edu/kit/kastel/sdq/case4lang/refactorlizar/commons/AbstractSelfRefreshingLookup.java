@@ -2,6 +2,7 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.commons;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * This class defines a skeleton implementation of a {@link SelfRefreshingLookup}. The {@link
@@ -22,7 +23,7 @@ public abstract class AbstractSelfRefreshingLookup<T, U, R> implements SelfRefre
         refreshHash();
         rebuild();
     }
-
+    @Nullable
     @Override
     public R lookup(U key) {
         if (isDirty()) {

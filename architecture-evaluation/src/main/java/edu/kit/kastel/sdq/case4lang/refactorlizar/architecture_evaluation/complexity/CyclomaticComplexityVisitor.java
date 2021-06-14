@@ -17,7 +17,7 @@ public class CyclomaticComplexityVisitor extends CtAbstractVisitor {
 
     private int complexity = 0;
 
-    /** @return the complexity */
+    /** Returns the complexity */
     public int getComplexity() {
         return complexity;
     }

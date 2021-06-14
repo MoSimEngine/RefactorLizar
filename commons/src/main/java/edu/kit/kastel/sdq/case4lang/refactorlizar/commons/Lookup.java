@@ -1,4 +1,7 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.commons;
+
+import javax.annotation.Nullable;
+
 /**
  * This defines a lookup, which gets a value for a given or null if the key is absent.
  *
@@ -12,5 +15,5 @@ public interface Lookup<T, U> {
      * @param key for lookup
      * @return the value or null if key is absent
      */
-    U lookup(T key);
+    @Nullable U lookup(T key);
 }

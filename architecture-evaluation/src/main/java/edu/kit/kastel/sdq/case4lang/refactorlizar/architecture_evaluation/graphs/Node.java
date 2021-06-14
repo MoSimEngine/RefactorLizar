@@ -3,17 +3,15 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graph
 import java.util.Objects;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.declaration.CtTypeMember;
-import spoon.reflect.visitor.CtVisitor;
 
 public class Node {
     private final CtTypeMember member;
 
-    /** @param member */
     public Node(CtTypeMember member) {
         this.member = member;
     }
 
-    /* (non-Javadoc)
+    /** (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
 
@@ -22,7 +20,7 @@ public class Node {
         return Objects.hash(member, member.getDeclaringType());
     }
 
-    /* (non-Javadoc)
+    /** (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
 
@@ -35,17 +33,9 @@ public class Node {
                 && Objects.equals(member.getDeclaringType(), other.member.getDeclaringType());
     }
 
-    /**
-     * @param arg0
-     * @see spoon.reflect.visitor.CtVisitable#accept(spoon.reflect.visitor.CtVisitor)
-     */
-    public void accept(CtVisitor arg0) {
-        member.accept(arg0);
-    }
 
     /**
-     * @return
-     * @see spoon.reflect.declaration.CtTypeMember#getDeclaringType()
+     * See {@link spoon.reflect.declaration.CtTypeMember#getDeclaringType()}.
      */
     public CtType<?> getDeclaringType() {
         return member.getDeclaringType();

@@ -8,10 +8,6 @@ public class Complexity extends CodeMetric {
         super(value);
     }
 
-    @Override
-    public double getValue() {
-        return value;
-    }
 
     @Override
     public String getName() {

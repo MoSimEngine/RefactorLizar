@@ -44,7 +44,7 @@ public class HyperGraphSizeCalculator {
         double size = 0;
         for (Node node : nodes) {
             BitSet pattern = generator.createPattern(new ArrayList<>(systemGraph.edges()), node);
-            double prob = patterns.get(pattern);
+            double prob = patterns.getOrDefault(pattern,0);
             size += log2(prob / getSystemSize(nodes));
         }
         return size;

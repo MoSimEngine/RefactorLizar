@@ -9,7 +9,7 @@ public class HyperGraphSize extends CodeMetric {
     }
 
     @Override
-    String getName() {
+    public String getName() {
         return METRIC_NAME;
     }
 }
