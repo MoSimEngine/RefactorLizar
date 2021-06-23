@@ -1,4 +1,6 @@
-
+// SPDX-FileCopyrightText: 2021 Martin Wittlinger <wittlinger.martin@gmail.com>
+//
+// SPDX-License-Identifier: MIT-Modern-Variant
 
 plugins {
 	// Support convention plugins written in Groovy. Convention plugins are build scripts in 'src/main' that automatically become available as plugins in the main build.

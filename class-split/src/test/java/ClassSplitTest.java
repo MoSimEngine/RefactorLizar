@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Martin Wittlinger <wittlinger.martin@gmail.com>
+//
+// SPDX-License-Identifier: MIT-Modern-Variant
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.refactoring.class_split.ClassSplitBuilder;

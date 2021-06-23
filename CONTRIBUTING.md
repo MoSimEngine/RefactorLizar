@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2021 Martin Wittlinger <wittlinger.martin@gmail.com>
+
+SPDX-License-Identifier: MIT-Modern-Variant
+-->
+
 ## Pull Requeests  
 Each pull request title follows the format:   
 `<type>(<scope>): <subject>`  
