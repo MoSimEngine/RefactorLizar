@@ -10,7 +10,6 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codeme
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.complexity.HyperGraphComplexityCalculator;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.SystemGraphUtils;
-
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,9 +17,10 @@ import java.util.stream.Collectors;
 public class HyperGraphCohesionCalculator<T> {
 
     private CalculationMode mode;
-	private SystemGraphUtils<T> systemGraphUtils;
+    private SystemGraphUtils<T> systemGraphUtils;
 
-    public HyperGraphCohesionCalculator(CalculationMode mode, SystemGraphUtils<T> systemGraphUtils) {
+    public HyperGraphCohesionCalculator(
+            CalculationMode mode, SystemGraphUtils<T> systemGraphUtils) {
         this.mode = Objects.requireNonNull(mode);
         this.systemGraphUtils = systemGraphUtils;
     }

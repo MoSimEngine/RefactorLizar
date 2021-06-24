@@ -9,17 +9,17 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codeme
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.complexity.HyperGraphComplexityCalculator;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.SystemGraphUtils;
-
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class HyperGraphInterModuleCouplingGenerator<T> {
 
     private CalculationMode mode;
-	private SystemGraphUtils<T> systemGraphUtils;
+    private SystemGraphUtils<T> systemGraphUtils;
 
     // die größe eines Graphen wird immer auf dem Systemgraphen berechnet
-    public HyperGraphInterModuleCouplingGenerator(CalculationMode mode, SystemGraphUtils<T> systemGraphUtils) {
+    public HyperGraphInterModuleCouplingGenerator(
+            CalculationMode mode, SystemGraphUtils<T> systemGraphUtils) {
         this.mode = Objects.requireNonNull(mode);
         this.systemGraphUtils = systemGraphUtils;
     }
@@ -31,7 +31,9 @@ public class HyperGraphInterModuleCouplingGenerator<T> {
                 .collect(Collectors.toSet())
                 .forEach(interModuleGraph::removeEdge);
         return new Coupling(
-                new HyperGraphComplexityCalculator<T>(mode, systemGraphUtils).calculate(interModuleGraph).getValue());
+                new HyperGraphComplexityCalculator<T>(mode, systemGraphUtils)
+                        .calculate(interModuleGraph)
+                        .getValue());
     }
 
     private boolean hasEndpointsInSameTypes(EndpointPair<Node<T>> edge) {

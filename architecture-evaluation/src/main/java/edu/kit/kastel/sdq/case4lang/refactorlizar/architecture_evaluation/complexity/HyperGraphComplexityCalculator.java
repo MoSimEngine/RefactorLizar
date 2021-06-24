@@ -14,12 +14,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class HyperGraphComplexityCalculator<T> {
-	
+
     private CalculationMode mode;
-	private SystemGraphUtils<T> systemGraphUtils;
+    private SystemGraphUtils<T> systemGraphUtils;
 
     // die größe eines Graphen wird immer auf dem Systemgraphen berechnet
-    public HyperGraphComplexityCalculator(CalculationMode mode, SystemGraphUtils<T> systemGraphUtils) {
+    public HyperGraphComplexityCalculator(
+            CalculationMode mode, SystemGraphUtils<T> systemGraphUtils) {
         this.mode = Objects.requireNonNull(mode);
         this.systemGraphUtils = systemGraphUtils;
     }
@@ -38,12 +39,14 @@ public class HyperGraphComplexityCalculator<T> {
         double subgraphSize = 0.0;
         for (Node<T> executable : hyperEdgeOnlyGraph.nodes()) {
             Graph<Node<T>> subgraph = createSubGraph(hyperEdgeOnlyGraph, executable);
-            subgraphSize += sizeCalculator.calculate(systemGraphUtils.convertToSystemGraph(subgraph));
+            subgraphSize +=
+                    sizeCalculator.calculate(systemGraphUtils.convertToSystemGraph(subgraph));
         }
         return subgraphSize;
     }
 
-    private Graph<Node<T>> createSubGraph(MutableGraph<Node<T>> hyperEdgeOnlyGraph, Node<T> executable) {
+    private Graph<Node<T>> createSubGraph(
+            MutableGraph<Node<T>> hyperEdgeOnlyGraph, Node<T> executable) {
         Set<Node<T>> reachableNodes = new HashSet<>(hyperEdgeOnlyGraph.adjacentNodes(executable));
         reachableNodes.add(executable);
         return Graphs.inducedSubgraph(hyperEdgeOnlyGraph, reachableNodes);

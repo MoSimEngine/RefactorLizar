@@ -29,7 +29,8 @@ public class HyperGraphGenerator {
                         .forEach(
                                 calledMethod ->
                                         graph.putEdge(
-                                                new SpoonNode(calledMethod), new SpoonNode(executable)));
+                                                new SpoonNode(calledMethod),
+                                                new SpoonNode(executable)));
             }
         }
         return graph;

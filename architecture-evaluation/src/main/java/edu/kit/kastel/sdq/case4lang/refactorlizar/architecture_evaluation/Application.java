@@ -10,10 +10,10 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codeme
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.cohesion.HyperGraphCohesionCalculator;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.complexity.HyperGraphComplexityCalculator;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.coupling.HyperGraphInterModuleCouplingGenerator;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.CtTypeSystemGraphUtils;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.HyperGraphGenerator;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.SystemGraphUtils;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.CtTypeSystemGraphUtils;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.projectfilter.DataTypesFilter;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.projectfilter.ObservedSystemFilter;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.size.HyperGraphSizeCalculator;
@@ -43,13 +43,22 @@ public class Application {
         graph = removeNotObservedSystem(graph, observedSystemPath);
         SystemGraphUtils<CtType<?>> systemGraphUtils = new CtTypeSystemGraphUtils();
         HyperGraphSize size = calculateHyperGraphSize(mode, systemGraphUtils, graph);
-        Complexity graphComplexity = new HyperGraphComplexityCalculator<CtType<?>>(mode, systemGraphUtils).calculate(graph);
-        Coupling graphCoupling = new HyperGraphInterModuleCouplingGenerator<CtType<?>>(mode, systemGraphUtils).calculate(graph);
-        Cohesion cohesion = new HyperGraphCohesionCalculator<CtType<?>>(mode, systemGraphUtils).calculate(graph);
+        Complexity graphComplexity =
+                new HyperGraphComplexityCalculator<CtType<?>>(mode, systemGraphUtils)
+                        .calculate(graph);
+        Coupling graphCoupling =
+                new HyperGraphInterModuleCouplingGenerator<CtType<?>>(mode, systemGraphUtils)
+                        .calculate(graph);
+        Cohesion cohesion =
+                new HyperGraphCohesionCalculator<CtType<?>>(mode, systemGraphUtils)
+                        .calculate(graph);
         return new Result(loc, sos, size, graphComplexity, graphCoupling, cohesion);
     }
 
-    private HyperGraphSize calculateHyperGraphSize(CalculationMode mode, SystemGraphUtils<CtType<?>> systemGraphUtils, Graph<Node<CtType<?>>> graph) {
+    private HyperGraphSize calculateHyperGraphSize(
+            CalculationMode mode,
+            SystemGraphUtils<CtType<?>> systemGraphUtils,
+            Graph<Node<CtType<?>>> graph) {
         return new HyperGraphSize(
                 new HyperGraphSizeCalculator<CtType<?>>(mode)
                         .calculate(systemGraphUtils.convertToSystemGraph(graph)));
@@ -65,7 +74,8 @@ public class Application {
         return model.getAllTypes();
     }
 
-    private Graph<Node<CtType<?>>> removeNotObservedSystem(Graph<Node<CtType<?>>> graph, String observedSystemPath) {
+    private Graph<Node<CtType<?>>> removeNotObservedSystem(
+            Graph<Node<CtType<?>>> graph, String observedSystemPath) {
         if (observedSystemPath.isBlank()) {
             return graph;
         }
