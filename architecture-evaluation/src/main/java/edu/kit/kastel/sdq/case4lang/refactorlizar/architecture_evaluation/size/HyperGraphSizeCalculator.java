@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class HyperGraphSizeCalculator {
+public class HyperGraphSizeCalculator<T> {
 
     private CalculationMode mode;
 
@@ -21,7 +21,7 @@ public class HyperGraphSizeCalculator {
         this.mode = mode;
     }
 
-    public double calculate(Graph<Node> systemGraph) {
+    public double calculate(Graph<Node<T>> systemGraph) {
         /*
         Schau für jeden Knoten an zu welcher HyperEdge er verbunden ist.
         Das gibt ein Pattern.
@@ -31,9 +31,9 @@ public class HyperGraphSizeCalculator {
         das alles summieren.
         */
         Map<BitSet, Integer> patterns = new HashMap<>();
-        PatternGenerator generator = new PatternGenerator();
-        Set<Node> nodes = systemGraph.nodes();
-        for (Node node : nodes) {
+        PatternGenerator<T> generator = new PatternGenerator<>();
+        Set<Node<T>> nodes = systemGraph.nodes();
+        for (Node<T> node : nodes) {
             BitSet pattern = generator.createPattern(new ArrayList<>(systemGraph.edges()), node);
             if (patterns.get(pattern) == null) {
                 patterns.put(pattern, 1);
@@ -42,7 +42,7 @@ public class HyperGraphSizeCalculator {
             }
         }
         double size = 0;
-        for (Node node : nodes) {
+        for (Node<T> node : nodes) {
             BitSet pattern = generator.createPattern(new ArrayList<>(systemGraph.edges()), node);
             double prob = patterns.get(pattern);
             size += log2(prob / getSystemSize(nodes));
@@ -50,7 +50,7 @@ public class HyperGraphSizeCalculator {
         return size;
     }
 
-    private int getSystemSize(Set<Node> nodes) {
+    private int getSystemSize(Set<Node<T>> nodes) {
         return mode == CalculationMode.REINER ? nodes.size() + 1 : nodes.size();
     }
 

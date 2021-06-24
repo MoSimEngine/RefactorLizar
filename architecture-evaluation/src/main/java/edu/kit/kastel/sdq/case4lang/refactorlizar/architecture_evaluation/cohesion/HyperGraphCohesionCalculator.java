@@ -9,41 +9,44 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.Calcul
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.Cohesion;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.complexity.HyperGraphComplexityCalculator;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.SystemGraphUtils;
+
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import spoon.reflect.declaration.CtType;
 
-public class HyperGraphCohesionCalculator {
+public class HyperGraphCohesionCalculator<T> {
 
     private CalculationMode mode;
+	private SystemGraphUtils<T> systemGraphUtils;
 
-    public HyperGraphCohesionCalculator(CalculationMode mode) {
+    public HyperGraphCohesionCalculator(CalculationMode mode, SystemGraphUtils<T> systemGraphUtils) {
         this.mode = Objects.requireNonNull(mode);
+        this.systemGraphUtils = systemGraphUtils;
     }
 
-    public Cohesion calculate(Graph<Node> graph) {
-        HyperGraphComplexityCalculator complexityCalculator =
-                new HyperGraphComplexityCalculator(mode);
-        MutableGraph<Node> intraModuleGraph = transformToIntraModuleGraph(graph);
+    public Cohesion calculate(Graph<Node<T>> graph) {
+        HyperGraphComplexityCalculator<T> complexityCalculator =
+                new HyperGraphComplexityCalculator<T>(mode, systemGraphUtils);
+        MutableGraph<Node<T>> intraModuleGraph = transformToIntraModuleGraph(graph);
         double interModuleGraphComplexity =
                 complexityCalculator.calculate(intraModuleGraph).getValue();
-        MutableGraph<Node> fullyConnectedGraph = transformToFullyConnectedGraph(graph);
+        MutableGraph<Node<T>> fullyConnectedGraph = transformToFullyConnectedGraph(graph);
         double fullyConnectedGraphComplexity =
                 complexityCalculator.calculate(fullyConnectedGraph).getValue();
         return new Cohesion(interModuleGraphComplexity / fullyConnectedGraphComplexity);
     }
 
-    private MutableGraph<Node> transformToFullyConnectedGraph(Graph<Node> graph) {
-        MutableGraph<Node> fullyConnectedGraph = Graphs.copyOf(graph);
+    private MutableGraph<Node<T>> transformToFullyConnectedGraph(Graph<Node<T>> graph) {
+        MutableGraph<Node<T>> fullyConnectedGraph = Graphs.copyOf(graph);
         Sets.combinations(fullyConnectedGraph.nodes(), 2).stream()
                 .map(Set::iterator)
                 .forEach(it -> fullyConnectedGraph.putEdge(it.next(), it.next()));
         return fullyConnectedGraph;
     }
 
-    private MutableGraph<Node> transformToIntraModuleGraph(Graph<Node> graph) {
-        MutableGraph<Node> intraModuleGraph = Graphs.copyOf(graph);
+    private MutableGraph<Node<T>> transformToIntraModuleGraph(Graph<Node<T>> graph) {
+        MutableGraph<Node<T>> intraModuleGraph = Graphs.copyOf(graph);
         graph.edges().stream()
                 .filter(this::hasEndpointsNotInSameTypes)
                 .collect(Collectors.toSet())
@@ -51,15 +54,15 @@ public class HyperGraphCohesionCalculator {
         return intraModuleGraph;
     }
 
-    private boolean hasEndpointsNotInSameTypes(EndpointPair<Node> edge) {
+    private boolean hasEndpointsNotInSameTypes(EndpointPair<Node<T>> edge) {
         return !isSameType(edge.nodeU(), edge.nodeV());
     }
 
-    private boolean isSameType(Node u, Node v) {
+    private boolean isSameType(Node<T> u, Node<T> v) {
         return getType(u).equals(getType(v));
     }
 
-    private CtType<?> getType(Node executable) {
-        return executable.getDeclaringType();
+    private T getType(Node<T> executable) {
+        return executable.getModule();
     }
 }
