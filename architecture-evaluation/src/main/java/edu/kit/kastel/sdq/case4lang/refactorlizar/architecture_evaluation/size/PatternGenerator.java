@@ -7,15 +7,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PatternGenerator {
+public class PatternGenerator<T> {
 
-    private Map<Node, BitSet> cache;
+    private Map<Node<T>, BitSet> cache;
 
     public PatternGenerator() {
         cache = new HashMap<>();
     }
 
-    public BitSet createPattern(List<EndpointPair<Node>> hyperEdges, Node node) {
+    public BitSet createPattern(List<EndpointPair<Node<T>>> hyperEdges, Node<T> node) {
         if (cache.containsKey(node)) {
             return cache.get(node);
         }
@@ -29,7 +29,7 @@ public class PatternGenerator {
         return pattern;
     }
 
-    private boolean isPart(EndpointPair<Node> hyperEdge, Node node) {
+    private boolean isPart(EndpointPair<Node<T>> hyperEdge, Node<T> node) {
         return hyperEdge.nodeU().equals(node) || hyperEdge.nodeV().equals(node);
     }
 }

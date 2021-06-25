@@ -8,38 +8,43 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.Calcul
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.Coupling;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.complexity.HyperGraphComplexityCalculator;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.SystemGraphUtils;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import spoon.reflect.declaration.CtType;
 
-public class HyperGraphInterModuleCouplingGenerator {
+public class HyperGraphInterModuleCouplingGenerator<T> {
 
     private CalculationMode mode;
+    private SystemGraphUtils<T> systemGraphUtils;
 
     // die größe eines Graphen wird immer auf dem Systemgraphen berechnet
-    public HyperGraphInterModuleCouplingGenerator(CalculationMode mode) {
+    public HyperGraphInterModuleCouplingGenerator(
+            CalculationMode mode, SystemGraphUtils<T> systemGraphUtils) {
         this.mode = Objects.requireNonNull(mode);
+        this.systemGraphUtils = systemGraphUtils;
     }
 
-    public Coupling calculate(Graph<Node> graph) {
-        MutableGraph<Node> interModuleGraph = Graphs.copyOf(graph);
+    public Coupling calculate(Graph<Node<T>> graph) {
+        MutableGraph<Node<T>> interModuleGraph = Graphs.copyOf(graph);
         graph.edges().stream()
                 .filter(this::hasEndpointsInSameTypes)
                 .collect(Collectors.toSet())
                 .forEach(interModuleGraph::removeEdge);
         return new Coupling(
-                new HyperGraphComplexityCalculator(mode).calculate(interModuleGraph).getValue());
+                new HyperGraphComplexityCalculator<T>(mode, systemGraphUtils)
+                        .calculate(interModuleGraph)
+                        .getValue());
     }
 
-    private boolean hasEndpointsInSameTypes(EndpointPair<Node> edge) {
+    private boolean hasEndpointsInSameTypes(EndpointPair<Node<T>> edge) {
         return isSameType(edge.nodeU(), edge.nodeV());
     }
 
-    private boolean isSameType(Node u, Node v) {
+    private boolean isSameType(Node<T> u, Node<T> v) {
         return getType(u).equals(getType(v));
     }
 
-    private CtType<?> getType(Node executable) {
-        return executable.getDeclaringType();
+    private T getType(Node<T> executable) {
+        return executable.getModule();
     }
 }

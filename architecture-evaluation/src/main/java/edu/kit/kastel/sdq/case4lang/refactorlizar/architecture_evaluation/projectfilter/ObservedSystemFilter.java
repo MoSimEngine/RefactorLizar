@@ -12,14 +12,15 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import spoon.reflect.declaration.CtType;
 
 public class ObservedSystemFilter {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
     private ObservedSystemFilter() {}
 
-    public static Graph<Node> removeNonObservedSystem(
-            Graph<Node> graph, String observedSystemPath) {
+    public static Graph<Node<CtType<?>>> removeNonObservedSystem(
+            Graph<Node<CtType<?>>> graph, String observedSystemPath) {
         var result = Graphs.copyOf(graph);
         try (Stream<String> lines = Files.lines(Path.of(observedSystemPath))) {
             Predicate<String> pattern =
@@ -35,19 +36,19 @@ public class ObservedSystemFilter {
         return graph;
     }
 
-    private static List<Node> filterNonObservedNodes(
-            Graph<Node> result, Predicate<String> pattern) {
+    private static List<Node<CtType<?>>> filterNonObservedNodes(
+            Graph<Node<CtType<?>>> result, Predicate<String> pattern) {
         return result.nodes().stream()
                 .filter(ObservedSystemFilter::hasDeclaringType)
                 .filter(v -> pattern.negate().test(getQualifiedName(v)))
                 .collect(Collectors.toList());
     }
 
-    private static boolean hasDeclaringType(Node v) {
-        return v.getDeclaringType() != null;
+    private static <T> boolean hasDeclaringType(Node<T> v) {
+        return v.getModule() != null;
     }
 
-    private static String getQualifiedName(Node v) {
-        return v.getDeclaringType().getQualifiedName();
+    private static String getQualifiedName(Node<CtType<?>> v) {
+        return v.getModule().getQualifiedName();
     }
 }

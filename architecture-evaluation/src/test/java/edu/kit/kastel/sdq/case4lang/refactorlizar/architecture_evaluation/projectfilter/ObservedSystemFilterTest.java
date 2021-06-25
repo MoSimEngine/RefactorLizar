@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import spoon.Launcher;
+import spoon.reflect.declaration.CtType;
 
 public class ObservedSystemFilterTest {
 
@@ -19,7 +20,7 @@ public class ObservedSystemFilterTest {
     void testRemoveNonObservedSystem() throws IOException {
         Launcher launcher = new Launcher();
         launcher.addInputResource("src/test/resources/FieldTest");
-        Graph<Node> g =
+        Graph<Node<CtType<?>>> g =
                 new HyperGraphGenerator().createHyperGraph(launcher.buildModel().getAllTypes());
         final Path tempFile = Files.createFile(tempDir.resolve("file"));
         Files.writeString(tempFile, ".*");
@@ -34,7 +35,7 @@ public class ObservedSystemFilterTest {
     void testRemoveNonObservedSystem2() throws IOException {
         Launcher launcher = new Launcher();
         launcher.addInputResource("src/test/resources/FieldTest");
-        Graph<Node> g =
+        Graph<Node<CtType<?>>> g =
                 new HyperGraphGenerator().createHyperGraph(launcher.buildModel().getAllTypes());
         final Path tempFile = Files.createFile(tempDir.resolve("file"));
         Files.writeString(tempFile, ".*A.*");

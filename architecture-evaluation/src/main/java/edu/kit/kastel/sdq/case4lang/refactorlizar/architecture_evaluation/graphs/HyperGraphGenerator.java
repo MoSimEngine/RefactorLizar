@@ -19,23 +19,24 @@ import spoon.support.reflect.declaration.CtConstructorImpl;
 
 public class HyperGraphGenerator {
 
-    public MutableGraph<Node> createHyperGraph(Collection<CtType<?>> types) {
-        MutableGraph<Node> graph = createGraph();
+    public MutableGraph<Node<CtType<?>>> createHyperGraph(Collection<CtType<?>> types) {
+        MutableGraph<Node<CtType<?>>> graph = createGraph();
 
         for (CtType<?> type : types) {
             for (CtTypeMember executable : getMethodsAndConstructorAndFields(type)) {
-                graph.addNode(new Node(executable));
+                graph.addNode(new SpoonNode(executable));
                 getReferencedMembers(executable)
                         .forEach(
                                 calledMethod ->
                                         graph.putEdge(
-                                                new Node(calledMethod), new Node(executable)));
+                                                new SpoonNode(calledMethod),
+                                                new SpoonNode(executable)));
             }
         }
         return graph;
     }
 
-    private MutableGraph<Node> createGraph() {
+    private MutableGraph<Node<CtType<?>>> createGraph() {
         return GraphBuilder.undirected().allowsSelfLoops(true).build();
     }
 
