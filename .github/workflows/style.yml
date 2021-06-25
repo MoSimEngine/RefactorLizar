@@ -22,8 +22,5 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
     - uses: actions/checkout@v2
-      with:
-          token: ${{ secrets.ACCESS_TOKEN }}
-          submodules: true
     - name: Test with gradle
       run: ./gradlew spotlessCheck
