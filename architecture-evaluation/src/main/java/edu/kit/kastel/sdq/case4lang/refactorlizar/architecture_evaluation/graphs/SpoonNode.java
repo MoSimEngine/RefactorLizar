@@ -8,7 +8,11 @@ import spoon.reflect.visitor.CtVisitor;
 public class SpoonNode implements Node<CtType<?>> {
     private final CtTypeMember member;
 
-    /** @param member */
+    /**
+     * Create a Node usable with the spoon source model.
+     *
+     * @param member source model member corresponding to the node
+     */
     public SpoonNode(CtTypeMember member) {
         this.member = member;
     }
@@ -16,7 +20,6 @@ public class SpoonNode implements Node<CtType<?>> {
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
-
     @Override
     public int hashCode() {
         return Objects.hash(member, member.getDeclaringType());
@@ -25,7 +28,6 @@ public class SpoonNode implements Node<CtType<?>> {
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -36,7 +38,9 @@ public class SpoonNode implements Node<CtType<?>> {
     }
 
     /**
-     * @param arg0
+     * Allow to set a visitor. This comment needs to be improved.
+     *
+     * @param arg0 the visitor.
      * @see spoon.reflect.visitor.CtVisitable#accept(spoon.reflect.visitor.CtVisitor)
      */
     public void accept(CtVisitor arg0) {
@@ -44,9 +48,12 @@ public class SpoonNode implements Node<CtType<?>> {
     }
 
     /**
-     * @return
+     * Provide the module identifier for the node.
+     *
+     * @return returns a CtType representing the module
      * @see spoon.reflect.declaration.CtTypeMember#getDeclaringType()
      */
+    @Override
     public CtType<?> getModule() {
         return member.getDeclaringType();
     }

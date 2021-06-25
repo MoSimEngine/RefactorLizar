@@ -10,6 +10,7 @@ public class CtTypeSystemGraphUtils implements SystemGraphUtils<CtType<?>> {
 
     public CtTypeSystemGraphUtils() {}
 
+    @Override
     public MutableGraph<Node<CtType<?>>> convertToSystemGraph(Graph<Node<CtType<?>>> graph) {
         MutableGraph<Node<CtType<?>>> systemGraph = Graphs.copyOf(graph);
         // add empty node as system node
