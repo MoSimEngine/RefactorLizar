@@ -39,19 +39,29 @@ publishing {
 }
 allprojects {
 	apply plugin: 'com.diffplug.spotless'
-}
-spotless {
-	java {
-		target "**/*.java"
-		targetExclude "**/test/resources/**", "**/build/**"
-		trimTrailingWhitespace()
-		removeUnusedImports()
-		googleJavaFormat().aosp()
-	}
-	groovy {
-		target "**/*.gradle"
-		// Use the default version and Groovy-Eclipse default configuration
-		greclipse()
+	spotless {
+		java {
+			ratchetFrom 'origin/master'
+			target "src/main/java/**/*.java"
+			targetExclude "**/test/resources/**", "**/build/**", "**/LicenseHeaderFile.java"
+			trimTrailingWhitespace()
+			removeUnusedImports()
+			googleJavaFormat().aosp()
+			licenseHeaderFile("$rootProject.projectDir/LicenseHeaderFile.java")
+		}
+		format "javaTestCode", com.diffplug.gradle.spotless.JavaExtension, {
+			ratchetFrom 'origin/master'
+			target "src/test/java/**/*.java"
+			targetExclude "**/test/resources/**", "**/build/**", "**/LicenseHeaderFile.java"
+			trimTrailingWhitespace()
+			removeUnusedImports()
+			googleJavaFormat().aosp()
+		}
+		groovy {
+			target "**/*.gradle"
+			// Use the default version and Groovy-Eclipse default configuration
+			greclipse()
+		}
 	}
 }
 
