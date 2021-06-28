@@ -53,13 +53,6 @@ spotless {
 		// Use the default version and Groovy-Eclipse default configuration
 		greclipse()
 	}
-	allprojects {
-		afterEvaluate { project ->
-			project.tasks.withType(JavaCompile) {
-				options.compilerArgs.removeAll { it.startsWith("--add") }
-			}
-		}
-	}
 }
 
 
