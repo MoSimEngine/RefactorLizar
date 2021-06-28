@@ -30,7 +30,6 @@ dependencies {
 
 group = 'edu.kit.kastel.sdq.case4lang.refactorlizar'
 version = '0.0.2'
-java.sourceCompatibility = JavaVersion.VERSION_11
 
 distributions {
 	main {
