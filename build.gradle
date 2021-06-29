@@ -55,6 +55,7 @@ spotless {
 	}
 }
 
+
 dependencies {
 	implementation project(":model")
 	implementation project (":core")

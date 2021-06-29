@@ -12,6 +12,6 @@ repositories {
 	gradlePluginPortal()
 }
 dependencies {
-	implementation "com.github.jengelman.gradle.plugins:shadow:6.1.0"
-	implementation group: 'net.ltgt.errorprone', name: 'net.ltgt.errorprone.gradle.plugin', version: '1.3.0'
+	implementation group: 'com.github.johnrengelman.shadow', name: 'com.github.johnrengelman.shadow.gradle.plugin', version: '7.0.0'
+	implementation group: 'net.ltgt.errorprone', name: 'net.ltgt.errorprone.gradle.plugin', version: '2.0.2'
 }
