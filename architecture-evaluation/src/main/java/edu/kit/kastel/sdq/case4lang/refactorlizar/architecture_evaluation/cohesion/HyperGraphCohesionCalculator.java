@@ -1,6 +1,5 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.cohesion;
 
-import com.google.common.collect.Sets;
 import com.google.common.graph.EndpointPair;
 import com.google.common.graph.Graph;
 import com.google.common.graph.Graphs;
@@ -11,7 +10,6 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.comple
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.SystemGraphUtils;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class HyperGraphCohesionCalculator<T> {
@@ -33,15 +31,23 @@ public class HyperGraphCohesionCalculator<T> {
                 complexityCalculator.calculate(intraModuleGraph).getValue();
         MutableGraph<Node<T>> fullyConnectedGraph = transformToFullyConnectedGraph(graph);
         double fullyConnectedGraphComplexity =
-                complexityCalculator.calculate(fullyConnectedGraph).getValue();
+                complexityCalculator.calculateForFullyConnected(fullyConnectedGraph).getValue();
         return new Cohesion(interModuleGraphComplexity / fullyConnectedGraphComplexity);
     }
 
     private MutableGraph<Node<T>> transformToFullyConnectedGraph(Graph<Node<T>> graph) {
         MutableGraph<Node<T>> fullyConnectedGraph = Graphs.copyOf(graph);
-        Sets.combinations(fullyConnectedGraph.nodes(), 2).stream()
-                .map(Set::iterator)
-                .forEach(it -> fullyConnectedGraph.putEdge(it.next(), it.next()));
+        for (Node<T> first : fullyConnectedGraph.nodes()) {
+            for (Node<T> second : fullyConnectedGraph.nodes()) {
+                if (first.hashCode() != second.hashCode()) {
+                    fullyConnectedGraph.putEdge(EndpointPair.ordered(first, second));
+                } else {
+                    if (!first.equals(second)) {
+                        fullyConnectedGraph.putEdge(EndpointPair.ordered(first, second));
+                    }
+                }
+            }
+        }
         return fullyConnectedGraph;
     }
 
@@ -59,6 +65,11 @@ public class HyperGraphCohesionCalculator<T> {
     }
 
     private boolean isSameType(Node<T> u, Node<T> v) {
+        T typeV = getType(v);
+        T typeU = getType(u);
+        if (typeV.hashCode() != typeU.hashCode()) {
+            return false;
+        }
         return getType(u).equals(getType(v));
     }
 

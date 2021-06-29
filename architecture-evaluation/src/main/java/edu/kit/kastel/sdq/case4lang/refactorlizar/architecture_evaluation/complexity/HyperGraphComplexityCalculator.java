@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class HyperGraphComplexityCalculator<T> {
-
     private CalculationMode mode;
     private SystemGraphUtils<T> systemGraphUtils;
 
@@ -27,11 +26,32 @@ public class HyperGraphComplexityCalculator<T> {
 
     public Complexity calculate(Graph<Node<T>> hypergraph) {
         MutableGraph<Node<T>> hyperEdgeOnlyGraph = transformToHyperedgeOnly(hypergraph);
-        HyperGraphSizeCalculator<T> sizeCalculator = new HyperGraphSizeCalculator<T>(mode);
+        HyperGraphSizeCalculator<T> sizeCalculator = new HyperGraphSizeCalculator<>(mode);
         double hyperEdgeOnlyGraphSize =
                 sizeCalculator.calculate(systemGraphUtils.convertToSystemGraph(hyperEdgeOnlyGraph));
         double subgraphSize = calculateSubGraphsSize(hyperEdgeOnlyGraph, sizeCalculator);
         return new Complexity(subgraphSize - hyperEdgeOnlyGraphSize);
+    }
+
+    public Complexity calculateForFullyConnected(Graph<Node<T>> hypergraph) {
+        MutableGraph<Node<T>> hyperEdgeOnlyGraph = transformToHyperedgeOnly(hypergraph);
+        HyperGraphSizeCalculator<T> sizeCalculator = new HyperGraphSizeCalculator<>(mode);
+        double hyperEdgeOnlyGraphSize =
+                sizeCalculator.calculate(systemGraphUtils.convertToSystemGraph(hyperEdgeOnlyGraph));
+        double subgraphSize =
+                calculateSubGraphsSizeFullyConnected(hyperEdgeOnlyGraph, sizeCalculator);
+        return new Complexity(subgraphSize - hyperEdgeOnlyGraphSize);
+    }
+
+    private double calculateSubGraphsSizeFullyConnected(
+            MutableGraph<Node<T>> hyperEdgeOnlyGraph, HyperGraphSizeCalculator<T> sizeCalculator) {
+        double subgraphSize = 0.0;
+        for (Node<T> executable : hyperEdgeOnlyGraph.nodes()) {
+            Graph<Node<T>> subgraph = createSubGraph(hyperEdgeOnlyGraph, executable);
+            return hyperEdgeOnlyGraph.nodes().size()
+                    * sizeCalculator.calculate(systemGraphUtils.convertToSystemGraph(subgraph));
+        }
+        return subgraphSize;
     }
 
     private double calculateSubGraphsSize(
@@ -39,8 +59,8 @@ public class HyperGraphComplexityCalculator<T> {
         double subgraphSize = 0.0;
         for (Node<T> executable : hyperEdgeOnlyGraph.nodes()) {
             Graph<Node<T>> subgraph = createSubGraph(hyperEdgeOnlyGraph, executable);
-            subgraphSize +=
-                    sizeCalculator.calculate(systemGraphUtils.convertToSystemGraph(subgraph));
+            double temp = sizeCalculator.calculate(systemGraphUtils.convertToSystemGraph(subgraph));
+            subgraphSize += temp;
         }
         return subgraphSize;
     }
