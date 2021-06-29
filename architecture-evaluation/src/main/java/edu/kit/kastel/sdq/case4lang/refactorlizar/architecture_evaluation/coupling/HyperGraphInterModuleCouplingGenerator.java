@@ -41,6 +41,11 @@ public class HyperGraphInterModuleCouplingGenerator<T> {
     }
 
     private boolean isSameType(Node<T> u, Node<T> v) {
+        T typeV = getType(v);
+        T typeU = getType(u);
+        if (typeV.hashCode() != typeU.hashCode()) {
+            return false;
+        }
         return getType(u).equals(getType(v));
     }
 
