@@ -38,7 +38,7 @@ public class HyperGraphSizeCalculator<T> {
         das alles summieren.
         */
         CompletionService<Object> service =
-                new ExecutorCompletionService<>(Executors.newWorkStealingPool());
+                new ExecutorCompletionService<>(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()));
         Map<BitSet, Integer> patterns = Collections.synchronizedMap(new HashMap<>());
         PatternGenerator<T> generator = new PatternGenerator<>();
         Set<Node<T>> nodes = systemGraph.nodes();
