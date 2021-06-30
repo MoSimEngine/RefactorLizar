@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class HyperGraphSizeCalculator<T> {
@@ -37,8 +38,8 @@ public class HyperGraphSizeCalculator<T> {
         Darüber -log_2
         das alles summieren.
         */
-        CompletionService<Object> service =
-                new ExecutorCompletionService<>(Executors.newWorkStealingPool());
+        ExecutorService workStealingPool = Executors.newWorkStealingPool();
+        CompletionService<Object> service = new ExecutorCompletionService<>(workStealingPool);
         Map<BitSet, Integer> patterns = Collections.synchronizedMap(new HashMap<>());
         PatternGenerator<T> generator = new PatternGenerator<>();
         Set<Node<T>> nodes = systemGraph.nodes();
@@ -69,6 +70,7 @@ public class HyperGraphSizeCalculator<T> {
             double prob = patterns.get(pattern);
             size += log2(prob / getSystemSize(nodes));
         }
+        workStealingPool.shutdownNow();
         return size;
     }
 
