@@ -48,21 +48,21 @@ public class HyperGraphGenerator {
         Set<CtTypeMember> result = new HashSet<>();
         executable.getElements(new TypeFilter<>(CtConstructorCall.class)).stream()
                 .map(CtConstructorCall::getExecutable)
-                .map(CtExecutableReference::getDeclaration)
+                .map(CtExecutableReference::getExecutableDeclaration)
                 .filter(Objects::nonNull)
                 .filter(CtConstructorImpl.class::isInstance)
                 .map(CtConstructor.class::cast)
                 .forEach(result::add);
         executable.getElements(new TypeFilter<>(CtInvocation.class)).stream()
                 .map(CtInvocation::getExecutable)
-                .map(CtExecutableReference::getDeclaration)
+                .map(CtExecutableReference::getExecutableDeclaration)
                 .filter(CtMethod.class::isInstance)
                 .map(CtMethod.class::cast)
                 .forEach(result::add);
         executable.getElements(new TypeFilter<>(CtFieldAccess.class)).stream()
                 .map(v -> v.getVariable())
                 .filter(Objects::nonNull)
-                .map(v -> v.getDeclaration())
+                .map(v -> v.getFieldDeclaration())
                 .filter(Objects::nonNull)
                 .forEach(result::add);
         // getDeclaration() removes non input calls
