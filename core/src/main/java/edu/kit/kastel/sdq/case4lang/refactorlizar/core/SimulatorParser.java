@@ -222,7 +222,8 @@ public class SimulatorParser {
 
     private static Optional<Path> findInfoFeatureFile(Path path) {
         try (Stream<Path> files = Files.list(path)) {
-            return files.filter(v -> v.getFileName().toString().equals(INFO_FEATURE_FILENAME))
+            return files.filter(
+                            v -> v.getFileName().toString().equalsIgnoreCase(INFO_FEATURE_FILENAME))
                     .findFirst();
         } catch (IOException e) {
             logger.atSevere().withCause(e).log("Error while parsing %s", path);
@@ -232,7 +233,8 @@ public class SimulatorParser {
 
     private static Optional<Path> findEmfFile(Path path) {
         try (Stream<Path> files = Files.walk(path)) {
-            return files.filter(v -> v.getFileName().toString().equals(MANIFEST_MF_FILENAME))
+            return files.filter(
+                            v -> v.getFileName().toString().equalsIgnoreCase(MANIFEST_MF_FILENAME))
                     .findFirst();
         } catch (IOException e) {
             logger.atSevere().withCause(e).log("Error while parsing %s", path);
