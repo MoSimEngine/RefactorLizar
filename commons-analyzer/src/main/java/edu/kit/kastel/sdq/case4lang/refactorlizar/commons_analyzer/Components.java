@@ -30,14 +30,26 @@ public class Components {
     }
 
     public static Optional<Component> findComponent(SimulatorModel model, CtPackage packag) {
-        return model.getSimulatorComponents().stream()
-                .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), packag))
-                .findFirst();
+        for (Component component : model.getSimulatorComponents()) {
+            if (component.getTypes().stream()
+                    .map(CtType::getPackage)
+                    .distinct()
+                    .anyMatch(v -> packag.getQualifiedName().equals(v.getQualifiedName()))) {
+                return Optional.of(component);
+            }
+        }
+        return Optional.empty();
     }
 
     public static Optional<Component> findComponent(ModularLanguage language, CtPackage packag) {
-        return language.getLanguageComponents().stream()
-                .filter(v -> JavaUtils.isParentOrSame(v.getJavaPackage(), packag))
-                .findFirst();
+        for (Component component : language.getLanguageComponents()) {
+            if (component.getTypes().stream()
+                    .map(CtType::getPackage)
+                    .distinct()
+                    .anyMatch(v -> packag.getQualifiedName().equals(v.getQualifiedName()))) {
+                return Optional.of(component);
+            }
+        }
+        return Optional.empty();
     }
 }

@@ -2,13 +2,13 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.model;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.Lookup;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.SelfRefreshingLookupBuilder;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtType;
-import spoon.reflect.visitor.filter.TypeFilter;
 
 public class ModularLanguage {
 
@@ -53,7 +53,7 @@ public class ModularLanguage {
     }
 
     private List<CtType<?>> getAllTypes(Component component) {
-        return component.getJavaPackage().getElements(new TypeFilter<>(CtType.class));
+        return new ArrayList<>(component.getTypes());
     }
 
     /**
