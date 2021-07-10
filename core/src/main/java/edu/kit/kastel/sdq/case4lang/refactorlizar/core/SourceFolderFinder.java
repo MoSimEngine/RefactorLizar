@@ -48,7 +48,7 @@ public class SourceFolderFinder extends SimpleFileVisitor<Path> {
      */
     private boolean isSrcFolder(Path dir) {
         return dir.getFileName() != null
-                && dir.getFileName().toString().equals("src")
+                && (dir.getFileName().toString().equals("src") || dir.getFileName().toString().equals("src-gen"))
                 && (!ignoreTestFolder || !dir.toString().contains("test"));
     }
 
