@@ -9,7 +9,6 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -123,9 +122,10 @@ public class DependencyGraphSupplier {
     }
 
     private Set<CtType<?>> getAllTypes(SimulatorModel model) {
-        Set<CtType<?>> types = new HashSet<>();
-        model.getAllElements(CtType.class).stream().forEach(types::add);
-        return types;
+        return model.getSimulatorComponents().stream()
+                .map(Component::getTypes)
+                .flatMap(Set::stream)
+                .collect(Collectors.toSet());
     }
 
     private MutableNetwork<CtType<?>, Edge<CtType<?>, CtTypeMember>> createTypeGraph(

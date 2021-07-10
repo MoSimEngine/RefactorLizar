@@ -1,134 +1,240 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.core;
 
-import static java.util.stream.Collectors.toMap;
-
+import com.google.common.collect.Iterables;
 import com.google.common.flogger.FluentLogger;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.core.javaparser.ModelBuilder;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.core.pluginparser.MetaInformationParser;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.core.pluginparser.EmfFileParser;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.core.pluginparser.FeatureFile;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.core.pluginparser.FeatureFileParser;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.core.pluginparser.IMetaInformationParser;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.IMetaInformation;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.ModularLanguage;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Stream;
+import spoon.Launcher;
+import spoon.OutputType;
+import spoon.compiler.Environment;
+import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
-import spoon.reflect.visitor.filter.TypeFilter;
 
+/**
+ * This defines an langaugeparser that is able to parse a language from multiple input types and
+ * layout
+ */
 public class LanguageParser {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
+    private static final String INFO_FEATURE_FILENAME = "info.feature";
+    private static final String MANIFEST_MF_FILENAME = "MANIFEST.mf";
 
     private LanguageParser() {}
-
+    /**
+     * Parses the language from the given path and returnsreturns a {@link ModularLanguage}.
+     *
+     * @param path The path to the language directory.
+     * @param kind The kind of the language.
+     * @param ignoreTestFolder If true, test folders will be ignored.
+     * @return a modular language
+     */
+    public static ModularLanguage parseLanguage(
+            String path, InputKind kind, boolean ignoreTestFolder) {
+        return parseLanguage(List.of(path), kind, ignoreTestFolder);
+    }
+    /**
+     * Parses the language from the given path and returnsreturns a {@link ModularLanguage}.
+     *
+     * @param path The path to the language directory.
+     * @param kind The kind of the language.
+     * @return a modular language
+     */
     public static ModularLanguage parseLanguage(String path, InputKind kind) {
         return parseLanguage(List.of(path), kind);
     }
-
+    /**
+     * Parses the language from the given paths and returns a {@link ModularLanguage}.
+     *
+     * @param paths The paths to the language directories.
+     * @param kind The kind of the language.
+     * @return a modular language
+     */
     public static ModularLanguage parseLanguage(Iterable<String> paths, InputKind kind) {
+        return parseLanguage(paths, kind, false);
+    }
+    /**
+     * Parses the language from the given paths and returns a {@link ModularLanguage}.
+     *
+     * @param paths The paths to the language directories.
+     * @param kind The kind of the language.
+     * @param ignoreTestFolder If true, folders containing "test" in their name will be ignored.
+     * @return a modular language.
+     */
+    public static ModularLanguage parseLanguage(
+            Iterable<String> paths, InputKind kind, boolean ignoreTestFolder) {
         switch (kind) {
             case ECLIPSE_PLUGIN:
-                return parseLanguageEclipsePlugin(paths);
+                return parseLanguageEclipsePlugin(paths, ignoreTestFolder);
             case FEATURE_FILE:
-                return parseLanguageFeatureFile(paths);
+                return parseLanguageFeatureFile(paths, ignoreTestFolder);
             default:
                 throw new IllegalArgumentException(String.format("Kind %s not implemented", kind));
         }
     }
 
-    private static ModularLanguage parseLanguageFeatureFile(Iterable<String> inputPaths) {
-        return parseFeatureFile(inputPaths);
+    private static ModularLanguage parseLanguageFeatureFile(
+            Iterable<String> inputPaths, boolean ignoreTestFolder) {
+        return new LanguageParser()
+                .parseInput(
+                        Iterables.transform(inputPaths, Path::of),
+                        new FeatureFileParser(),
+                        LanguageParser::findInfoFeatureFile,
+                        ignoreTestFolder);
     }
 
-    private static ModularLanguage parseEmfFile(Iterable<String> paths) {
-        Collection<CtPackage> javaPackages = buildJavaPackages(paths);
-        MetaInformationParser parser = new MetaInformationParser();
-        Collection<IMetaInformation> emfFiles = parser.analyzeEmfFiles(paths);
-        Map<String, CtPackage> packageByQName = convertPackagesToMap(javaPackages);
-        Set<Component> components = new HashSet<>();
-        for (IMetaInformation featureFile : emfFiles) {
-            CtPackage packag = packageByQName.get(featureFile.getSimpleName());
-            if (packag == null) {
-                logger.atWarning().log("ignoring bundle %s", featureFile);
-                continue;
-            }
-            components.add(new Component(packag, featureFile));
+    private static ModularLanguage parseLanguageEclipsePlugin(
+            Iterable<String> inputPaths, boolean ignoreTestFolder) {
+        return new LanguageParser()
+                .parseInput(
+                        Iterables.transform(inputPaths, Path::of),
+                        new EmfFileParser(),
+                        LanguageParser::findEmfFile,
+                        ignoreTestFolder);
+    }
+
+    private ModularLanguage parseInput(
+            Iterable<Path> paths,
+            IMetaInformationParser parser,
+            Function<Path, Optional<Path>> findMetaInformationFile,
+            boolean ignoreTestFolder) {
+
+        List<Path> srcFolders = findSourceFolders(paths, ignoreTestFolder);
+        Set<Component> components =
+                createShadowComponents(parser, srcFolders, findMetaInformationFile);
+        // now rebuild components with the new types
+        return buildModularLanguageFromShadowComponents(srcFolders, components);
+    }
+
+    private ModularLanguage buildModularLanguageFromShadowComponents(
+            List<Path> srcFolders, Set<Component> components) {
+        Map<String, CtType<?>> typeMap = new HashMap<>();
+        Launcher launcher = new Launcher();
+        setSpoonCompilerFlags(launcher.getEnvironment());
+        for (Path path : srcFolders) {
+            launcher.addInputResource(path.toString());
         }
-        return new ModularLanguage(components);
-    }
-
-    private static ModularLanguage parseLanguageEclipsePlugin(Iterable<String> inputPaths) {
-        return parseEmfFile(inputPaths);
-    }
-
-    private static ModularLanguage parseFeatureFile(Iterable<String> paths) {
-        Collection<CtPackage> javaPackages = buildJavaPackages(paths);
-        MetaInformationParser parser = new MetaInformationParser();
-        Collection<IMetaInformation> featureFiles = parser.analyzeFeatureFiles(paths);
-        Map<Path, CtPackage> packageByPath = convertPackagesToPathMap(javaPackages);
-        Set<Component> components = new HashSet<>();
-        for (IMetaInformation featureFile : featureFiles) {
-            Optional<Entry<Path, CtPackage>> entry =
-                    packageByPath.entrySet().stream()
-                            .filter(v -> findMatchingPath(featureFile, v))
-                            .min(
-                                    (o1, o2) ->
-                                            Integer.compare(
-                                                    getLengthFofPath(o1), getLengthFofPath(o2)));
-            if (entry.isEmpty()) {
-                logger.atWarning().log("ignoring bundle %s", featureFile);
-                continue;
-            }
-            var bundlePackage = entry.get().getValue();
-            packageByPath.remove(entry.get().getKey());
-            components.add(new Component(bundlePackage, featureFile));
+        for (CtType<?> type : launcher.buildModel().getAllTypes()) {
+            typeMap.put(type.getQualifiedName(), type);
         }
-        return new ModularLanguage(components);
+        Set<Component> componentsWithNewTypes = new HashSet<>();
+        for (Component component : components) {
+            Set<CtType<?>> typesOfComponent = new HashSet<>();
+            for (CtType<?> shadowType : component.getTypes()) {
+                CtType<?> fullType = typeMap.get(shadowType.getQualifiedName());
+                if (fullType == null) {
+                    logger.atInfo().log("%s type is null", shadowType.getQualifiedName());
+                } else {
+                    typesOfComponent.add(fullType);
+                }
+            }
+            componentsWithNewTypes.add(
+                    new Component(typesOfComponent, component.getMetaInformation()));
+        }
+        return new ModularLanguage(componentsWithNewTypes);
     }
 
-    private static boolean findMatchingPath(
-            IMetaInformation featureFile, Entry<Path, CtPackage> v) {
-        return v.getKey().toString().contains(featureFile.getFilePath().getParent().toString());
+    private Set<Component> createShadowComponents(
+            IMetaInformationParser parser,
+            List<Path> srcFolders,
+            Function<Path, Optional<Path>> findMetaInformationFile) {
+        Set<CtType<?>> typeCache = new HashSet<>();
+        Set<CtPackage> packageCache = new HashSet<>();
+        Set<Component> components = new HashSet<>();
+        for (Path path : srcFolders) {
+            IMetaInformation metaFile = null;
+
+            if (path.getParent() != null) {
+                Optional<Path> metaFilePath = findMetaInformationFile.apply(path.getParent());
+                if (metaFilePath.isPresent()) {
+                    metaFile =
+                            parser.parse(metaFilePath.get())
+                                    .orElse(createShadowMetaInformation(path));
+                }
+            }
+
+            if (metaFile == null) {
+                metaFile = createShadowMetaInformation(path);
+            }
+            Launcher launcher = new Launcher();
+            logger.atInfo().log(path.toString());
+            launcher.addInputResource(path.toString());
+            setSpoonCompilerFlags(launcher.getEnvironment());
+
+            CtModel model = launcher.buildModel();
+
+            Set<CtType<?>> typesOfComponent = new HashSet<>();
+            model.getAllTypes().stream()
+                    .filter(type -> !typeCache.contains(type))
+                    .forEach(typesOfComponent::add);
+
+            typeCache.addAll(model.getAllTypes());
+            packageCache.addAll(model.getAllPackages());
+            components.add(new Component(typesOfComponent, metaFile));
+        }
+        return components;
     }
 
-    private static int getLengthFofPath(Entry<Path, CtPackage> entry) {
-        return entry.getKey().toString().length();
+    private List<Path> findSourceFolders(Iterable<Path> paths, boolean ignoreTestFolder) {
+        SourceFolderFinder visitor = new SourceFolderFinder(ignoreTestFolder);
+
+        for (Path path : paths) {
+            try {
+                Files.walkFileTree(path, visitor);
+            } catch (IOException e) {
+                logger.atSevere().withCause(e).log("Error while parsing test");
+            }
+        }
+        return visitor.getSrcFolders();
     }
 
-    private static Collection<CtPackage> buildJavaPackages(Iterable<String> paths) {
-        ModelBuilder builder = new ModelBuilder();
-        builder.buildModel(paths);
-        return builder.getAllPackages();
+    private void setSpoonCompilerFlags(Environment env) {
+        env.setComplianceLevel(11);
+        env.setOutputType(OutputType.NO_OUTPUT);
+        env.setNoClasspath(true);
+        env.setShouldCompile(false);
+        env.setIgnoreDuplicateDeclarations(true);
     }
 
-    private static Map<String, CtPackage> convertPackagesToMap(Collection<CtPackage> javaPackages) {
-        // we dont need a merge function here, because we have 0 duplicates
-        return javaPackages.stream()
-                .collect(toMap(CtPackage::getSimpleName, v -> v, (v, w) -> v, HashMap::new));
+    private IMetaInformation createShadowMetaInformation(Path path) {
+        return new FeatureFile(path, "Shadowed " + path.getParent().getFileName().toString());
     }
 
-    private static Map<Path, CtPackage> convertPackagesToPathMap(
-            Collection<CtPackage> javaPackages) {
-        // we dont need a merge function here, because we have 0 duplicates
-        return javaPackages.stream()
-                .collect(toMap(v -> getPath(v), v -> v, (v, w) -> v, HashMap::new));
+    private static Optional<Path> findInfoFeatureFile(Path path) {
+        try (Stream<Path> files = Files.list(path)) {
+            return files.filter(
+                            v -> v.getFileName().toString().equalsIgnoreCase(INFO_FEATURE_FILENAME))
+                    .findFirst();
+        } catch (IOException e) {
+            logger.atSevere().withCause(e).log("Error while parsing %s", path);
+        }
+        return Optional.empty();
     }
 
-    private static Path getPath(CtPackage packag) {
-        var typeInRoot =
-                packag.getElements(new TypeFilter<>(CtType.class)).stream()
-                        .filter(type -> type.getPosition().isValidPosition())
-                        .min((o1, o2) -> Integer.compare(getPathLength(o1), getPathLength(o2)));
-        return Path.of(typeInRoot.map(v -> v.getPosition().getFile().getPath()).orElse(""))
-                .getParent();
-    }
-
-    private static int getPathLength(CtType<?> type) {
-        return type.getPosition().getFile().getPath().length();
+    private static Optional<Path> findEmfFile(Path path) {
+        try (Stream<Path> files = Files.walk(path)) {
+            return files.filter(
+                            v -> v.getFileName().toString().equalsIgnoreCase(MANIFEST_MF_FILENAME))
+                    .findFirst();
+        } catch (IOException e) {
+            logger.atSevere().withCause(e).log("Error while parsing %s", path);
+        }
+        return Optional.empty();
     }
 }

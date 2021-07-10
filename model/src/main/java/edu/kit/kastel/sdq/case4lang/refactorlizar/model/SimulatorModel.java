@@ -2,6 +2,7 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.model;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.Lookup;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.SelfRefreshingLookupBuilder;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -9,9 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import spoon.Launcher;
 import spoon.OutputType;
-import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtType;
-import spoon.reflect.visitor.filter.TypeFilter;
 
 /** SimulatorModel */
 public class SimulatorModel {
@@ -19,12 +18,6 @@ public class SimulatorModel {
     private Set<Component> simulatorComponents;
     private Lookup<String, CtType<?>> typeByQNameLookup;
     private Launcher launcher;
-
-    public <T extends CtElement> Collection<T> getAllElements(Class<? extends T> clazz) {
-        return simulatorComponents.stream()
-                .flatMap(v -> v.getJavaPackage().getElements(new TypeFilter<>(clazz)).stream())
-                .collect(Collectors.toList());
-    }
 
     public Set<Component> getSimulatorComponents() {
         return simulatorComponents;
@@ -63,7 +56,7 @@ public class SimulatorModel {
     }
 
     private List<CtType<?>> getAllTypes(Component v) {
-        return v.getJavaPackage().getElements(new TypeFilter<>(CtType.class));
+        return new ArrayList<>(v.getTypes());
     }
 
     public CtType<?> getTypeWithQualifiedName(String qName) {
