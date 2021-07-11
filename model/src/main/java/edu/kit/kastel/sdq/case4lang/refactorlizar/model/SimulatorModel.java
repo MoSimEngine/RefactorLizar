@@ -2,22 +2,20 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.model;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.Lookup;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.SelfRefreshingLookupBuilder;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import spoon.Launcher;
-import spoon.OutputType;
 import spoon.reflect.declaration.CtType;
 
 /** SimulatorModel */
-public class SimulatorModel {
+public class SimulatorModel implements PrettyPrintable {
 
     private Set<Component> simulatorComponents;
     private Lookup<String, CtType<?>> typeByQNameLookup;
-    private Launcher launcher;
 
     public Set<Component> getSimulatorComponents() {
         return simulatorComponents;
@@ -26,16 +24,6 @@ public class SimulatorModel {
     public SimulatorModel(Set<Component> languageComponents) {
         this.simulatorComponents = languageComponents;
         typeByQNameLookup = createTypeByQNameLookup(languageComponents);
-    }
-
-    public SimulatorModel(Set<Component> languageComponents, Launcher launcher) {
-        this(languageComponents);
-        this.launcher = launcher;
-    }
-
-    public void print(String path) {
-        launcher.getEnvironment().setOutputType(OutputType.CLASSES);
-        launcher.setSourceOutputDirectory(path);
     }
 
     private Lookup<String, CtType<?>> createTypeByQNameLookup(
@@ -91,5 +79,11 @@ public class SimulatorModel {
     @Override
     public String toString() {
         return "SimulatorModel [simulatorComponents=" + simulatorComponents + "]";
+    }
+
+    @Override
+    public void prettyprint(Path path) {
+        ModelPrinter printer = new ModelPrinter();
+        printer.prettyprint(path, getSimulatorComponents());
     }
 }

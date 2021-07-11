@@ -217,7 +217,7 @@ public class SimulatorParser {
     }
 
     private IMetaInformation createShadowMetaInformation(Path path) {
-        return new FeatureFile(path, "Shadowed " + path.getParent().getFileName().toString());
+        return new FeatureFile(path.getParent(), "Shadowed " + path.getParent().toString());
     }
 
     private static Optional<Path> findInfoFeatureFile(Path path) {

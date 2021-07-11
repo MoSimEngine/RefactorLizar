@@ -1,7 +1,9 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.model;
 
+import com.google.common.flogger.FluentLogger;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.Lookup;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.SelfRefreshingLookupBuilder;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -10,8 +12,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtType;
 
-public class ModularLanguage {
+public class ModularLanguage implements PrettyPrintable {
 
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private Set<Component> languageComponents;
     private Lookup<String, CtType<?>> typeByQNameLookup;
 
@@ -87,5 +90,11 @@ public class ModularLanguage {
     @Override
     public String toString() {
         return "ModularLanguage [languageComponents=" + languageComponents + "]";
+    }
+
+    @Override
+    public void prettyprint(Path path) {
+        ModelPrinter printer = new ModelPrinter();
+        printer.prettyprint(path, languageComponents);
     }
 }
