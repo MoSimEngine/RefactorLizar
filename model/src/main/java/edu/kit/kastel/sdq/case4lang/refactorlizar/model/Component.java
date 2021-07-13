@@ -63,7 +63,7 @@ public class Component implements PrettyPrintable {
 
     @Override
     public String toString() {
-        return "Component{" + "metaInformation=" + metaInformation+"}";
+        return "Component{" + "metaInformation=" + metaInformation + "}";
     }
 
     @Override
@@ -97,6 +97,7 @@ public class Component implements PrettyPrintable {
     public void addType(CtType<?> type) {
         types.add(type);
     }
+
     public void removeType(CtType<?> type) {
         types.remove(type);
     }
