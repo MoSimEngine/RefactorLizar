@@ -41,11 +41,10 @@ public class LayerClassSplit {
         this.classToSplit = type;
     }
 
-    private Component findComponentForClass(SimulatorModel model) {
+    private Optional<Component> findComponentForClass(SimulatorModel model) {
         return model.getSimulatorComponents().stream()
                 .filter(v -> v.getTypes().contains(classToSplit))
-                .findFirst()
-                .get();
+                .findFirst();
     }
 
     private Map<Layer, CtType<?>> createLayerClasses(CtType<?> type) {
@@ -56,6 +55,7 @@ public class LayerClassSplit {
         if (type.getSuperclass() != null) {
             lastClass.setSuperclass(type.getSuperclass());
         }
+        lastClass.setExtendedModifiers(type.getExtendedModifiers());
         lastClass.setSuperInterfaces(type.getSuperInterfaces());
         layerClasses.put(COMMONS_LAYER, lastClass);
         for (Layer layer : layers.getLayers()) {
@@ -320,6 +320,11 @@ public class LayerClassSplit {
                 .getKey();
     }
 
+    private void swapClasses(Component refactorComponent, Map<Layer, CtType<?>> layerClasses) {
+        refactorComponent.removeType(classToSplit);
+        layerClasses.values().forEach(refactorComponent::addType);
+    }
+
     StructuralRefactoring createRefactoring() {
         return (language, model) -> {
             logger.atInfo().log("Refactoring %s", classToSplit.getQualifiedName());
@@ -329,7 +334,11 @@ public class LayerClassSplit {
                         classToSplit.getQualifiedName());
                 return;
             }
-            Component refactorComponent = findComponentForClass(model);
+            Optional<Component> refactorComponent = findComponentForClass(model);
+            if (refactorComponent.isEmpty()) {
+                logger.atInfo().log(
+                        "No component for class %s was found", classToSplit.getQualifiedName());
+            }
             Map<Layer, CtType<?>> layerClasses = createLayerClasses(classToSplit);
             moveFields(layerClasses);
             moveMethods(layerClasses);
@@ -337,9 +346,39 @@ public class LayerClassSplit {
             adjustMethods(layerClasses);
             adjustTypeReferences(model, layerClasses);
             // moveTypeReferences(model,layerClasses);
-            refactorComponent.removeType(classToSplit);
-            layerClasses.values().forEach(refactorComponent::addType);
+            swapClasses(refactorComponent.get(), layerClasses);
             logger.atInfo().log("Refactoring %s finished", classToSplit.getQualifiedName());
         };
+    }
+
+    private class HierarchicLayer extends Layer {
+        private HierarchicLayer parent;
+        private HierarchicLayer child;
+        private CtType<?> type;
+
+        HierarchicLayer(CtType<?> type, Layer layer) {
+            super(layer.getName());
+            this.type = type;
+        }
+
+        public HierarchicLayer getChild() {
+            return child;
+        }
+
+        public HierarchicLayer getParent() {
+            return parent;
+        }
+
+        public CtType<?> getType() {
+            return type;
+        }
+
+        public void setChild(HierarchicLayer child) {
+            this.child = child;
+        }
+
+        public void setParent(HierarchicLayer parent) {
+            this.parent = parent;
+        }
     }
 }
