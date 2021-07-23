@@ -240,45 +240,43 @@ public class LayerClassSplit {
     }
 
     private void adjustMethods(Map<Layer, CtType<?>> layerClasses) {
+        CtType<?> startType = layerClasses.get(COMMONS_LAYER);
+        CtType<?> lowerType = getLowerClass(layerClasses, startType);
         boolean changed = false;
-        do {
+        while(true) {
             changed = false;
-            for (CtType<?> type : layerClasses.values()) {
-                for (CtMethod<?> method : type.getMethods()) {
-                    if(unmovableMethods.contains(method)) {
-                        continue;
-                    }
-                    List<CtExecutableReference<?>> referencedMethods =
-                            method.getElements(new TypeFilter<>(CtExecutableReference.class));
-                    referencedMethods.removeIf(
-                            v ->
-                                    v.getDeclaringType() == null
-                                            || !Objects.equals(
-                                                    classToSplit,
-                                                    v.getDeclaringType().getTypeDeclaration()));
-                    referencedMethods.removeIf(CtExecutableReference::isConstructor);
-                    if (!hasAllMethods(referencedMethods, type)) {
-                        CtType<?> lowerClass = getLowerClass(layerClasses, type);
-                        if (lowerClass == null) {
-                            break;
-                        }
-                        type.removeMethod(method);
-                        lowerClass.addMethod(method);
-                        logger.atInfo().log(
-                                "Adjusting method %s%s in %s",
-                                method.getSimpleName(),method.getSignature(), type.getSimpleName());
-                        changed = true;
-                        break;
-                    }
+            if(lowerType == null) {
+                break;
+            }
+            for (CtMethod<?> method : startType.getMethods()) {
+                if(unmovableMethods.contains(method)) {
+                    continue;
+                }
+                List<CtExecutableReference<?>> referencedMethods =
+                        method.getElements(new TypeFilter<>(CtExecutableReference.class));
+                referencedMethods.removeIf(v -> v.getDeclaringType() == null || !Objects
+                        .equals(classToSplit, v.getDeclaringType().getTypeDeclaration()));
+                referencedMethods.removeIf(CtExecutableReference::isConstructor);
+                if (!hasAllMethods(referencedMethods, startType)) {
+                    startType.removeMethod(method);
+                    lowerType.addMethod(method);
+                    changed = true;
+                    logger.atInfo().log(
+                            "Adjusting method %s%s in %s",
+                            method.getSimpleName(),method.getSignature(), startType.getSimpleName());
                 }
             }
-        } while (changed);
+            if(!changed) {
+            startType = lowerType;
+            lowerType = getLowerClass(layerClasses, startType);
+            }
+        }
     }
 
     private CtType<?> getLowerClass(Map<Layer, CtType<?>> layerClasses, CtType<?> type) {
         for (CtType<?> layerClass : layerClasses.values()) {
             if (layerClass.getSuperclass() != null
-                    && layerClass.getSuperclass().equals(type.getReference())) {
+                    && layerClass.getSuperclass().getQualifiedName().equals(type.getReference().getQualifiedName())) {
                 return layerClass;
             }
         }
@@ -321,31 +319,42 @@ public class LayerClassSplit {
 
 
     private CtType<?> getLowestLayerClass(Map<Layer, CtType<?>> layerClasses) {
-        Set<CtType<?>> layerTypes = new HashSet<>(layerClasses.values());
-        for (CtType<?> candidate : layerTypes) {
-            if (layerTypes.stream().allMatch(type -> candidate.isSubtypeOf(type.getReference()))) {
-                return candidate;
+        if(layerClasses.values().isEmpty()) {
+            throw new IllegalStateException("Could not find lowest layer class");
+        }
+        CtType<?> lowestClass = layerClasses.values().iterator().next();
+        while (true) {
+            CtType<?> lowerClass = getLowerClass(layerClasses, lowestClass);
+            if(lowerClass == null) {
+                return lowestClass;
+            }
+            else {
+                lowestClass = lowerClass;
             }
         }
-        throw new IllegalStateException("Could not find lowest layer class");
     }
 
     private Layer getHighestLayer(Map<Layer, CtType<?>> layerClasses) {
-        Set<CtType<?>> layerTypes = new HashSet<>(layerClasses.values());
-        Optional<Entry<Layer, CtType<?>>> candidateLayer =
-                layerClasses.entrySet().stream()
-                        .filter(
-                                candidate ->
-                                        layerTypes.stream()
-                                                .allMatch(
-                                                        inner ->
-                                                                inner.isSubtypeOf(
-                                                                        candidate
-                                                                                .getValue()
-                                                                                .getReference())))
-                        .findFirst();
-        if (candidateLayer.isPresent()) {
-            return candidateLayer.get().getKey();
+        if(layerClasses.values().isEmpty()) {
+            return null;
+        }
+        CtType<?> startClass = layerClasses.values().iterator().next();
+        while (true) {
+            if(startClass.getSuperclass() == null) {
+                    break;
+            }
+            CtType<?> higherClass = startClass.getSuperclass().getTypeDeclaration();
+            if(layerClasses.values().contains(higherClass)) {
+                startClass = higherClass;
+            }
+            else {
+                break;
+            }
+        }
+        for(Map.Entry<Layer, CtType<?>> entry : layerClasses.entrySet()) {
+            if(entry.getValue().equals(startClass)) {
+                return entry.getKey();
+            }
         }
         return Iterables.tryFind(layerClasses.keySet(), v -> v.equals(COMMONS_LAYER)).orNull();
     }
@@ -377,21 +386,25 @@ public class LayerClassSplit {
                         type.setSuperInterfaces(upperClass.getSuperInterfaces());
                     }
                 }
-                changed = layerClasses.entrySet()
-                        .removeIf(v -> v.getValue().getTypeMembers().isEmpty());
             }
+            changed = layerClasses.entrySet()
+            .removeIf(v -> v.getValue().getTypeMembers().isEmpty());
+
         } while (changed);
     }
     private void adjustRecursiveGenerics(Map<Layer, CtType<?>> layerClasses) {
-        
         for (CtType<?> type : layerClasses.values()) {
-            for(var test :  type.getFormalCtTypeParameters().stream().map(v -> v.getElements(new TypeFilter<>(CtTypeReference.class))).flatMap(List::stream).collect(Collectors.toList())) {
-                if(test.getTypeDeclaration().getReference().equals(classToSplit.getReference())) {
-                    test.replace(createGenericReference(layerClasses.get(getHighestLayer(layerClasses))));
+            CtTypeReference<?> createGenericReference = createGenericReference(
+                layerClasses.get(getHighestLayer(layerClasses)));
+            for (var test : type.getFormalCtTypeParameters().stream()
+                    .map(v -> v.getElements(new TypeFilter<>(CtTypeReference.class)))
+                    .flatMap(List::stream).collect(Collectors.toList())) {
+                if (test.getTypeDeclaration().getReference().equals(classToSplit.getReference())) {
+                    test.replace(createGenericReference);
                 }
             }
-            
-            }
+
+        }
     }
     private CtTypeReference<?> createGenericReference2(CtType<?> type) {
         CtTypeReference<?> genericTypeRef = type.getReference();
@@ -479,12 +492,6 @@ public class LayerClassSplit {
                         classToSplit.getQualifiedName());
                 return;
             }
-            // if (hasRecursiveGeneric(classToSplit)) {
-            //     logger.atInfo().log(
-            //             "Class %s has a recursive generic and cant be splitted",
-            //             classToSplit.getQualifiedName());
-            //     return;
-            // }
             Optional<Component> refactorComponent = findComponentForClass(model);
             if (refactorComponent.isEmpty()) {
                 logger.atInfo().log(

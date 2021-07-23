@@ -44,19 +44,22 @@ public class LayerClassSplitTest {
         ;
     }
 
+    private String simulator = "src/test/resources/eval/scenario04/langApply";
+    private String language = "F:/OneDrive - bwedu/Uni zeugs/Hiwi/Software/eval/mCamunda";
     @Test
     void testCreateRefactoring2() {
+        Path.of(simulator).toAbsolutePath();
         LayerArchitecture architecture = new LayerArchitecture("paradigm,domain");
-        SimulatorModel model =
-                SimulatorParser.parseSimulator(
-                        "src/test/resources/szenario16/before", InputKind.FEATURE_FILE);
+        Project project = buildProject(List.of(language), List.of(simulator));
+        SimulatorModel model = project.getSimulatorModel();
+
         Set<CtType<?>> types =
                 new HashSet<>(model.getSimulatorComponents().iterator().next().getTypes());
         for (CtType<?> ctType : types) {
             LayerClassSplit refactoring = new LayerClassSplit(architecture, ctType);
             refactoring.createRefactoring().refactor(null, model);
         }
-        model.prettyprint(Path.of("./szenario16"));
+        model.prettyprint(Path.of("./szenario04"));
     }
 
     @Test
@@ -117,7 +120,7 @@ public class LayerClassSplitTest {
         refactoring.createRefactoring().refactor(null, model);
         Set<CtType<?>> typesAfter = getAllTypes(model);
         assertThat(typesAfter).doesNotContain(startType);
-        assertThat(typesAfter).hasSize(4);
+        assertThat(typesAfter).hasSize(3);
     }
 
     @Test
