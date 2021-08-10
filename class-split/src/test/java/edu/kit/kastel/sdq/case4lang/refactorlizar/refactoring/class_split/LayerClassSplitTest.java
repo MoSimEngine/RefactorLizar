@@ -3,7 +3,6 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.refactoring.class_split;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThat;
 
-import com.google.common.truth.Correspondence;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.layer.LayerArchitecture;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.core.InputKind;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.core.ProjectParser;
@@ -11,6 +10,8 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.core.SimulatorParser;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Project;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,12 +22,6 @@ import spoon.reflect.declaration.ModifierKind;
 import spoon.reflect.reference.CtFieldReference;
 
 public class LayerClassSplitTest {
-
-    private static final Correspondence<CtType<?>, CtType<?>> HAS_SAME_MODIFIERS() {
-        return Correspondence.from(
-                (u, v) -> !v.getModifiers().containsAll(u.getModifiers()), "modifiers");
-    }
-    ;
 
     @Test
     void testCreateRefactoring() {
@@ -41,11 +36,12 @@ public class LayerClassSplitTest {
         LayerClassSplit refactoring = new LayerClassSplit(architecture, splitType);
         refactoring.createRefactoring().refactor(null, model);
         assertThat(model.getTypeWithQualifiedName("layer.TestClass")).isNull();
-        ;
     }
 
-    private String simulator = "src/test/resources/eval/scenario04/langApply";
+    private String scenario = "scenario17";
+    private String simulator = "F:/OneDrive - bwedu/Uni zeugs/Hiwi/Software/eval/input/"+scenario+"/langApply/src";
     private String language = "F:/OneDrive - bwedu/Uni zeugs/Hiwi/Software/eval/mCamunda";
+
     @Test
     void testCreateRefactoring2() {
         Path.of(simulator).toAbsolutePath();
@@ -59,7 +55,7 @@ public class LayerClassSplitTest {
             LayerClassSplit refactoring = new LayerClassSplit(architecture, ctType);
             refactoring.createRefactoring().refactor(null, model);
         }
-        model.prettyprint(Path.of("./szenario04"));
+        model.prettyprint(Path.of("./" + scenario));
     }
 
     @Test
@@ -186,6 +182,67 @@ public class LayerClassSplitTest {
                 .hasSize(1);
     }
 
+    @Test
+    void testStaticFieldReference() {
+        LayerArchitecture architecture = new LayerArchitecture("paradigm,domain,quality");
+        Project project =
+                buildProject(
+                        List.of(),
+                        List.of("src/test/resources/staticFieldReference/src/"));
+        SimulatorModel model = project.getSimulatorModel();
+        Set<CtType<?>> typesBefore = getAllTypes(model);
+        CtType<?> startType = typesBefore.iterator().next();
+        LayerClassSplit refactoring = new LayerClassSplit(architecture, startType);
+        refactoring.createRefactoring().refactor(null, model);
+        int a = 3; 
+    }
+
+    @Test
+    void testGenericSuperclass() {
+        LayerArchitecture architecture = new LayerArchitecture("paradigm,quality");
+        Project project =
+                buildProject(
+                        List.of(),
+                        List.of("src/test/resources/genericSuperclass/src/"));
+        SimulatorModel model = project.getSimulatorModel();
+        Set<CtType<?>> typesBefore = getAllTypes(model);
+        CtType<?> startType = model.getTypeWithQualifiedName("genericSuperclass.Lower");
+        LayerClassSplit refactoring = new LayerClassSplit(architecture, startType);
+        refactoring.createRefactoring().refactor(null, model);
+        int a = 3; 
+    }
+
+    @Test
+    void testSingelton() {
+        LayerArchitecture architecture = new LayerArchitecture("paradigm,quality");
+        Project project =
+                buildProject(
+                        List.of(),
+                        List.of("src/test/resources/singelton/src/"));
+        SimulatorModel model = project.getSimulatorModel();
+        CtType<?> startType = model.getTypeWithQualifiedName("singelton.Singelton");
+        LayerClassSplit refactoring = new LayerClassSplit(architecture, startType);
+        refactoring.createRefactoring().refactor(null, model);
+        assertThat(getAllTypes(model)).hasSize(1);
+    }
+    @Test
+    void testAdjustedRecursiveGeneric() {
+        LayerArchitecture architecture = new LayerArchitecture("paradigm,domain");
+        Project project =
+                buildProject(
+                        List.of(),
+                        List.of("src/test/resources/adjustedRecursivGeneric/src/"));
+        SimulatorModel model = project.getSimulatorModel();
+        List<CtType<?>> typesBefore = new ArrayList<>(getAllTypes(model));
+        Collections.sort(typesBefore, (o1,o2) -> -1);
+        for(CtType<?> type : typesBefore) { 
+        LayerClassSplit refactoring = new LayerClassSplit(architecture, type);
+        refactoring.createRefactoring().refactor(null, model);
+        }
+        //TODO: assert schreiben
+        // assertThat(getAllTypes(model)).hasSize(1);
+    }
+// adjustedRecursivGeneric
     private Project buildProject(List<String> languagePaths, List<String> simulatorPaths) {
         return new ProjectParser()
                 .setLanguageKind(InputKind.FEATURE_FILE)

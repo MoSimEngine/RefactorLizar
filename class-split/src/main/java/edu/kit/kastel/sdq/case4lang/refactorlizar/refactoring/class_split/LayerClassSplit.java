@@ -308,11 +308,20 @@ public class LayerClassSplit {
     }
 
     private void convertTypeReference(CtType<?> type, Map<Layer, CtType<?>> layerClasses) {
-        List<CtTypeReference<?>> typeReferences =
+         List<CtTypeReference<?>> typeReferences =
                 type.getElements(new TypeFilter<>(CtTypeReference.class));
         typeReferences.removeIf(v -> !Objects.equals(classToSplit, v.getTypeDeclaration()));
         CtType<?> lowestType = getLowestLayerClass(layerClasses);
-        typeReferences.forEach(v -> v.replace(createGenericReference(lowestType)));
+        typeReferences.forEach(v -> v.replace(createGenericReference(lowestType,v.getActualTypeArguments())));
+    }
+
+    private CtElement createGenericReference(CtType<?> type,
+            List<CtTypeReference<?>> actualTypeArguments) {
+                CtTypeReference<?> genericTypeRef = type.getReference();
+                for (CtTypeReference<?> typeParam : actualTypeArguments) {
+                    genericTypeRef.addActualTypeArgument(typeParam);
+                }
+                return genericTypeRef;
     }
 
     private CtType<?> getLowestLayerClass(Map<Layer, CtType<?>> layerClasses) {
@@ -409,9 +418,7 @@ public class LayerClassSplit {
         Layer layer = getHighestLayer(layerClasses);
         if (hasSuperclass(classToSplit)) {
             CtType<?> type = classToSplit.getSuperclass().getTypeDeclaration();
-            copyModifiers(type, layerClasses.get(layer));
             copySuperInterfaces(type, layerClasses.get(layer));
-            copyGenerics(type, layerClasses.get(layer));
             CtTypeReference<?> genericTypeRef = classToSplit.getSuperclass();
             layerClasses.get(layer).setSuperclass(genericTypeRef);
         }
@@ -420,6 +427,8 @@ public class LayerClassSplit {
     private Set<CtMethod<?>> findUnmovableMethods(CtType<?> type) {
         Set<CtMethod<?>> methods = new HashSet<>();
         var methodsOfType = type.getMethods();
+        try {
+            
         if (hasSuperclass(type)) {
             var methodsOfSuperclass = type.getSuperclass().getTypeDeclaration().getAllMethods();
             for (CtMethod<?> superClassMethod : methodsOfSuperclass) {
@@ -431,7 +440,9 @@ public class LayerClassSplit {
                     // move it
                 }
             }
-        }
+        }}        catch (Exception e) {
+            //TODO: AbstractBoundaryEventBuilder mit AbstractCatchevent produziert einen Fehler
+    logger.atInfo().log("There was an error in getting all superclass methods for %s", type.getQualifiedName());        }
         for (CtTypeReference<?> intrface : type.getSuperInterfaces()) {
             intrface.getTypeDeclaration().getAllMethods().forEach(methods::add);
         }
@@ -583,7 +594,7 @@ public class LayerClassSplit {
     }
 
     private boolean isSingelton(CtType<?> type) {
-        return type.getElements(new TypeFilter<>(CtConstructorCall.class)).stream().anyMatch(v -> v.getType().equals(type));
+        return type.getElements(new TypeFilter<>(CtConstructorCall.class)).stream().anyMatch(v -> v.getType().getQualifiedName().equals(type.getQualifiedName()));
     }
 
     StructuralRefactoring createRefactoring() {
