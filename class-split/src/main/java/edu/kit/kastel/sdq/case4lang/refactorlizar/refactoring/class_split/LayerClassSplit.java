@@ -36,6 +36,7 @@ import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtField;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtModifiable;
+import spoon.reflect.declaration.CtParameter;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.declaration.ModifierKind;
 import spoon.reflect.reference.CtExecutableReference;
@@ -86,7 +87,7 @@ public class LayerClassSplit {
 
     private CtClass<?> createClassWithLayerName(String layerName) {
         return TypeCreation.classOfQualifiedName(
-                classToSplit, classToSplit.getPackage() + createLayerClassname(layerName));
+                classToSplit, classToSplit.getPackage() + "." + createLayerClassname(layerName));
     }
 
     private String createLayerClassname(String layerName) {
@@ -292,7 +293,7 @@ public class LayerClassSplit {
 
     private void removeEmptyTypes(Map<Layer, CtType<?>> layerClasses) {
         if (layerClasses.values().stream().allMatch(Types::hasOnlyConstructorTypeMembers)) {
-            // TODO: sometimes we only have a constructor in all classes
+            // sometimes we only have a constructor in all classes
             return;
         }
         boolean changed = false;
@@ -328,7 +329,10 @@ public class LayerClassSplit {
                             .map(v -> v.getElements(new TypeFilter<>(CtTypeReference.class)))
                             .flatMap(List::stream)
                             .collect(Collectors.toList())) {
-                if (test.getTypeDeclaration().getReference().equals(classToSplit.getReference())) {
+                if (test.getTypeDeclaration() != null
+                        && test.getTypeDeclaration()
+                                .getReference()
+                                .equals(classToSplit.getReference())) {
                     test.replace(createGenericReference);
                 }
             }
@@ -367,7 +371,9 @@ public class LayerClassSplit {
                     type.getQualifiedName());
         }
         for (CtTypeReference<?> intrface : type.getSuperInterfaces()) {
-            intrface.getTypeDeclaration().getAllMethods().forEach(methods::add);
+            if (intrface.getTypeDeclaration() != null) {
+                intrface.getTypeDeclaration().getAllMethods().forEach(methods::add);
+            }
         }
         for (CtConstructor<?> constructor :
                 classToSplit.getElements(new TypeFilter<>(CtConstructor.class))) {
@@ -426,7 +432,7 @@ public class LayerClassSplit {
                                 .createCodeSnippetStatement(
                                         "super("
                                                 + constructor.getParameters().stream()
-                                                        .map(v -> v.getSimpleName())
+                                                        .map(CtParameter::getSimpleName)
                                                         .collect(Collectors.joining(","))
                                                 + ")");
                 clone.getBody().addStatement(0, statement);
@@ -546,9 +552,9 @@ public class LayerClassSplit {
     }
 
     StructuralRefactoring createRefactoring() {
-        return (project) -> {
-            this.project = project;
-            SimulatorModel model = project.getSimulatorModel();
+        return refactorProject -> {
+            this.project = refactorProject;
+            SimulatorModel model = refactorProject.getSimulatorModel();
             logger.atInfo().log("Refactoring %s", classToSplit.getQualifiedName());
             if (!isRefactorable(model)) {
                 return;

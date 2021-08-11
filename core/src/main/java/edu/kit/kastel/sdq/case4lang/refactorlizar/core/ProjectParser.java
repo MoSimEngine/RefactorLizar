@@ -22,7 +22,7 @@ public class ProjectParser {
         languagePaths = new ArrayList<>();
     }
 
-    public ProjectParser ignoreTestFOlder(boolean ignoreTestFolder) {
+    public ProjectParser ignoreTestFolder(boolean ignoreTestFolder) {
         this.ignoreTestFolder = ignoreTestFolder;
         return this;
     }

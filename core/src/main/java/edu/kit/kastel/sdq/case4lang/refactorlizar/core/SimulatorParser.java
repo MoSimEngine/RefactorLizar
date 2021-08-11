@@ -225,7 +225,6 @@ public class SimulatorParser {
                 metaFile = createShadowMetaInformation(path);
             }
             Launcher launcher = new Launcher();
-            logger.atInfo().log(path.toString());
             launcher.addInputResource(path.toString());
             setSpoonCompilerFlags(launcher.getEnvironment());
 

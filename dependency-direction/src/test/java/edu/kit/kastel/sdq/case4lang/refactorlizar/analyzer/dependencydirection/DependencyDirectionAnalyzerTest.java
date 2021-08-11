@@ -31,10 +31,12 @@ public class DependencyDirectionAnalyzerTest {
              */
             ModularLanguage language =
                     LanguageParser.parseLanguage(
-                            "src/test/resources/modular_language", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/modular_language",
+                            InputKind.ECLIPSE_PLUGIN);
             SimulatorModel simulator =
                     SimulatorParser.parseSimulator(
-                            "src/test/resources/wrong_direction", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/wrong_direction",
+                            InputKind.ECLIPSE_PLUGIN);
             DependencyDirectionAnalyzer dda = new DependencyDirectionAnalyzer();
             Settings settings = dda.getSettings();
             settings.setValue("level", "type");
@@ -59,10 +61,12 @@ public class DependencyDirectionAnalyzerTest {
              */
             ModularLanguage language =
                     LanguageParser.parseLanguage(
-                            "src/test/resources/modular_language", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/modular_language",
+                            InputKind.ECLIPSE_PLUGIN);
             SimulatorModel simulator =
                     SimulatorParser.parseSimulator(
-                            "src/test/resources/correct_direction", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/correct_direction",
+                            InputKind.ECLIPSE_PLUGIN);
             DependencyDirectionAnalyzer dda = new DependencyDirectionAnalyzer();
             Settings settings = dda.getSettings();
             settings.setValue("level", "type");
@@ -91,10 +95,12 @@ public class DependencyDirectionAnalyzerTest {
              */
             ModularLanguage language =
                     LanguageParser.parseLanguage(
-                            "src/test/resources/modular_language", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/modular_language",
+                            InputKind.ECLIPSE_PLUGIN);
             SimulatorModel simulator =
                     SimulatorParser.parseSimulator(
-                            "src/test/resources/wrong_direction", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/wrong_direction",
+                            InputKind.ECLIPSE_PLUGIN);
             DependencyDirectionAnalyzer dda = new DependencyDirectionAnalyzer();
             Settings settings = dda.getSettings();
             settings.setValue("level", "package");
@@ -119,10 +125,12 @@ public class DependencyDirectionAnalyzerTest {
              */
             ModularLanguage language =
                     LanguageParser.parseLanguage(
-                            "src/test/resources/modular_language", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/modular_language",
+                            InputKind.ECLIPSE_PLUGIN);
             SimulatorModel simulator =
                     SimulatorParser.parseSimulator(
-                            "src/test/resources/correct_direction", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/correct_direction",
+                            InputKind.ECLIPSE_PLUGIN);
             DependencyDirectionAnalyzer dda = new DependencyDirectionAnalyzer();
             Settings settings = dda.getSettings();
             settings.setValue("level", "package");
@@ -151,10 +159,12 @@ public class DependencyDirectionAnalyzerTest {
              */
             ModularLanguage language =
                     LanguageParser.parseLanguage(
-                            "src/test/resources/modular_language", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/modular_language",
+                            InputKind.ECLIPSE_PLUGIN);
             SimulatorModel simulator =
                     SimulatorParser.parseSimulator(
-                            "src/test/resources/wrong_direction", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/wrong_direction",
+                            InputKind.ECLIPSE_PLUGIN);
             DependencyDirectionAnalyzer dda = new DependencyDirectionAnalyzer();
             Settings settings = dda.getSettings();
             settings.setValue("level", "component");
@@ -179,10 +189,12 @@ public class DependencyDirectionAnalyzerTest {
              */
             ModularLanguage language =
                     LanguageParser.parseLanguage(
-                            "src/test/resources/modular_language", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/modular_language",
+                            InputKind.ECLIPSE_PLUGIN);
             SimulatorModel simulator =
                     SimulatorParser.parseSimulator(
-                            "src/test/resources/correct_direction", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/correct_direction",
+                            InputKind.ECLIPSE_PLUGIN);
             DependencyDirectionAnalyzer dda = new DependencyDirectionAnalyzer();
             Settings settings = dda.getSettings();
             settings.setValue("level", "component");

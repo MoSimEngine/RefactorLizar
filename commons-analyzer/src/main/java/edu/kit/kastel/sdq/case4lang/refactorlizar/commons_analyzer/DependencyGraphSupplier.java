@@ -122,7 +122,7 @@ public class DependencyGraphSupplier {
     }
 
     private Set<CtType<?>> getAllTypes(SimulatorModel model) {
-        return model.getSimulatorComponents().stream()
+        return model.getComponents().stream()
                 .map(Component::getTypes)
                 .flatMap(Set::stream)
                 .collect(Collectors.toSet());

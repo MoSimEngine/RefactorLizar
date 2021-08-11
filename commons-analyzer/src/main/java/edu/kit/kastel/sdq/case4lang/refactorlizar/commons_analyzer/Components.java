@@ -30,7 +30,7 @@ public class Components {
     }
 
     public static Optional<Component> findComponent(SimulatorModel model, CtPackage packag) {
-        for (Component component : model.getSimulatorComponents()) {
+        for (Component component : model.getComponents()) {
             if (component.getTypes().stream()
                     .map(CtType::getPackage)
                     .distinct()
@@ -42,7 +42,7 @@ public class Components {
     }
 
     public static Optional<Component> findComponent(ModularLanguage language, CtPackage packag) {
-        for (Component component : language.getLanguageComponents()) {
+        for (Component component : language.getComponents()) {
             if (component.getTypes().stream()
                     .map(CtType::getPackage)
                     .distinct()

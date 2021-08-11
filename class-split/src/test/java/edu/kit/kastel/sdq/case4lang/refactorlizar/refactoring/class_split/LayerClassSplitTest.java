@@ -22,7 +22,7 @@ public class LayerClassSplitTest {
     @Test
     void testCreateRefactoring() {
         LayerArchitecture architecture = new LayerArchitecture("domain,paradigm,quality");
-        Project project = buildProject(List.of(), List.of("src/test/resources/layer"));
+        Project project = buildProject(List.of(), List.of("src/test/resources/projects/layer"));
         SimulatorModel model = project.getSimulatorModel();
         CtType<?> splitType =
                 model.getComponents().iterator().next().getTypes().stream()
@@ -34,12 +34,11 @@ public class LayerClassSplitTest {
         assertThat(model.getTypeWithQualifiedName("layer.TestClass")).isNull();
     }
 
-
     @Test
     void testNoLayerClass() {
         // contract: a no layer class must be unmodified
         LayerArchitecture architecture = new LayerArchitecture("paradigm,domain");
-        Project project = buildProject(List.of(), List.of("src/test/resources/noLayer"));
+        Project project = buildProject(List.of(), List.of("src/test/resources/projects/noLayer"));
         SimulatorModel model = project.getSimulatorModel();
         Set<CtType<?>> typesBefore = getAllTypes(model);
         LayerClassSplit refactoring =
@@ -54,7 +53,7 @@ public class LayerClassSplitTest {
     void testModifiers() {
         // contract: each splitted class must have the same modifiers as the original class
         LayerArchitecture architecture = new LayerArchitecture("paradigm,domain");
-        Project project = buildProject(List.of(), List.of("src/test/resources/modifiers"));
+        Project project = buildProject(List.of(), List.of("src/test/resources/projects/modifiers"));
         SimulatorModel model = project.getSimulatorModel();
         Set<CtType<?>> typesBefore = getAllTypes(model);
         CtType<?> startType = typesBefore.iterator().next();
@@ -71,7 +70,8 @@ public class LayerClassSplitTest {
     void testGenerics() {
         // contract: each splitted class must have the same generics as the original class
         LayerArchitecture architecture = new LayerArchitecture("paradigm,domain");
-        Project project = buildProject(List.of(), List.of("src/test/resources/simpleGenerics"));
+        Project project =
+                buildProject(List.of(), List.of("src/test/resources/projects/simpleGenerics"));
         SimulatorModel model = project.getSimulatorModel();
         Set<CtType<?>> typesBefore = getAllTypes(model);
         CtType<?> startType = typesBefore.iterator().next();
@@ -89,7 +89,7 @@ public class LayerClassSplitTest {
     void testClassReplacement() {
         // contract: a class with 3 layers gets splitted in 4 classes
         LayerArchitecture architecture = new LayerArchitecture("paradigm,domain,quality");
-        Project project = buildProject(List.of(), List.of("src/test/resources/modifiers"));
+        Project project = buildProject(List.of(), List.of("src/test/resources/projects/modifiers"));
         SimulatorModel model = project.getSimulatorModel();
         Set<CtType<?>> typesBefore = getAllTypes(model);
         CtType<?> startType = typesBefore.iterator().next();
@@ -104,7 +104,8 @@ public class LayerClassSplitTest {
     void testSimpleFieldMovement() {
         // contract: fields get moved to the correct layer class
         LayerArchitecture architecture = new LayerArchitecture("paradigm,domain,quality");
-        Project project = buildProject(List.of(), List.of("src/test/resources/simpleFields"));
+        Project project =
+                buildProject(List.of(), List.of("src/test/resources/projects/simpleFields"));
         SimulatorModel model = project.getSimulatorModel();
         Set<CtType<?>> typesBefore = getAllTypes(model);
         CtType<?> startType = typesBefore.iterator().next();
@@ -123,20 +124,13 @@ public class LayerClassSplitTest {
     void testFieldMovesField() {
         // contract: fields get moved to the correct layer class if a upper layer ses a lower field
         LayerArchitecture architecture = new LayerArchitecture("paradigm,domain,quality");
-        Project project = buildProject(List.of(), List.of("src/test/resources/fieldUsesField"));
+        Project project =
+                buildProject(List.of(), List.of("src/test/resources/projects/fieldUsesField"));
         SimulatorModel model = project.getSimulatorModel();
         Set<CtType<?>> typesBefore = getAllTypes(model);
         CtType<?> startType = typesBefore.iterator().next();
         LayerClassSplit refactoring = new LayerClassSplit(architecture, startType);
         refactoring.createRefactoring().refactor(project);
-        assertThat(
-                        model.getTypeWithQualifiedName("fieldUsesField.CommonsFieldUsage")
-                                .getDeclaredFields())
-                .isEmpty();
-        assertThat(
-                        model.getTypeWithQualifiedName("fieldUsesField.ParadigmFieldUsage")
-                                .getDeclaredFields())
-                .hasSize(0);
         assertThat(
                         model.getTypeWithQualifiedName("fieldUsesField.DomainFieldUsage")
                                 .getDeclaredFields())
@@ -152,8 +146,10 @@ public class LayerClassSplitTest {
         LayerArchitecture architecture = new LayerArchitecture("paradigm,domain,quality");
         Project project =
                 buildProject(
-                        List.of(),
-                        List.of("src/test/resources/simulatorExtendsLanguageClass/simulator"));
+                        List.of(
+                                "src/test/resources/projects/simulatorExtendsLanguageClass/simulator"),
+                        List.of(
+                                "src/test/resources/projects/simulatorExtendsLanguageClass/simulator"));
         SimulatorModel model = project.getSimulatorModel();
         Set<CtType<?>> typesBefore = getAllTypes(model);
         CtType<?> startType = typesBefore.iterator().next();
@@ -169,7 +165,9 @@ public class LayerClassSplitTest {
     void testStaticFieldReference() {
         LayerArchitecture architecture = new LayerArchitecture("paradigm,domain,quality");
         Project project =
-                buildProject(List.of(), List.of("src/test/resources/staticFieldReference/src/"));
+                buildProject(
+                        List.of(),
+                        List.of("src/test/resources/projects/staticFieldReference/src/"));
         SimulatorModel model = project.getSimulatorModel();
         Set<CtType<?>> typesBefore = getAllTypes(model);
         CtType<?> startType = typesBefore.iterator().next();
@@ -181,7 +179,8 @@ public class LayerClassSplitTest {
     void testGenericSuperclass() {
         LayerArchitecture architecture = new LayerArchitecture("paradigm,quality");
         Project project =
-                buildProject(List.of(), List.of("src/test/resources/genericSuperclass/src/"));
+                buildProject(
+                        List.of(), List.of("src/test/resources/projects/genericSuperclass/src/"));
         SimulatorModel model = project.getSimulatorModel();
         CtType<?> startType = model.getTypeWithQualifiedName("genericSuperclass.Lower");
         LayerClassSplit refactoring = new LayerClassSplit(architecture, startType);
@@ -191,7 +190,8 @@ public class LayerClassSplitTest {
     @Test
     void testSingelton() {
         LayerArchitecture architecture = new LayerArchitecture("paradigm,quality");
-        Project project = buildProject(List.of(), List.of("src/test/resources/singelton/src/"));
+        Project project =
+                buildProject(List.of(), List.of("src/test/resources/projects/singelton/src/"));
         SimulatorModel model = project.getSimulatorModel();
         CtType<?> startType = model.getTypeWithQualifiedName("singelton.Singelton");
         LayerClassSplit refactoring = new LayerClassSplit(architecture, startType);
@@ -203,7 +203,9 @@ public class LayerClassSplitTest {
     void testAdjustedRecursiveGeneric() {
         LayerArchitecture architecture = new LayerArchitecture("paradigm,domain");
         Project project =
-                buildProject(List.of(), List.of("src/test/resources/adjustedRecursivGeneric/src/"));
+                buildProject(
+                        List.of(),
+                        List.of("src/test/resources/projects/adjustedRecursivGeneric/src/"));
         SimulatorModel model = project.getSimulatorModel();
         List<CtType<?>> typesBefore = new ArrayList<>(getAllTypes(model));
         Collections.sort(typesBefore, (o1, o2) -> -1);
