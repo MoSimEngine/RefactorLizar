@@ -4,10 +4,19 @@ import com.google.common.collect.Iterables;
 import com.google.common.flogger.FluentLogger;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.layer.Layer;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.layer.LayerArchitecture;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.query.Constructors;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.query.Elements;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.query.Models;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.query.Types;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.refactoring.LayerSelection;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.refactoring.NameBasedLayerSelection;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.refactoring.StructuralRefactoring;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.refactoring.creation.TypeCreation;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.refactoring.modification.Modifiers;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.refactoring.modification.Relations;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Project;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,22 +26,17 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
-import spoon.reflect.CtModel;
-import spoon.reflect.code.CtBlock;
-import spoon.reflect.code.CtConstructorCall;
 import spoon.reflect.code.CtFieldAccess;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.code.CtTypeAccess;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtConstructor;
 import spoon.reflect.declaration.CtElement;
-import spoon.reflect.declaration.CtExecutable;
 import spoon.reflect.declaration.CtField;
 import spoon.reflect.declaration.CtMethod;
+import spoon.reflect.declaration.CtModifiable;
 import spoon.reflect.declaration.CtType;
-import spoon.reflect.declaration.CtTypeParameter;
 import spoon.reflect.declaration.ModifierKind;
 import spoon.reflect.reference.CtExecutableReference;
 import spoon.reflect.reference.CtFieldReference;
@@ -41,12 +45,15 @@ import spoon.reflect.visitor.filter.TypeFilter;
 
 public class LayerClassSplit {
 
+    private static final String DEFAULT_LAYER_NAME = "Commons";
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final Layer COMMONS_LAYER = new Layer("commons");
     private LayerArchitecture layers;
     private CtType<?> classToSplit;
     private Set<CtMethod<?>> unmovableMethods;
     private Set<CtField<?>> unmovableFields;
+    private LayerSelection selection = new NameBasedLayerSelection();
+    private Project project;
 
     public LayerClassSplit(LayerArchitecture layers, CtType<?> type) {
         this.layers = layers;
@@ -55,29 +62,21 @@ public class LayerClassSplit {
         unmovableFields = new HashSet<>();
     }
 
-    private Optional<Component> findComponentForClass(SimulatorModel model) {
-        return model.getSimulatorComponents().stream()
-                .filter(v -> v.getTypes().contains(classToSplit))
-                .findFirst();
-    }
-
     private Map<Layer, CtType<?>> createLayerClasses(CtType<?> type) {
         Set<CtTypeReference<?>> referencedTypes = type.getReferencedTypes();
         Map<Layer, CtType<?>> layerClasses = new HashMap<>();
-        CtType<?> lastClass = createClassWithLayerName("Commons");
-        copyModifiers(type, lastClass);
-        copySuperInterfaces(type, lastClass);
-        copyGenerics(type, lastClass);
-        if (hasSuperclass(type)) {
-            lastClass.setSuperclass(type.getSuperclass());
-        }
+        CtType<?> lastClass = createClassWithLayerName(DEFAULT_LAYER_NAME);
+        Modifiers.copyModifiers(type, lastClass);
+        Modifiers.copyGenerics(type, lastClass);
+        Relations.setInheritance(Modifiers.createGenericReference(type), lastClass);
+        Relations.setSuperInterfaces(lastClass, type.getSuperInterfaces());
         layerClasses.put(COMMONS_LAYER, lastClass);
         for (Layer layer : layers.getLayers()) {
             if (checkLayerExistence(referencedTypes, layer)) {
                 CtClass<?> layerClass = createClassWithLayerName(layer.getName());
-                copyGenerics(lastClass, layerClass);
-                copyModifiers(type, layerClass);
-                setGenericSuperClass(lastClass, layerClass);
+                Modifiers.copyGenerics(lastClass, layerClass);
+                Modifiers.copyModifiers(type, layerClass);
+                Relations.setInheritance(Modifiers.createGenericReference(lastClass), layerClass);
                 lastClass = layerClass;
                 layerClasses.put(layer, layerClass);
             }
@@ -85,38 +84,9 @@ public class LayerClassSplit {
         return layerClasses;
     }
 
-    private void copyGenerics(CtType<?> from, CtType<?> to) {
-        to.setFormalCtTypeParameters(from.getFormalCtTypeParameters());
-    }
-
-    private void copyModifiers(CtType<?> from, CtType<?> to) {
-        to.setExtendedModifiers(from.getExtendedModifiers());
-    }
-
-    private void copySuperInterfaces(CtType<?> from, CtType<?> to) {
-        to.setSuperInterfaces(
-                from.getSuperInterfaces().stream()
-                        .map(v -> createGenericReference(v.getTypeDeclaration()))
-                        .collect(Collectors.toSet()));
-    }
-
-    private void setGenericSuperClass(CtType<?> parent, CtType<?> child) {
-        CtTypeReference<?> copyGenericTypeRefs = createGenericReference(parent);
-        child.setSuperclass(copyGenericTypeRefs);
-    }
-
-    private CtTypeReference<?> createGenericReference(CtType<?> type) {
-        CtTypeReference<?> genericTypeRef = type.getReference();
-        for (CtTypeParameter typeParam : type.getFormalCtTypeParameters()) {
-            genericTypeRef.addActualTypeArgument(typeParam.getReference());
-        }
-        return genericTypeRef;
-    }
-
     private CtClass<?> createClassWithLayerName(String layerName) {
-        return classToSplit
-                .getFactory()
-                .createClass(classToSplit.getPackage(), createLayerClassname(layerName));
+        return TypeCreation.classOfQualifiedName(
+                classToSplit, classToSplit.getPackage() + createLayerClassname(layerName));
     }
 
     private String createLayerClassname(String layerName) {
@@ -131,35 +101,17 @@ public class LayerClassSplit {
         return reference.getQualifiedName().contains(layer.getName() + ".");
     }
 
-    private Layer getLayerForElement(CtElement element) {
-        Set<CtTypeReference<?>> referencedTypes = element.getReferencedTypes();
-        List<CtFieldReference<?>> fieldReferences = getReferencedFields(element);
-        fieldReferences.forEach(v -> referencedTypes.addAll(v.getReferencedTypes()));
-        fieldReferences.forEach(v -> referencedTypes.add(v.getType()));
-        referencedTypes.removeIf(Objects::isNull);
-        Layer lowestLayer = COMMONS_LAYER;
-        for (Layer layer : layers.getLayers()) {
-            if (checkLayerExistence(referencedTypes, layer)) {
-                lowestLayer = layer;
-            }
-        }
-        return lowestLayer;
-    }
-
-    private List<CtFieldReference<?>> getReferencedFields(CtElement element) {
-        return element.getElements(new TypeFilter<>(CtFieldReference.class));
-    }
-
     private boolean hasAllReferencedMethodsAndFields(
             List<CtExecutableReference<?>> referencedMethods,
             List<CtFieldReference<?>> referencedFields,
             CtType<?> type) {
-        return hasAllMethods(referencedMethods, type) && hasAllFields(referencedFields, type);
+        return Types.hasAllMethods(referencedMethods, type)
+                && Types.hasAllFields(referencedFields, type);
     }
 
     private List<CtFieldReference<?>> getUsedLayerFields(
             CtMethod<?> method, Map<Layer, CtType<?>> layerClasses) {
-        List<CtFieldReference<?>> referencedFields = getReferencedFields(method);
+        List<CtFieldReference<?>> referencedFields = Elements.getReferencedFields(method);
         referencedFields.removeIf(field -> field.getDeclaringType() != null);
         referencedFields.removeIf(field -> !isReferencedInLayerClass(layerClasses.values(), field));
         return referencedFields;
@@ -170,45 +122,15 @@ public class LayerClassSplit {
         return layerClasses.contains(field.getDeclaringType().getTypeDeclaration());
     }
 
-    private boolean hasAllFields(List<CtFieldReference<?>> referencedFields, CtType<?> value) {
-        for (CtFieldReference<?> field : referencedFields) {
-            List<CtFieldReference<?>> fields = new ArrayList<>(value.getAllFields());
-            fields.removeIf(v -> !v.getSimpleName().equals(field.getSimpleName()));
-            if (fields.isEmpty()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean hasAllMethods(
-            List<CtExecutableReference<?>> referencedMethods, CtType<?> type) {
-        try {
-            var signaturesForType =
-                    type.getAllMethods().stream()
-                            .map(CtExecutable::getSignature)
-                            .collect(Collectors.toSet());
-            var usedSignatures =
-                    referencedMethods.stream()
-                            .map(CtExecutableReference::getSignature)
-                            .collect(Collectors.toSet());
-            return signaturesForType.containsAll(usedSignatures);
-        } catch (Exception e) {
-            logger.atSevere().log("Error while getting methods %s", e);
-        }
-        return false;
-    }
-
     private void moveFields(Map<Layer, CtType<?>> layerClasses) {
         for (CtField<?> field : classToSplit.getFields()) {
             Layer layer =
-                    unmovableFields.contains(field) ? COMMONS_LAYER : getLayerForElement(field);
+                    unmovableFields.contains(field)
+                            ? COMMONS_LAYER
+                            : selection.getLayerForElement(project, field, layers, COMMONS_LAYER);
             CtType<?> layerClass = layerClasses.get(layer);
             CtField<?> newField = field.clone();
-            if (newField.isPrivate()) {
-                newField.setVisibility(ModifierKind.PROTECTED);
-            }
-            layerClass.addField(newField);
+            layerClass.addField(setProtectedIfPrivate(newField));
         }
     }
 
@@ -216,20 +138,23 @@ public class LayerClassSplit {
         for (CtMethod<?> method : classToSplit.getMethods()) {
             Layer layer = COMMONS_LAYER;
             if (!unmovableMethods.contains(method)) {
-                layer = getLayerForElement(method);
+                layer = selection.getLayerForElement(project, method, layers, COMMONS_LAYER);
             }
             CtType<?> layerClass = layerClasses.get(layer);
             CtMethod<?> newMethod = method.clone();
-            if (newMethod.isPrivate()) {
-                newMethod.setVisibility(ModifierKind.PROTECTED);
-            }
-            layerClass.addMethod(newMethod);
+            layerClass.addMethod(setProtectedIfPrivate(newMethod));
         }
+    }
+
+    private <T extends CtModifiable> T setProtectedIfPrivate(T modifiable) {
+        return modifiable.setVisibility(ModifierKind.PROTECTED);
     }
 
     private void moveInnerTypes(Map<Layer, CtType<?>> layerClasses) {
         for (CtType<?> type : classToSplit.getNestedTypes()) {
-            layerClasses.get(getLayerForElement(type)).addNestedType(type);
+            layerClasses
+                    .get(selection.getLayerForElement(project, type, layers, COMMONS_LAYER))
+                    .addNestedType(type);
         }
     }
 
@@ -284,7 +209,7 @@ public class LayerClassSplit {
 
     private CtType<?> getLowerClass(Map<Layer, CtType<?>> layerClasses, CtType<?> type) {
         for (CtType<?> layerClass : layerClasses.values()) {
-            if (hasSuperclass(layerClass) && isSuperclass(type, layerClass)) {
+            if (Types.hasSuperclass(type) && isSuperclass(type, layerClass)) {
                 return layerClass;
             }
         }
@@ -297,31 +222,28 @@ public class LayerClassSplit {
                 .equals(parent.getReference().getQualifiedName());
     }
 
-    private boolean hasSuperclass(CtType<?> layerClass) {
-        return layerClass.getSuperclass() != null;
-    }
-
     private void adjustTypeReferences(SimulatorModel model, Map<Layer, CtType<?>> layerClasses) {
-        for (Component component : model.getSimulatorComponents()) {
+        for (Component component : model.getComponents()) {
             component.getTypes().forEach(type -> convertTypeReference(type, layerClasses));
         }
     }
 
     private void convertTypeReference(CtType<?> type, Map<Layer, CtType<?>> layerClasses) {
-         List<CtTypeReference<?>> typeReferences =
+        List<CtTypeReference<?>> typeReferences =
                 type.getElements(new TypeFilter<>(CtTypeReference.class));
         typeReferences.removeIf(v -> !Objects.equals(classToSplit, v.getTypeDeclaration()));
         CtType<?> lowestType = getLowestLayerClass(layerClasses);
-        typeReferences.forEach(v -> v.replace(createGenericReference(lowestType,v.getActualTypeArguments())));
+        typeReferences.forEach(
+                v -> v.replace(createGenericReference(lowestType, v.getActualTypeArguments())));
     }
 
-    private CtElement createGenericReference(CtType<?> type,
-            List<CtTypeReference<?>> actualTypeArguments) {
-                CtTypeReference<?> genericTypeRef = type.getReference();
-                for (CtTypeReference<?> typeParam : actualTypeArguments) {
-                    genericTypeRef.addActualTypeArgument(typeParam);
-                }
-                return genericTypeRef;
+    private CtElement createGenericReference(
+            CtType<?> type, List<CtTypeReference<?>> actualTypeArguments) {
+        CtTypeReference<?> genericTypeRef = type.getReference();
+        for (CtTypeReference<?> typeParam : actualTypeArguments) {
+            genericTypeRef.addActualTypeArgument(typeParam);
+        }
+        return genericTypeRef;
     }
 
     private CtType<?> getLowestLayerClass(Map<Layer, CtType<?>> layerClasses) {
@@ -345,7 +267,7 @@ public class LayerClassSplit {
         }
         CtType<?> startClass = Iterables.getFirst(layerClasses.values(), null);
         while (true) {
-            if (!hasSuperclass(startClass)) {
+            if (!Types.hasSuperclass(startClass)) {
                 break;
             }
             CtType<?> higherClass = startClass.getSuperclass().getTypeDeclaration();
@@ -369,42 +291,38 @@ public class LayerClassSplit {
     }
 
     private void removeEmptyTypes(Map<Layer, CtType<?>> layerClasses) {
-        if (layerClasses.values().stream().allMatch(v -> hasOnlyConstructorTypeMembers(v))) {
+        if (layerClasses.values().stream().allMatch(Types::hasOnlyConstructorTypeMembers)) {
             // TODO: sometimes we only have a constructor in all classes
             return;
         }
         boolean changed = false;
         do {
             for (CtType<?> type : layerClasses.values()) {
-                if (hasSuperclass(type)
+                if (Types.hasSuperclass(type)
                         && layerClasses
                                 .values()
                                 .contains(type.getSuperclass().getTypeDeclaration())) {
                     CtType<?> upperClass = type.getSuperclass().getTypeDeclaration();
-                    if (hasOnlyConstructorTypeMembers(upperClass) && hasSuperclass(upperClass)) {
-                        setGenericSuperClass(upperClass.getSuperclass().getTypeDeclaration(), type);
-                        type.setSuperInterfaces(upperClass.getSuperInterfaces());
+                    if (Types.hasOnlyConstructorTypeMembers(upperClass)
+                            && Types.hasSuperclass(upperClass)) {
+                        Relations.setInheritance(upperClass.getSuperclass(), type);
+                        Relations.setSuperInterfaces(type, upperClass.getSuperInterfaces());
                     }
                 }
             }
             changed =
                     layerClasses
                             .entrySet()
-                            .removeIf(v -> hasOnlyConstructorTypeMembers(v.getValue()));
+                            .removeIf(v -> Types.hasOnlyConstructorTypeMembers(v.getValue()));
 
         } while (changed);
-    }
-
-    private boolean hasOnlyConstructorTypeMembers(CtType<?> upperClass) {
-        return upperClass.getTypeMembers().isEmpty()
-                || upperClass.getTypeMembers().size()
-                        == upperClass.getElements(new TypeFilter<>(CtConstructor.class)).size();
     }
 
     private void adjustRecursiveGenerics(Map<Layer, CtType<?>> layerClasses) {
         for (CtType<?> type : layerClasses.values()) {
             CtTypeReference<?> createGenericReference =
-                    createGenericReference(layerClasses.get(getHighestLayer(layerClasses)));
+                    Modifiers.createGenericReference(
+                            layerClasses.get(getHighestLayer(layerClasses)));
             for (var test :
                     type.getFormalCtTypeParameters().stream()
                             .map(v -> v.getElements(new TypeFilter<>(CtTypeReference.class)))
@@ -416,9 +334,9 @@ public class LayerClassSplit {
             }
         }
         Layer layer = getHighestLayer(layerClasses);
-        if (hasSuperclass(classToSplit)) {
+        if (Types.hasSuperclass(classToSplit)) {
             CtType<?> type = classToSplit.getSuperclass().getTypeDeclaration();
-            copySuperInterfaces(type, layerClasses.get(layer));
+            Relations.setSuperInterfaces(type, layerClasses.get(layer).getSuperInterfaces());
             CtTypeReference<?> genericTypeRef = classToSplit.getSuperclass();
             layerClasses.get(layer).setSuperclass(genericTypeRef);
         }
@@ -428,21 +346,26 @@ public class LayerClassSplit {
         Set<CtMethod<?>> methods = new HashSet<>();
         var methodsOfType = type.getMethods();
         try {
-            
-        if (hasSuperclass(type)) {
-            var methodsOfSuperclass = type.getSuperclass().getTypeDeclaration().getAllMethods();
-            for (CtMethod<?> superClassMethod : methodsOfSuperclass) {
-                if (superClassMethod.isAbstract()) {
-                    Iterables.tryFind(methodsOfType, v -> v.isOverriding(superClassMethod))
-                            .toJavaUtil()
-                            .ifPresent(methods::add);
-                    // check if an abstract method is overridden by a concrete one, if so, we cant
-                    // move it
+
+            if (Types.hasSuperclass(type)) {
+                var methodsOfSuperclass = type.getSuperclass().getTypeDeclaration().getAllMethods();
+                for (CtMethod<?> superClassMethod : methodsOfSuperclass) {
+                    if (superClassMethod.isAbstract()) {
+                        Iterables.tryFind(methodsOfType, v -> v.isOverriding(superClassMethod))
+                                .toJavaUtil()
+                                .ifPresent(methods::add);
+                        // check if an abstract method is overridden by a concrete one, if so, we
+                        // cant
+                        // move it
+                    }
                 }
             }
-        }}        catch (Exception e) {
-            //TODO: AbstractBoundaryEventBuilder mit AbstractCatchevent produziert einen Fehler
-    logger.atInfo().log("There was an error in getting all superclass methods for %s", type.getQualifiedName());        }
+        } catch (Exception e) {
+            // TODO: AbstractBoundaryEventBuilder mit AbstractCatchevent produziert einen Fehler
+            logger.atInfo().log(
+                    "There was an error in getting all superclass methods for %s",
+                    type.getQualifiedName());
+        }
         for (CtTypeReference<?> intrface : type.getSuperInterfaces()) {
             intrface.getTypeDeclaration().getAllMethods().forEach(methods::add);
         }
@@ -496,7 +419,7 @@ public class LayerClassSplit {
         CtType<?> commonsType = layerClasses.get(COMMONS_LAYER);
         for (CtConstructor<?> constructor :
                 classToSplit.getElements(new TypeFilter<>(CtConstructor.class))) {
-            if (!hasSuperCall(constructor)) {
+            if (!Constructors.hasSuperCall(constructor)) {
                 CtConstructor<?> clone = constructor.clone();
                 CtStatement statement =
                         clone.getFactory()
@@ -508,11 +431,11 @@ public class LayerClassSplit {
                                                 + ")");
                 clone.getBody().addStatement(0, statement);
                 layerClasses.values().stream()
-                        .filter(v -> !v.getSimpleName().contains("Commons"))
+                        .filter(v -> !v.getSimpleName().contains(DEFAULT_LAYER_NAME))
                         .forEach(v -> v.addTypeMember(clone));
             } else {
                 layerClasses.values().stream()
-                        .filter(v -> !v.getSimpleName().contains("Commons"))
+                        .filter(v -> !v.getSimpleName().contains(DEFAULT_LAYER_NAME))
                         .forEach(v -> v.addTypeMember(constructor.clone()));
             }
         }
@@ -528,79 +451,106 @@ public class LayerClassSplit {
         }
     }
 
-    private boolean hasSuperCall(CtConstructor<?> constructor) {
-        CtBlock<?> body = constructor.getBody();
-        if (body.getStatements().isEmpty()) {
-            return false;
-        }
-        return body.getStatement(0).toString().contains("super(");
-    }
-    private void adjustStaticVariableAccess(Map<Layer, CtType<?>> layerClasses, SimulatorModel model) {
-            for(Component component : model.getSimulatorComponents()) {
-                for(CtType<?> modelType : component.getTypes()) {
-                    modelType.getElements(new TypeFilter<>(CtFieldAccess.class))
-                    .stream()
-                    .filter(fieldReference -> fieldReference.getVariable().getDeclaringType()!=null)
-                    .filter(fieldReference -> fieldReference.getVariable().getDeclaringType().getQualifiedName().equals(classToSplit.getQualifiedName()))
-                    .filter(fieldAccess -> fieldAccess.getVariable().isStatic())
-                    .forEach(fieldReference -> setDeclaringLayerTypeForStaticReference(layerClasses, fieldReference));
-                }
+    private void adjustStaticVariableAccess(
+            Map<Layer, CtType<?>> layerClasses, SimulatorModel model) {
+        for (Component component : model.getComponents()) {
+            for (CtType<?> modelType : component.getTypes()) {
+                modelType.getElements(new TypeFilter<>(CtFieldAccess.class)).stream()
+                        .filter(
+                                fieldReference ->
+                                        fieldReference.getVariable().getDeclaringType() != null)
+                        .filter(
+                                fieldReference ->
+                                        fieldReference
+                                                .getVariable()
+                                                .getDeclaringType()
+                                                .getQualifiedName()
+                                                .equals(classToSplit.getQualifiedName()))
+                        .filter(fieldAccess -> fieldAccess.getVariable().isStatic())
+                        .forEach(
+                                fieldReference ->
+                                        setDeclaringLayerTypeForStaticReference(
+                                                layerClasses, fieldReference));
             }
-            layerClasses.values().stream().map(type -> type.getElements(new TypeFilter<>(CtFieldAccess.class)))
-            .flatMap(List::stream)
-            .filter(fieldReference -> fieldReference.getVariable().getDeclaringType()!=null)
-            .filter(fieldReference -> fieldReference.getVariable().getDeclaringType().getQualifiedName().equals(classToSplit.getQualifiedName()))
-            .filter(fieldAccess -> fieldAccess.getVariable().isStatic())
-            .forEach(fieldReference -> setDeclaringLayerTypeForStaticReference(layerClasses, fieldReference));
+        }
+        layerClasses.values().stream()
+                .map(type -> type.getElements(new TypeFilter<>(CtFieldAccess.class)))
+                .flatMap(List::stream)
+                .filter(fieldReference -> fieldReference.getVariable().getDeclaringType() != null)
+                .filter(
+                        fieldReference ->
+                                fieldReference
+                                        .getVariable()
+                                        .getDeclaringType()
+                                        .getQualifiedName()
+                                        .equals(classToSplit.getQualifiedName()))
+                .filter(fieldAccess -> fieldAccess.getVariable().isStatic())
+                .forEach(
+                        fieldReference ->
+                                setDeclaringLayerTypeForStaticReference(
+                                        layerClasses, fieldReference));
     }
 
-    private void setDeclaringLayerTypeForStaticReference(Map<Layer, CtType<?>> layerClasses, CtFieldAccess<?> fieldAccess) {
-        layerClasses.values().stream().filter(type -> type.getField(fieldAccess.getVariable().getSimpleName())!=null).findAny().ifPresent(type -> getTypeAccessToSplitClass(fieldAccess).forEach(v ->setAccessedType(v, type)));
+    private void setDeclaringLayerTypeForStaticReference(
+            Map<Layer, CtType<?>> layerClasses, CtFieldAccess<?> fieldAccess) {
+        layerClasses.values().stream()
+                .filter(type -> type.getField(fieldAccess.getVariable().getSimpleName()) != null)
+                .findAny()
+                .ifPresent(
+                        type ->
+                                getTypeAccessToSplitClass(fieldAccess)
+                                        .forEach(v -> setAccessedType(v, type)));
     }
 
     private List<CtTypeAccess<?>> getTypeAccessToSplitClass(CtFieldAccess<?> fieldAccess) {
-        return fieldAccess.getElements(new TypeFilter<>(CtTypeAccess.class)).stream().filter(v -> v.getAccessedType().getQualifiedName().equals(classToSplit.getQualifiedName())).collect(Collectors.toList());
+        return fieldAccess.getElements(new TypeFilter<>(CtTypeAccess.class)).stream()
+                .filter(
+                        v ->
+                                v.getAccessedType()
+                                        .getQualifiedName()
+                                        .equals(classToSplit.getQualifiedName()))
+                .collect(Collectors.toList());
     }
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void setAccessedType(CtTypeAccess access, CtType<?> type) {
-    access.setAccessedType(type.getReference());
+        access.setAccessedType(type.getReference());
     }
 
-
-
     private boolean isRefactorable(SimulatorModel model) {
-        if (!classToSplit.isClass()) {
+        if (!Types.isClass(classToSplit) && !Types.isEnum(classToSplit)) {
             logger.atWarning().log(
                     "Type %s is not a class, cannot split", classToSplit.getQualifiedName());
             return false;
         }
-        if (getLayerForElement(classToSplit).equals(COMMONS_LAYER)) {
+        if (selection
+                .getLayerForElement(project, classToSplit, layers, COMMONS_LAYER)
+                .equals(COMMONS_LAYER)) {
             logger.atInfo().log(
-                    "Class %s is in commons layer, nothing to do",
-                    classToSplit.getQualifiedName());
+                    "Class %s is in commons layer, nothing to do", classToSplit.getQualifiedName());
             return false;
         }
-        Optional<Component> refactorComponent = findComponentForClass(model);
+        Optional<Component> refactorComponent = Models.getComponent(model, classToSplit);
         if (refactorComponent.isEmpty()) {
             logger.atInfo().log(
                     "No component for class %s was found", classToSplit.getQualifiedName());
             return false;
         }
-        if(isSingelton(classToSplit)) {
-            logger.atInfo().log("Class %s is a singelton and cant be splitted in layer", classToSplit.getQualifiedName());
+        if (Types.isSingelton(classToSplit)) {
+            logger.atInfo().log(
+                    "Class %s is a singelton and cant be splitted in layer",
+                    classToSplit.getQualifiedName());
             return false;
         }
         return true;
     }
 
-    private boolean isSingelton(CtType<?> type) {
-        return type.getElements(new TypeFilter<>(CtConstructorCall.class)).stream().anyMatch(v -> v.getType().getQualifiedName().equals(type.getQualifiedName()));
-    }
-
     StructuralRefactoring createRefactoring() {
-        return (language, model) -> {
+        return (project) -> {
+            this.project = project;
+            SimulatorModel model = project.getSimulatorModel();
             logger.atInfo().log("Refactoring %s", classToSplit.getQualifiedName());
-            if(!isRefactorable(model)) {
+            if (!isRefactorable(model)) {
                 return;
             }
             unmovableMethods = findUnmovableMethods(classToSplit);
@@ -614,9 +564,8 @@ public class LayerClassSplit {
             removeEmptyTypes(layerClasses);
             adjustRecursiveGenerics(layerClasses);
             adjustTypeReferences(model, layerClasses);
-            swapClasses(findComponentForClass(model).get(), layerClasses);
+            swapClasses(Models.getComponent(model, classToSplit).get(), layerClasses);
             logger.atInfo().log("Refactoring %s finished", classToSplit.getQualifiedName());
         };
     }
-
 }

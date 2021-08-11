@@ -1,24 +1,20 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.refactoring.class_split;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.layer.LayerArchitecture;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.core.InputKind;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.core.ProjectParser;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.core.SimulatorParser;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Project;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
-import spoon.reflect.declaration.CtModifiable;
 import spoon.reflect.declaration.CtType;
-import spoon.reflect.declaration.ModifierKind;
 import spoon.reflect.reference.CtFieldReference;
 
 public class LayerClassSplitTest {
@@ -26,47 +22,29 @@ public class LayerClassSplitTest {
     @Test
     void testCreateRefactoring() {
         LayerArchitecture architecture = new LayerArchitecture("domain,paradigm,quality");
-        SimulatorModel model =
-                SimulatorParser.parseSimulator("src/test/resources/layer", InputKind.FEATURE_FILE);
+        Project project = buildProject(List.of(), List.of("src/test/resources/layer"));
+        SimulatorModel model = project.getSimulatorModel();
         CtType<?> splitType =
-                model.getSimulatorComponents().iterator().next().getTypes().stream()
+                model.getComponents().iterator().next().getTypes().stream()
                         .filter(v -> v.getSimpleName().equals("TestClass"))
                         .findFirst()
                         .get();
         LayerClassSplit refactoring = new LayerClassSplit(architecture, splitType);
-        refactoring.createRefactoring().refactor(null, model);
+        refactoring.createRefactoring().refactor(project);
         assertThat(model.getTypeWithQualifiedName("layer.TestClass")).isNull();
     }
 
-    private String scenario = "scenario17";
-    private String simulator = "F:/OneDrive - bwedu/Uni zeugs/Hiwi/Software/eval/input/"+scenario+"/langApply/src";
-    private String language = "F:/OneDrive - bwedu/Uni zeugs/Hiwi/Software/eval/mCamunda";
-
-    @Test
-    void testCreateRefactoring2() {
-        Path.of(simulator).toAbsolutePath();
-        LayerArchitecture architecture = new LayerArchitecture("paradigm,domain");
-        Project project = buildProject(List.of(language), List.of(simulator));
-        SimulatorModel model = project.getSimulatorModel();
-
-        Set<CtType<?>> types =
-                new HashSet<>(model.getSimulatorComponents().iterator().next().getTypes());
-        for (CtType<?> ctType : types) {
-            LayerClassSplit refactoring = new LayerClassSplit(architecture, ctType);
-            refactoring.createRefactoring().refactor(null, model);
-        }
-        model.prettyprint(Path.of("./" + scenario));
-    }
 
     @Test
     void testNoLayerClass() {
         // contract: a no layer class must be unmodified
         LayerArchitecture architecture = new LayerArchitecture("paradigm,domain");
-        SimulatorModel model = createSimulator("src/test/resources/noLayer");
+        Project project = buildProject(List.of(), List.of("src/test/resources/noLayer"));
+        SimulatorModel model = project.getSimulatorModel();
         Set<CtType<?>> typesBefore = getAllTypes(model);
         LayerClassSplit refactoring =
                 new LayerClassSplit(architecture, typesBefore.iterator().next());
-        refactoring.createRefactoring().refactor(null, model);
+        refactoring.createRefactoring().refactor(project);
         Set<CtType<?>> typesAfter = getAllTypes(model);
         assertThat(typesAfter).isEqualTo(typesBefore);
         assertThat(typesBefore).hasSize(1);
@@ -76,11 +54,12 @@ public class LayerClassSplitTest {
     void testModifiers() {
         // contract: each splitted class must have the same modifiers as the original class
         LayerArchitecture architecture = new LayerArchitecture("paradigm,domain");
-        SimulatorModel model = createSimulator("src/test/resources/modifiers");
+        Project project = buildProject(List.of(), List.of("src/test/resources/modifiers"));
+        SimulatorModel model = project.getSimulatorModel();
         Set<CtType<?>> typesBefore = getAllTypes(model);
         CtType<?> startType = typesBefore.iterator().next();
         LayerClassSplit refactoring = new LayerClassSplit(architecture, startType);
-        refactoring.createRefactoring().refactor(null, model);
+        refactoring.createRefactoring().refactor(project);
         Set<CtType<?>> typesAfter = getAllTypes(model);
         assertThat(typesAfter).doesNotContain(startType);
         for (CtType<?> type : typesAfter) {
@@ -92,11 +71,12 @@ public class LayerClassSplitTest {
     void testGenerics() {
         // contract: each splitted class must have the same generics as the original class
         LayerArchitecture architecture = new LayerArchitecture("paradigm,domain");
-        SimulatorModel model = createSimulator("src/test/resources/simpleGenerics");
+        Project project = buildProject(List.of(), List.of("src/test/resources/simpleGenerics"));
+        SimulatorModel model = project.getSimulatorModel();
         Set<CtType<?>> typesBefore = getAllTypes(model);
         CtType<?> startType = typesBefore.iterator().next();
         LayerClassSplit refactoring = new LayerClassSplit(architecture, startType);
-        refactoring.createRefactoring().refactor(null, model);
+        refactoring.createRefactoring().refactor(project);
         Set<CtType<?>> typesAfter = getAllTypes(model);
         assertThat(typesAfter).doesNotContain(startType);
         for (CtType<?> type : typesAfter) {
@@ -109,11 +89,12 @@ public class LayerClassSplitTest {
     void testClassReplacement() {
         // contract: a class with 3 layers gets splitted in 4 classes
         LayerArchitecture architecture = new LayerArchitecture("paradigm,domain,quality");
-        SimulatorModel model = createSimulator("src/test/resources/modifiers");
+        Project project = buildProject(List.of(), List.of("src/test/resources/modifiers"));
+        SimulatorModel model = project.getSimulatorModel();
         Set<CtType<?>> typesBefore = getAllTypes(model);
         CtType<?> startType = typesBefore.iterator().next();
         LayerClassSplit refactoring = new LayerClassSplit(architecture, startType);
-        refactoring.createRefactoring().refactor(null, model);
+        refactoring.createRefactoring().refactor(project);
         Set<CtType<?>> typesAfter = getAllTypes(model);
         assertThat(typesAfter).doesNotContain(startType);
         assertThat(typesAfter).hasSize(3);
@@ -123,11 +104,12 @@ public class LayerClassSplitTest {
     void testSimpleFieldMovement() {
         // contract: fields get moved to the correct layer class
         LayerArchitecture architecture = new LayerArchitecture("paradigm,domain,quality");
-        SimulatorModel model = createSimulator("src/test/resources/simpleFields");
+        Project project = buildProject(List.of(), List.of("src/test/resources/simpleFields"));
+        SimulatorModel model = project.getSimulatorModel();
         Set<CtType<?>> typesBefore = getAllTypes(model);
         CtType<?> startType = typesBefore.iterator().next();
         LayerClassSplit refactoring = new LayerClassSplit(architecture, startType);
-        refactoring.createRefactoring().refactor(null, model);
+        refactoring.createRefactoring().refactor(project);
         Set<CtType<?>> typesAfter = getAllTypes(model);
         for (CtType<?> type : typesAfter) {
             assertThat(type.getDeclaredFields()).hasSize(1);
@@ -141,11 +123,12 @@ public class LayerClassSplitTest {
     void testFieldMovesField() {
         // contract: fields get moved to the correct layer class if a upper layer ses a lower field
         LayerArchitecture architecture = new LayerArchitecture("paradigm,domain,quality");
-        SimulatorModel model = createSimulator("src/test/resources/fieldUsesField");
+        Project project = buildProject(List.of(), List.of("src/test/resources/fieldUsesField"));
+        SimulatorModel model = project.getSimulatorModel();
         Set<CtType<?>> typesBefore = getAllTypes(model);
         CtType<?> startType = typesBefore.iterator().next();
         LayerClassSplit refactoring = new LayerClassSplit(architecture, startType);
-        refactoring.createRefactoring().refactor(null, model);
+        refactoring.createRefactoring().refactor(project);
         assertThat(
                         model.getTypeWithQualifiedName("fieldUsesField.CommonsFieldUsage")
                                 .getDeclaredFields())
@@ -169,13 +152,13 @@ public class LayerClassSplitTest {
         LayerArchitecture architecture = new LayerArchitecture("paradigm,domain,quality");
         Project project =
                 buildProject(
-                        List.of("src/test/resources/simulatorExtendsLanguageClass/simulator"),
+                        List.of(),
                         List.of("src/test/resources/simulatorExtendsLanguageClass/simulator"));
         SimulatorModel model = project.getSimulatorModel();
         Set<CtType<?>> typesBefore = getAllTypes(model);
         CtType<?> startType = typesBefore.iterator().next();
         LayerClassSplit refactoring = new LayerClassSplit(architecture, startType);
-        refactoring.createRefactoring().refactor(null, model);
+        refactoring.createRefactoring().refactor(project);
         assertThat(
                         model.getTypeWithQualifiedName("simulator.CommonsSimulatorClass")
                                 .getDeclaredExecutables())
@@ -186,63 +169,50 @@ public class LayerClassSplitTest {
     void testStaticFieldReference() {
         LayerArchitecture architecture = new LayerArchitecture("paradigm,domain,quality");
         Project project =
-                buildProject(
-                        List.of(),
-                        List.of("src/test/resources/staticFieldReference/src/"));
+                buildProject(List.of(), List.of("src/test/resources/staticFieldReference/src/"));
         SimulatorModel model = project.getSimulatorModel();
         Set<CtType<?>> typesBefore = getAllTypes(model);
         CtType<?> startType = typesBefore.iterator().next();
         LayerClassSplit refactoring = new LayerClassSplit(architecture, startType);
-        refactoring.createRefactoring().refactor(null, model);
-        int a = 3; 
+        assertDoesNotThrow(() -> refactoring.createRefactoring().refactor(project));
     }
 
     @Test
     void testGenericSuperclass() {
         LayerArchitecture architecture = new LayerArchitecture("paradigm,quality");
         Project project =
-                buildProject(
-                        List.of(),
-                        List.of("src/test/resources/genericSuperclass/src/"));
+                buildProject(List.of(), List.of("src/test/resources/genericSuperclass/src/"));
         SimulatorModel model = project.getSimulatorModel();
-        Set<CtType<?>> typesBefore = getAllTypes(model);
         CtType<?> startType = model.getTypeWithQualifiedName("genericSuperclass.Lower");
         LayerClassSplit refactoring = new LayerClassSplit(architecture, startType);
-        refactoring.createRefactoring().refactor(null, model);
-        int a = 3; 
+        assertDoesNotThrow(() -> refactoring.createRefactoring().refactor(project));
     }
 
     @Test
     void testSingelton() {
         LayerArchitecture architecture = new LayerArchitecture("paradigm,quality");
-        Project project =
-                buildProject(
-                        List.of(),
-                        List.of("src/test/resources/singelton/src/"));
+        Project project = buildProject(List.of(), List.of("src/test/resources/singelton/src/"));
         SimulatorModel model = project.getSimulatorModel();
         CtType<?> startType = model.getTypeWithQualifiedName("singelton.Singelton");
         LayerClassSplit refactoring = new LayerClassSplit(architecture, startType);
-        refactoring.createRefactoring().refactor(null, model);
+        refactoring.createRefactoring().refactor(project);
         assertThat(getAllTypes(model)).hasSize(1);
     }
+
     @Test
     void testAdjustedRecursiveGeneric() {
         LayerArchitecture architecture = new LayerArchitecture("paradigm,domain");
         Project project =
-                buildProject(
-                        List.of(),
-                        List.of("src/test/resources/adjustedRecursivGeneric/src/"));
+                buildProject(List.of(), List.of("src/test/resources/adjustedRecursivGeneric/src/"));
         SimulatorModel model = project.getSimulatorModel();
         List<CtType<?>> typesBefore = new ArrayList<>(getAllTypes(model));
-        Collections.sort(typesBefore, (o1,o2) -> -1);
-        for(CtType<?> type : typesBefore) { 
-        LayerClassSplit refactoring = new LayerClassSplit(architecture, type);
-        refactoring.createRefactoring().refactor(null, model);
+        Collections.sort(typesBefore, (o1, o2) -> -1);
+        for (CtType<?> type : typesBefore) {
+            LayerClassSplit refactoring = new LayerClassSplit(architecture, type);
+            assertDoesNotThrow(() -> refactoring.createRefactoring().refactor(project));
         }
-        //TODO: assert schreiben
-        // assertThat(getAllTypes(model)).hasSize(1);
     }
-// adjustedRecursivGeneric
+
     private Project buildProject(List<String> languagePaths, List<String> simulatorPaths) {
         return new ProjectParser()
                 .setLanguageKind(InputKind.FEATURE_FILE)
@@ -252,17 +222,9 @@ public class LayerClassSplitTest {
                 .parse();
     }
 
-    private boolean isProtected(CtModifiable v) {
-        return v.getModifiers().contains(ModifierKind.PROTECTED);
-    }
-
     private HashSet<CtType<?>> getAllTypes(SimulatorModel model) {
-        return model.getSimulatorComponents().stream()
+        return model.getComponents().stream()
                 .flatMap(v -> v.getTypes().stream())
                 .collect(HashSet::new, HashSet::add, HashSet::addAll);
-    }
-
-    private SimulatorModel createSimulator(String path) {
-        return SimulatorParser.parseSimulator(path, InputKind.FEATURE_FILE);
     }
 }
