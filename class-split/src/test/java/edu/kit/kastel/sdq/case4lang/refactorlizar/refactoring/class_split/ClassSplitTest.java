@@ -1,6 +1,7 @@
+package edu.kit.kastel.sdq.case4lang.refactorlizar.refactoring.class_split;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import edu.kit.kastel.sdq.case4lang.refactorlizar.refactoring.class_split.ClassSplitBuilder;
 import org.junit.jupiter.api.Test;
 import spoon.Launcher;
 import spoon.reflect.CtModel;
@@ -13,7 +14,7 @@ public class ClassSplitTest {
     @Test
     public void classSplitTest() {
         Launcher launcher = new Launcher();
-        launcher.addInputResource("src/test/resources/simpleProject");
+        launcher.addInputResource("src/test/resources/projects/simpleProject");
         CtModel model = launcher.buildModel();
         CtType<?> type = model.getAllTypes().iterator().next();
         CtField<?> field1 = type.getField("a");

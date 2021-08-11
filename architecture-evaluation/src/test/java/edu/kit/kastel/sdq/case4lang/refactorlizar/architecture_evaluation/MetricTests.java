@@ -15,7 +15,7 @@ class MetricTests {
                             new Application()
                                     .evaluate(
                                             CalculationMode.MARTIN,
-                                            "src/test/resources/smallProject/Foo.java")
+                                            "src/test/resources/projects/smallProject/Foo.java")
                                     .getSize()
                                     .getValue())
                     .isWithin(0.1)
@@ -24,7 +24,7 @@ class MetricTests {
                             new Application()
                                     .evaluate(
                                             CalculationMode.REINER,
-                                            "src/test/resources/smallProject/Foo.java")
+                                            "src/test/resources/projects/smallProject/Foo.java")
                                     .getSize()
                                     .getValue())
                     .isEqualTo(4.0);
@@ -36,7 +36,7 @@ class MetricTests {
                             new Application()
                                     .evaluate(
                                             CalculationMode.MARTIN,
-                                            "src/test/resources/smallProject")
+                                            "src/test/resources/projects/smallProject")
                                     .getSize()
                                     .getValue())
                     .isWithin(0.1)
@@ -45,7 +45,7 @@ class MetricTests {
                             new Application()
                                     .evaluate(
                                             CalculationMode.REINER,
-                                            "src/test/resources/smallProject")
+                                            "src/test/resources/projects/smallProject")
                                     .getSize()
                                     .getValue())
                     .isWithin(0.1)
@@ -61,7 +61,7 @@ class MetricTests {
                             new Application()
                                     .evaluate(
                                             CalculationMode.MARTIN,
-                                            "src/test/resources/smallProject/Foo.java")
+                                            "src/test/resources/projects/smallProject/Foo.java")
                                     .getComplexity()
                                     .getValue())
                     .isWithin(0.1)
@@ -70,7 +70,7 @@ class MetricTests {
                             new Application()
                                     .evaluate(
                                             CalculationMode.REINER,
-                                            "src/test/resources/smallProject/Foo.java")
+                                            "src/test/resources/projects/smallProject/Foo.java")
                                     .getComplexity()
                                     .getValue())
                     .isEqualTo(4.0);
@@ -82,7 +82,7 @@ class MetricTests {
                             new Application()
                                     .evaluate(
                                             CalculationMode.MARTIN,
-                                            "src/test/resources/smallProject/")
+                                            "src/test/resources/projects/smallProject/")
                                     .getComplexity()
                                     .getValue())
                     .isWithin(0.1)
@@ -91,7 +91,7 @@ class MetricTests {
                             new Application()
                                     .evaluate(
                                             CalculationMode.REINER,
-                                            "src/test/resources/smallProject/")
+                                            "src/test/resources/projects/smallProject/")
                                     .getComplexity()
                                     .getValue())
                     .isEqualTo(4.0);
@@ -106,7 +106,7 @@ class MetricTests {
                             new Application()
                                     .evaluate(
                                             CalculationMode.MARTIN,
-                                            "src/test/resources/smallProject/Foo.java")
+                                            "src/test/resources/projects/smallProject/Foo.java")
                                     .getCoupling()
                                     .getValue())
                     .isWithin(0.1)
@@ -115,7 +115,7 @@ class MetricTests {
                             new Application()
                                     .evaluate(
                                             CalculationMode.REINER,
-                                            "src/test/resources/smallProject/Foo.java")
+                                            "src/test/resources/projects/smallProject/Foo.java")
                                     .getCoupling()
                                     .getValue())
                     .isEqualTo(-1.0);
@@ -127,7 +127,7 @@ class MetricTests {
                             new Application()
                                     .evaluate(
                                             CalculationMode.MARTIN,
-                                            "src/test/resources/smallProject/")
+                                            "src/test/resources/projects/smallProject/")
                                     .getCoupling()
                                     .getValue())
                     .isWithin(0.1)
@@ -136,7 +136,7 @@ class MetricTests {
                             new Application()
                                     .evaluate(
                                             CalculationMode.REINER,
-                                            "src/test/resources/smallProject/")
+                                            "src/test/resources/projects/smallProject/")
                                     .getCoupling()
                                     .getValue())
                     .isEqualTo(-1.0);
@@ -151,7 +151,7 @@ class MetricTests {
                             new Application()
                                     .evaluate(
                                             CalculationMode.MARTIN,
-                                            "src/test/resources/smallProject/Foo.java")
+                                            "src/test/resources/projects/smallProject/Foo.java")
                                     .getCohesion()
                                     .getValue())
                     .isWithin(0.1)
@@ -160,7 +160,7 @@ class MetricTests {
                             new Application()
                                     .evaluate(
                                             CalculationMode.REINER,
-                                            "src/test/resources/smallProject/Foo.java")
+                                            "src/test/resources/projects/smallProject/Foo.java")
                                     .getCohesion()
                                     .getValue())
                     .isEqualTo(1.0);
@@ -172,7 +172,7 @@ class MetricTests {
                             new Application()
                                     .evaluate(
                                             CalculationMode.MARTIN,
-                                            "src/test/resources/smallProject/")
+                                            "src/test/resources/projects/smallProject/")
                                     .getCohesion()
                                     .getValue())
                     .isWithin(0.1)
@@ -181,7 +181,7 @@ class MetricTests {
                             new Application()
                                     .evaluate(
                                             CalculationMode.REINER,
-                                            "src/test/resources/smallProject/")
+                                            "src/test/resources/projects/smallProject/")
                                     .getCohesion()
                                     .getValue())
                     .isWithin(0.1)

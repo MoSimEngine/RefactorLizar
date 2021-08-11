@@ -20,10 +20,12 @@ public class DependencyLayerAnalyzerTest {
         public void wrong_layer() {
             ModularLanguage language =
                     LanguageParser.parseLanguage(
-                            "src/test/resources/xppu/modular-language", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/xppu/modular-language",
+                            InputKind.ECLIPSE_PLUGIN);
             SimulatorModel simulator =
                     SimulatorParser.parseSimulator(
-                            "src/test/resources/xppu/wrong_layer", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/xppu/wrong_layer",
+                            InputKind.ECLIPSE_PLUGIN);
             DependencyLayerAnalyzer dla = new DependencyLayerAnalyzer();
             Settings settings = dla.getSettings();
             settings.setValue("level", "type");
@@ -36,10 +38,12 @@ public class DependencyLayerAnalyzerTest {
         public void correct_layer() {
             ModularLanguage language =
                     LanguageParser.parseLanguage(
-                            "src/test/resources/xppu/modular-language", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/xppu/modular-language",
+                            InputKind.ECLIPSE_PLUGIN);
             SimulatorModel simulator =
                     SimulatorParser.parseSimulator(
-                            "src/test/resources/xppu/correct_layer", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/xppu/correct_layer",
+                            InputKind.ECLIPSE_PLUGIN);
             DependencyLayerAnalyzer dla = new DependencyLayerAnalyzer();
             Settings settings = dla.getSettings();
             settings.setValue("level", "type");
@@ -55,10 +59,12 @@ public class DependencyLayerAnalyzerTest {
         public void wrong_layer() {
             ModularLanguage language =
                     LanguageParser.parseLanguage(
-                            "src/test/resources/xppu/modular-language", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/xppu/modular-language",
+                            InputKind.ECLIPSE_PLUGIN);
             SimulatorModel simulator =
                     SimulatorParser.parseSimulator(
-                            "src/test/resources/xppu/wrong_layer", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/xppu/wrong_layer",
+                            InputKind.ECLIPSE_PLUGIN);
             DependencyLayerAnalyzer dla = new DependencyLayerAnalyzer();
             Settings settings = dla.getSettings();
             settings.setValue("level", "package");
@@ -71,10 +77,12 @@ public class DependencyLayerAnalyzerTest {
         public void correct_layer() {
             ModularLanguage language =
                     LanguageParser.parseLanguage(
-                            "src/test/resources/xppu/modular-language", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/xppu/modular-language",
+                            InputKind.ECLIPSE_PLUGIN);
             SimulatorModel simulator =
                     SimulatorParser.parseSimulator(
-                            "src/test/resources/xppu/correct_layer", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/xppu/correct_layer",
+                            InputKind.ECLIPSE_PLUGIN);
             DependencyLayerAnalyzer dla = new DependencyLayerAnalyzer();
             Settings settings = dla.getSettings();
             settings.setValue("level", "package");
@@ -90,10 +98,12 @@ public class DependencyLayerAnalyzerTest {
         public void wrong_layer() {
             ModularLanguage language =
                     LanguageParser.parseLanguage(
-                            "src/test/resources/xppu/modular-language", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/xppu/modular-language",
+                            InputKind.ECLIPSE_PLUGIN);
             SimulatorModel simulator =
                     SimulatorParser.parseSimulator(
-                            "src/test/resources/xppu/wrong_layer", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/xppu/wrong_layer",
+                            InputKind.ECLIPSE_PLUGIN);
             DependencyLayerAnalyzer dla = new DependencyLayerAnalyzer();
             Settings settings = dla.getSettings();
             settings.setValue("level", "component");
@@ -106,10 +116,12 @@ public class DependencyLayerAnalyzerTest {
         public void correct_layer() {
             ModularLanguage language =
                     LanguageParser.parseLanguage(
-                            "src/test/resources/xppu/modular-language", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/xppu/modular-language",
+                            InputKind.ECLIPSE_PLUGIN);
             SimulatorModel simulator =
                     SimulatorParser.parseSimulator(
-                            "src/test/resources/xppu/correct_layer", InputKind.ECLIPSE_PLUGIN);
+                            "src/test/resources/projects/xppu/correct_layer",
+                            InputKind.ECLIPSE_PLUGIN);
             DependencyLayerAnalyzer dla = new DependencyLayerAnalyzer();
             Settings settings = dla.getSettings();
             settings.setValue("level", "component");

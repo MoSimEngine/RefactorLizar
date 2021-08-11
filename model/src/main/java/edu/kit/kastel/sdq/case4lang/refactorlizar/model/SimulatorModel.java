@@ -12,12 +12,12 @@ import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtType;
 
 /** SimulatorModel */
-public class SimulatorModel implements PrettyPrintable {
+public class SimulatorModel implements PrettyPrintable, Queryable {
 
     private Set<Component> simulatorComponents;
     private Lookup<String, CtType<?>> typeByQNameLookup;
 
-    public Set<Component> getSimulatorComponents() {
+    public Set<Component> getComponents() {
         return simulatorComponents;
     }
 
@@ -84,6 +84,6 @@ public class SimulatorModel implements PrettyPrintable {
     @Override
     public void prettyprint(Path path) {
         ModelPrinter printer = new ModelPrinter();
-        printer.prettyprint(path, getSimulatorComponents());
+        printer.prettyprint(path, getComponents());
     }
 }

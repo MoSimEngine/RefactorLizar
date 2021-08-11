@@ -78,6 +78,21 @@ public class SimulatorParser {
                 throw new IllegalArgumentException(String.format("Kind %s not implemented", kind));
         }
     }
+    // TODO: write doc
+    public static SimulatorModel parseSimulator(
+            Iterable<Path> simulatorPaths,
+            Iterable<Path> languagePaths,
+            InputKind kind,
+            boolean ignoreTestFolder) {
+        switch (kind) {
+            case ECLIPSE_PLUGIN:
+                return parseSimulatorEclipsePlugin(simulatorPaths, languagePaths, ignoreTestFolder);
+            case FEATURE_FILE:
+                return parseSimulatorFeatureFile(simulatorPaths, languagePaths, ignoreTestFolder);
+            default:
+                throw new IllegalArgumentException(String.format("Kind %s not implemented", kind));
+        }
+    }
     /**
      * Parses the simulator from the given paths and returns a {@link SimulatorModel}.
      *
@@ -94,6 +109,7 @@ public class SimulatorParser {
         return new SimulatorParser()
                 .parseInput(
                         Iterables.transform(inputPaths, Path::of),
+                        List.of(),
                         new FeatureFileParser(),
                         SimulatorParser::findInfoFeatureFile,
                         ignoreTestFolder);
@@ -104,30 +120,62 @@ public class SimulatorParser {
         return new SimulatorParser()
                 .parseInput(
                         Iterables.transform(inputPaths, Path::of),
+                        List.of(),
+                        new EmfFileParser(),
+                        SimulatorParser::findEmfFile,
+                        ignoreTestFolder);
+    }
+
+    private static SimulatorModel parseSimulatorFeatureFile(
+            Iterable<Path> simulatorPaths, Iterable<Path> languagePaths, boolean ignoreTestFolder) {
+        return new SimulatorParser()
+                .parseInput(
+                        simulatorPaths,
+                        languagePaths,
+                        new FeatureFileParser(),
+                        SimulatorParser::findInfoFeatureFile,
+                        ignoreTestFolder);
+    }
+
+    private static SimulatorModel parseSimulatorEclipsePlugin(
+            Iterable<Path> simulatorPaths, Iterable<Path> inputPaths, boolean ignoreTestFolder) {
+        return new SimulatorParser()
+                .parseInput(
+                        simulatorPaths,
+                        inputPaths,
                         new EmfFileParser(),
                         SimulatorParser::findEmfFile,
                         ignoreTestFolder);
     }
 
     private SimulatorModel parseInput(
-            Iterable<Path> paths,
+            Iterable<Path> simulatorPaths,
+            Iterable<Path> languagePaths,
             IMetaInformationParser parser,
             Function<Path, Optional<Path>> findMetaInformationFile,
             boolean ignoreTestFolder) {
 
-        List<Path> srcFolders = findSourceFolders(paths, ignoreTestFolder);
+        List<Path> simulatorSrcFolders = findSourceFolders(simulatorPaths, ignoreTestFolder);
+        List<Path> languageSrcFolders = findSourceFolders(languagePaths, ignoreTestFolder);
+
         Set<Component> components =
-                createShadowComponents(parser, srcFolders, findMetaInformationFile);
+                createShadowComponents(parser, simulatorSrcFolders, findMetaInformationFile);
         // now rebuild components with the new types
-        return buildSimulatorModelFromShadowComponents(srcFolders, components);
+        return buildSimulatorModelFromShadowComponents(
+                simulatorSrcFolders, languageSrcFolders, components);
     }
 
     private SimulatorModel buildSimulatorModelFromShadowComponents(
-            List<Path> srcFolders, Set<Component> components) {
+            List<Path> simulatorSrcFolders,
+            List<Path> languageSrcFolders,
+            Set<Component> components) {
         Map<String, CtType<?>> typeMap = new HashMap<>();
         Launcher launcher = new Launcher();
         setSpoonCompilerFlags(launcher.getEnvironment());
-        for (Path path : srcFolders) {
+        for (Path path : simulatorSrcFolders) {
+            launcher.addInputResource(path.toString());
+        }
+        for (Path path : languageSrcFolders) {
             launcher.addInputResource(path.toString());
         }
         for (CtType<?> type : launcher.buildModel().getAllTypes()) {
@@ -177,7 +225,6 @@ public class SimulatorParser {
                 metaFile = createShadowMetaInformation(path);
             }
             Launcher launcher = new Launcher();
-            logger.atInfo().log(path.toString());
             launcher.addInputResource(path.toString());
             setSpoonCompilerFlags(launcher.getEnvironment());
 

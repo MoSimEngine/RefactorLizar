@@ -11,7 +11,7 @@ class ParserTest {
     void testParseLanguage() {
         ModularLanguage model =
                 LanguageParser.parseLanguage(
-                        "src/test/resources/featureFileSample", InputKind.FEATURE_FILE);
+                        "src/test/resources/projects/featureFileSample", InputKind.FEATURE_FILE);
         assertThat(model).isNotNull();
     }
 
@@ -19,7 +19,7 @@ class ParserTest {
     void testParseSimulator() {
         SimulatorModel model =
                 SimulatorParser.parseSimulator(
-                        "src/test/resources/featureFileSample", InputKind.FEATURE_FILE);
+                        "src/test/resources/projects/featureFileSample", InputKind.FEATURE_FILE);
         assertThat(model).isNotNull();
     }
 }

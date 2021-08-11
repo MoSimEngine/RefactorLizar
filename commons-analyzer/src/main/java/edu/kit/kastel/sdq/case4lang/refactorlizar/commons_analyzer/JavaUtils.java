@@ -37,7 +37,7 @@ public class JavaUtils {
     }
 
     public static boolean isSimulatorPackage(SimulatorModel model, CtPackage packag) {
-        return model.getSimulatorComponents().stream()
+        return model.getComponents().stream()
                 .map(Component::getTypes)
                 .flatMap(Set::stream)
                 .map(CtType::getPackage)
@@ -47,7 +47,7 @@ public class JavaUtils {
     }
 
     public static boolean isLanguagePackage(ModularLanguage language, CtPackage packag) {
-        return language.getLanguageComponents().stream()
+        return language.getComponents().stream()
                 .map(Component::getTypes)
                 .flatMap(Set::stream)
                 .map(CtType::getPackage)
@@ -57,13 +57,13 @@ public class JavaUtils {
     }
 
     public static boolean isSimulatorComponent(SimulatorModel model, Component simulatorComponent) {
-        return model.getSimulatorComponents().stream()
+        return model.getComponents().stream()
                 .anyMatch(candidate -> candidate.equals(simulatorComponent));
     }
 
     public static boolean isLanguageComponent(
             ModularLanguage language, Component languageComponent) {
-        return language.getLanguageComponents().stream()
+        return language.getComponents().stream()
                 .anyMatch(candidate -> candidate.equals(languageComponent));
     }
 

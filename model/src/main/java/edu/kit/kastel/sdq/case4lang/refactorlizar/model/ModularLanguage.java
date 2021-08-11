@@ -12,13 +12,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtType;
 
-public class ModularLanguage implements PrettyPrintable {
+public class ModularLanguage implements PrettyPrintable, Queryable {
 
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private Set<Component> languageComponents;
     private Lookup<String, CtType<?>> typeByQNameLookup;
 
-    public Set<Component> getLanguageComponents() {
+    public Set<Component> getComponents() {
         return languageComponents;
     }
 
