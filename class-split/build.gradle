@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
 	implementation project(':model')
+	implementation project(':commons')
 	testImplementation project(':core')
 	implementation project(':commons-refactoring')
 }

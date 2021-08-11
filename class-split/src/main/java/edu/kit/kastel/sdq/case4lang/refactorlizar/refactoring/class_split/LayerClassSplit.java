@@ -17,6 +17,7 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.refactoring.modificati
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Project;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -509,13 +510,16 @@ public class LayerClassSplit {
     }
 
     private List<CtTypeAccess<?>> getTypeAccessToSplitClass(CtFieldAccess<?> fieldAccess) {
-        return fieldAccess.getElements(new TypeFilter<>(CtTypeAccess.class)).stream()
+        // compiler has type problems
+        List<CtTypeAccess<?>> typeAccesses = new ArrayList<>();
+        fieldAccess.getElements(new TypeFilter<>(CtTypeAccess.class)).stream()
                 .filter(
                         v ->
                                 v.getAccessedType()
                                         .getQualifiedName()
                                         .equals(classToSplit.getQualifiedName()))
-                .collect(Collectors.toList());
+                .forEach(typeAccesses::add);
+        return typeAccesses;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
