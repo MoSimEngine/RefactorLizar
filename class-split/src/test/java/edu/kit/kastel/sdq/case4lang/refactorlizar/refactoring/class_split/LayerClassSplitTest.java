@@ -158,7 +158,7 @@ public class LayerClassSplitTest {
         assertThat(
                         model.getTypeWithQualifiedName("simulator.CommonsSimulatorClass")
                                 .getDeclaredExecutables())
-                .hasSize(1);
+                .hasSize(2);
     }
 
     @Test

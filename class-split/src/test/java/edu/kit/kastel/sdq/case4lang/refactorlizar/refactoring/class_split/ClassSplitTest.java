@@ -1,4 +1,5 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.refactoring.class_split;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
