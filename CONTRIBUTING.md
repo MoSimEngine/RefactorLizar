@@ -1,4 +1,4 @@
-## Pull Requeests  
+## Pull Requests  
 Each pull request title follows the format:   
 `<type>(<scope>): <subject>`  
 ### Type  
