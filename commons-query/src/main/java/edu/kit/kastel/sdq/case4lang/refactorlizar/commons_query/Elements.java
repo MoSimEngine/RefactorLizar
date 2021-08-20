@@ -1,4 +1,4 @@
-package edu.kit.kastel.sdq.case4lang.refactorlizar.commons.query;
+package edu.kit.kastel.sdq.case4lang.refactorlizar.commons_query;
 
 import java.util.List;
 import spoon.reflect.declaration.CtElement;

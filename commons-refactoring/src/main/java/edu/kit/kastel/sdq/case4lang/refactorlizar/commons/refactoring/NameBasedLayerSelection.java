@@ -2,7 +2,7 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.commons.refactoring;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.layer.Layer;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.layer.LayerArchitecture;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.query.Elements;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_query.Elements;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Project;
 import java.util.List;
 import java.util.Objects;
