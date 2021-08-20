@@ -207,10 +207,6 @@ public class LayerClassSplit {
         return Objects.equals(classToSplit, v.getDeclaringType().getTypeDeclaration());
     }
 
-    private List<CtExecutableReference<?>> getReferencedMethods(CtMethod<?> method) {
-        return method.getElements(new TypeFilter<>(CtExecutableReference.class));
-    }
-
     private CtType<?> getLowerClass(Map<Layer, CtType<?>> layerClasses, CtType<?> type) {
         for (CtType<?> layerClass : layerClasses.values()) {
             if (Types.hasSuperclass(type) && isSuperclass(type, layerClass)) {

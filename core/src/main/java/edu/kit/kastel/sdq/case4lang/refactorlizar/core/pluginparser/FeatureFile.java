@@ -3,6 +3,7 @@ package edu.kit.kastel.sdq.case4lang.refactorlizar.core.pluginparser;
 import com.google.common.flogger.FluentLogger;
 import com.google.gson.Gson;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.IMetaInformation;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -62,7 +63,8 @@ public class FeatureFile implements IMetaInformation {
             }
             Path outputPath = Paths.get(path.toString(), newPath.toString());
             createDirs(outputPath);
-            Files.write(outputPath.resolve("info.feature"), json.getBytes());
+            Files.write(
+                    outputPath.resolve("info.feature"), json.getBytes(Charset.defaultCharset()));
         } catch (Exception e) {
             logger.atWarning().withCause(e).log("Could not write to file: %s", path);
         }
@@ -79,6 +81,10 @@ public class FeatureFile implements IMetaInformation {
 
         public JsonHolder(String layerName) {
             this.Layer = layerName;
+        }
+        /** Returns the layer. */
+        public String getLayer() {
+            return Layer;
         }
     }
 }

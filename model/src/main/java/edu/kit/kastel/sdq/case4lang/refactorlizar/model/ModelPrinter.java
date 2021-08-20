@@ -12,7 +12,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.util.Comparator;
-import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * This class is used to print the model to files. It handles printing of a components and their
@@ -69,28 +69,28 @@ class ModelPrinter {
      * @throws IOException if an error occurs while cleaning the folder.
      */
     private void cleanEmptyFolders(Path path) throws IOException {
-        Files.walk(path)
-                .sorted(Comparator.reverseOrder())
-                .map(Path::toFile)
-                .filter(File::isDirectory)
-                .filter(isEmptyDirectory())
-                .forEach(File::delete);
+        try (Stream<Path> paths = Files.walk(path)) {
+            paths.sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .filter(File::isDirectory)
+                    .filter(this::isEmptyDirectory)
+                    .forEach(File::delete);
+        }
     }
 
     /**
      * Checks if a given file is an empty directory.
      *
-     * @return A predicate that checks if a given file is an empty directory.
+     * @return boolean if the given file is an empty directory.
      */
-    private Predicate<? super File> isEmptyDirectory() {
-        return directory -> {
-            try {
-                return Files.list(directory.toPath()).findFirst().isEmpty();
-            } catch (IOException e) {
-                logger.atWarning().withCause(e).log("Error while checking emptines of directory ");
-                return false;
-            }
-        };
+    private boolean isEmptyDirectory(File directory) {
+
+        try (Stream<Path> paths = Files.list(directory.toPath())) {
+            return paths.findFirst().isEmpty();
+        } catch (IOException e) {
+            logger.atWarning().withCause(e).log("Error while checking emptines of directory ");
+            return false;
+        }
     }
     /** This defines a class to find the depthest folder with a single child-folder. */
     private static final class SimpleFileVisitorExtension extends SimpleFileVisitor<Path> {
