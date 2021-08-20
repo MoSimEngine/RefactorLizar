@@ -4,16 +4,17 @@ import com.google.common.collect.Iterables;
 import com.google.common.flogger.FluentLogger;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.layer.Layer;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.layer.LayerArchitecture;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.query.Constructors;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.query.Elements;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.query.Models;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.query.Types;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.refactoring.LayerSelection;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.refactoring.NameBasedLayerSelection;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.refactoring.StructuralRefactoring;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.refactoring.creation.TypeCreation;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.refactoring.modification.Modifiers;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.refactoring.modification.Relations;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_query.Constructors;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_query.Elements;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_query.Methods;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_query.Models;
+import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_query.Types;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Component;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Project;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
@@ -173,7 +174,8 @@ public class LayerClassSplit {
                 if (unmovableMethods.contains(method)) {
                     continue;
                 }
-                List<CtExecutableReference<?>> referencedMethods = getReferencedMethods(method);
+                List<CtExecutableReference<?>> referencedMethods =
+                        Methods.getReferencedMethods(method);
                 referencedMethods.removeIf(
                         referencedMethod -> referencedMethod.getDeclaringType() == null);
                 referencedMethods.removeIf(
@@ -398,7 +400,8 @@ public class LayerClassSplit {
             changed = false;
             var methodSetCopy = new HashSet<>(methods);
             for (CtMethod<?> method : methodSetCopy) {
-                List<CtExecutableReference<?>> referencedMethods = getReferencedMethods(method);
+                List<CtExecutableReference<?>> referencedMethods =
+                        Methods.getReferencedMethods(method);
                 referencedMethods.removeIf(
                         v ->
                                 v.getDeclaringType() == null
