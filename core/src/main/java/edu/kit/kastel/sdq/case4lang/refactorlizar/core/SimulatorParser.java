@@ -24,7 +24,6 @@ import spoon.Launcher;
 import spoon.OutputType;
 import spoon.compiler.Environment;
 import spoon.reflect.CtModel;
-import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 
 /**
@@ -50,9 +49,9 @@ public class SimulatorParser {
         return parseSimulator(List.of(path), kind, ignoreTestFolder);
     }
     /**
-     * Parses the simulator from the given paths and returns a {@link SimulatorModel}.
+     * Parses the simulator from the given path and returns a {@link SimulatorModel}.
      *
-     * @param paths The paths to the simulator directories.
+     * @param path The path to the simulator directory.
      * @param kind The kind of the simulator.
      * @return a simulator model.
      */
@@ -78,7 +77,7 @@ public class SimulatorParser {
                 throw new IllegalArgumentException(String.format("Kind %s not implemented", kind));
         }
     }
-    // TODO: write doc
+
     public static SimulatorModel parseSimulator(
             Iterable<Path> simulatorPaths,
             Iterable<Path> languagePaths,
@@ -207,7 +206,6 @@ public class SimulatorParser {
             List<Path> srcFolders,
             Function<Path, Optional<Path>> findMetaInformationFile) {
         Set<CtType<?>> typeCache = new HashSet<>();
-        Set<CtPackage> packageCache = new HashSet<>();
         Set<Component> components = new HashSet<>();
         for (Path path : srcFolders) {
             IMetaInformation metaFile = null;
@@ -236,7 +234,6 @@ public class SimulatorParser {
                     .forEach(typesOfComponent::add);
 
             typeCache.addAll(model.getAllTypes());
-            packageCache.addAll(model.getAllPackages());
             components.add(new Component(typesOfComponent, metaFile));
         }
         return components;

@@ -24,7 +24,6 @@ import spoon.Launcher;
 import spoon.OutputType;
 import spoon.compiler.Environment;
 import spoon.reflect.CtModel;
-import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 
 /**
@@ -155,7 +154,6 @@ public class LanguageParser {
             List<Path> srcFolders,
             Function<Path, Optional<Path>> findMetaInformationFile) {
         Set<CtType<?>> typeCache = new HashSet<>();
-        Set<CtPackage> packageCache = new HashSet<>();
         Set<Component> components = new HashSet<>();
         for (Path path : srcFolders) {
             IMetaInformation metaFile = null;
@@ -185,7 +183,6 @@ public class LanguageParser {
                     .forEach(typesOfComponent::add);
 
             typeCache.addAll(model.getAllTypes());
-            packageCache.addAll(model.getAllPackages());
             components.add(new Component(typesOfComponent, metaFile));
         }
         return components;

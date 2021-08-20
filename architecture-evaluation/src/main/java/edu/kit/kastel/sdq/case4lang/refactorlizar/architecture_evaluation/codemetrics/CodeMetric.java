@@ -8,7 +8,7 @@ public abstract class CodeMetric {
         this.value = value;
     }
 
-    /** @return the value */
+    /** Returns the value */
     public double getValue() {
         return value;
     }

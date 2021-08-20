@@ -17,6 +17,7 @@ public class SimulatorModel implements PrettyPrintable, Queryable {
     private Set<Component> simulatorComponents;
     private Lookup<String, CtType<?>> typeByQNameLookup;
 
+    @Override
     public Set<Component> getComponents() {
         return simulatorComponents;
     }
