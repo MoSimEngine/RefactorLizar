@@ -1,0 +1,6 @@
+@startuml ClassSplit 2
+(*) -> "create class C1,C2"
+"create class C1,C2" -> "move typemembers to C1 and C2"
+"move typemembers to C1 and C2" -> "adjust references in L1, L2"
+"adjust references in L1, L2" -> (*)
+@enduml

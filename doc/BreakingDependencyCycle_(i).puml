@@ -1,0 +1,9 @@
+@startuml breakingDependencyCycle
+(*) -> "create class E"
+"create class E" -> "create interface C1_new from C1"
+"create interface C1_new from C1" -> "create class C2"
+"create class C2" -down-> "set E implementing C1_new"
+"set E implementing C1_new" -l-> "move typemembers from C1 to C1_new"
+"move typemembers from C1 to C1_new" -l-> "delete C1"
+"delete C1" -l-> (*)
+@enduml

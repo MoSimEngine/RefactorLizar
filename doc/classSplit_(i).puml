@@ -1,0 +1,18 @@
+@startuml ClassSplit 1
+skinparam linetype ortho
+(*) -> "create core class"
+"create core class" -> "create extension class"
+"create extension class" -> "check all typemembers"
+
+if "member correct class?" then
+ --> [false] move typemember to lower class
+  if "all typemembers checked?" then
+  -> [true] adjust References
+  -> (*)
+  else
+  --> [false] "check all typemembers"
+endif
+ else
+ -> [true] "check all typemembers"
+endif
+@enduml

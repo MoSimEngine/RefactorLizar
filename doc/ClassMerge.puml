@@ -1,0 +1,7 @@
+@startuml ClassMerge
+(*) -> "create class C"
+"create class C" -> "move typemembers from C1 to C"
+"move typemembers from C1 to C" -> "move typemembers from C2 to C"
+"move typemembers from C2 to C" -> "adjust references"
+"adjust references" -> (*)
+@enduml

@@ -47,6 +47,7 @@ import spoon.reflect.code.CtThrow;
 import spoon.reflect.code.CtTry;
 import spoon.reflect.code.CtTryWithResource;
 import spoon.reflect.code.CtTypeAccess;
+import spoon.reflect.code.CtTypePattern;
 import spoon.reflect.code.CtUnaryOperator;
 import spoon.reflect.code.CtVariableRead;
 import spoon.reflect.code.CtVariableWrite;
@@ -532,5 +533,11 @@ public class ElementVisitor implements CtVisitor {
     /** Set the result to the given boolean value */
     public void setResult(boolean result) {
         this.result = result;
+    }
+
+    @Override
+    public void visitCtTypePattern(CtTypePattern pattern) {
+        // TODO Auto-generated method stub
+        
     }
 }

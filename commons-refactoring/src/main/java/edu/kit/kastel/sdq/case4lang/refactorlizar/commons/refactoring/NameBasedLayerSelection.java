@@ -40,4 +40,11 @@ public class NameBasedLayerSelection implements LayerSelection {
     private boolean containsLayerName(Layer layer, CtTypeReference<?> reference) {
         return reference.getQualifiedName().contains(layer.getName() + ".");
     }
+
+    @Override
+    public Iterable<Layer> getUsedLayers(Project project, CtElement element,
+            LayerArchitecture layers) {
+
+                return null;
+    }
 }

@@ -64,25 +64,31 @@ public class LayerClassSplit {
         unmovableMethods = new HashSet<>();
         unmovableFields = new HashSet<>();
     }
+    public LayerClassSplit(LayerArchitecture layers, CtType<?> type, LayerSelection selection) {
+        this(layers,type);
+        this.selection = selection;
+    }
 
     private Map<Layer, CtType<?>> createLayerClasses(CtType<?> type) {
         Set<CtTypeReference<?>> referencedTypes = type.getReferencedTypes();
         Map<Layer, CtType<?>> layerClasses = new HashMap<>();
         CtType<?> lastClass = createClassWithLayerName(DEFAULT_LAYER_NAME);
         Modifiers.copyModifiers(type, lastClass);
+        lastClass.removeModifier(ModifierKind.FINAL);
         Modifiers.copyGenerics(type, lastClass);
-        Relations.setInheritance(Modifiers.createGenericReference(type), lastClass);
+        if(type.getSuperclass() != null) {
+            Relations.setInheritance(Modifiers.createGenericReference(type), lastClass);
+        }
         Relations.setSuperInterfaces(lastClass, type.getSuperInterfaces());
         layerClasses.put(COMMONS_LAYER, lastClass);
-        for (Layer layer : layers.getLayers()) {
-            if (checkLayerExistence(referencedTypes, layer)) {
+        for(Layer layer : selection.getUsedLayers(project, type, layers)) {
                 CtClass<?> layerClass = createClassWithLayerName(layer.getName());
                 Modifiers.copyGenerics(lastClass, layerClass);
                 Modifiers.copyModifiers(type, layerClass);
+                layerClass.removeModifier(ModifierKind.FINAL);
                 Relations.setInheritance(Modifiers.createGenericReference(lastClass), layerClass);
                 lastClass = layerClass;
                 layerClasses.put(layer, layerClass);
-            }
         }
         return layerClasses;
     }
@@ -96,13 +102,7 @@ public class LayerClassSplit {
         return StringUtils.capitalize(layerName) + classToSplit.getSimpleName();
     }
 
-    private boolean checkLayerExistence(Set<CtTypeReference<?>> referencedTypes, Layer layer) {
-        return referencedTypes.stream().anyMatch(reference -> containsLayerName(layer, reference));
-    }
 
-    private boolean containsLayerName(Layer layer, CtTypeReference<?> reference) {
-        return reference.getQualifiedName().contains(layer.getName() + ".");
-    }
 
     private boolean hasAllReferencedMethodsAndFields(
             List<CtExecutableReference<?>> referencedMethods,
@@ -122,6 +122,9 @@ public class LayerClassSplit {
 
     private boolean isReferencedInLayerClass(
             Collection<CtType<?>> layerClasses, CtFieldReference<?> field) {
+        if(field.getDeclaringType() == null) {
+            return false;
+        }
         return layerClasses.contains(field.getDeclaringType().getTypeDeclaration());
     }
 
@@ -209,7 +212,7 @@ public class LayerClassSplit {
 
     private CtType<?> getLowerClass(Map<Layer, CtType<?>> layerClasses, CtType<?> type) {
         for (CtType<?> layerClass : layerClasses.values()) {
-            if (Types.hasSuperclass(type) && isSuperclass(type, layerClass)) {
+            if (Types.hasSuperclass(layerClass) && isSuperclass(type, layerClass)) {
                 return layerClass;
             }
         }
@@ -217,8 +220,8 @@ public class LayerClassSplit {
     }
 
     private boolean isSuperclass(CtType<?> parent, CtType<?> child) {
-        return child.getSuperclass()
-                .getQualifiedName()
+        return String.valueOf(child.getSuperclass()
+                .getQualifiedName())
                 .equals(parent.getReference().getQualifiedName());
     }
 

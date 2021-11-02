@@ -1,0 +1,5 @@
+@startuml Inheritance
+(*) -> "set S as superclass of A"
+"set S as superclass of A" -> "remove superclass of A"
+"remove superclass of A" -> (*)
+@enduml

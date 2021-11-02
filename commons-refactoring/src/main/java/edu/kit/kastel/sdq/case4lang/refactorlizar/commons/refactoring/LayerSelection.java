@@ -18,4 +18,6 @@ public interface LayerSelection {
      */
     Layer getLayerForElement(
             Project project, CtElement element, LayerArchitecture layers, Layer defaultLayer);
+
+    Iterable<Layer> getUsedLayers(Project project, CtElement element, LayerArchitecture layers);
 }
