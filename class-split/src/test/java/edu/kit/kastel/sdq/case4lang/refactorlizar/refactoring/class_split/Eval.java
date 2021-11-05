@@ -24,11 +24,12 @@ public class Eval {
     String langPath = "F:/OneDrive - bwedu/Uni zeugs/Hiwi/Software/SmartGrid/SmartGridLang/metamodel/refactored";
     String simulatorPath = "F:/OneDrive - bwedu/Uni zeugs/Hiwi/Software/eval/smartgrid-angepasst/Smart-Grid-ICT-Resilience-Framework/bundles";
     List<String> classQNameList = List.of(
-      "smartgrid.attackersimulation.ViralHacker",
-      "smartgrid.attackersimulation.LocalHacker"
+     "smartgrid.attackersimulation.ViralHacker",
+     "smartgrid.attackersimulation.LocalHacker"
+
     );
-    String scenarioNumber = "10";
-    LayerArchitecture architecture = new LayerArchitecture("paradigm,domain");
+    String scenarioNumber = "09";
+    LayerArchitecture architecture = new LayerArchitecture("paradigm,domain,analysis");
 
     Project project = buildProject(List.of(langPath), List.of(simulatorPath));
     SimulatorModel model = project.getSimulatorModel();
@@ -36,6 +37,10 @@ public class Eval {
     for(String classQName : classQNameList) {
 
       CtType<?> startType = model.getTypeWithQualifiedName(classQName);
+      if(startType == null) {
+        System.out.println("Type not found: " + classQName);
+        continue;
+      }
     LayerClassSplit refactoring = new LayerClassSplit(architecture, startType, new Selection());
     refactoring.createRefactoring().refactor(project);
     }
@@ -105,6 +110,12 @@ public class Eval {
     }
     if(reference.getQualifiedName().contains("base.")) {
       return "paradigm." + reference.getQualifiedName();
+    }
+    if(reference.getQualifiedName().contains("input.")) {
+      return "analysis." + reference.getQualifiedName();
+    }
+    if(reference.getQualifiedName().contains("output.")) {
+      return "analysis." + reference.getQualifiedName();
     }
     return "";
   }
