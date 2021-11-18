@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.layer.Layer;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.layer.LayerArchitecture;
@@ -14,6 +15,8 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.core.InputKind;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.core.ProjectParser;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Project;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.SimulatorModel;
+import spoon.Launcher;
+import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.reference.CtFieldReference;
@@ -24,25 +27,28 @@ public class Eval {
     String langPath = "F:/OneDrive - bwedu/Uni zeugs/Hiwi/Software/SmartGrid/SmartGridLang/metamodel/refactored";
     String simulatorPath = "F:/OneDrive - bwedu/Uni zeugs/Hiwi/Software/eval/smartgrid-angepasst/Smart-Grid-ICT-Resilience-Framework/bundles";
     List<String> classQNameList = List.of(
-     "smartgrid.attackersimulation.ViralHacker",
-     "smartgrid.attackersimulation.LocalHacker"
-
+     "smartgrid.attackersimulation.strategies.AttackStrategies"
     );
-    String scenarioNumber = "09";
+    String scenarioNumber = "X";
     LayerArchitecture architecture = new LayerArchitecture("paradigm,domain,analysis");
 
     Project project = buildProject(List.of(langPath), List.of(simulatorPath));
     SimulatorModel model = project.getSimulatorModel();
-    //for(String classQName : model.getComponents().stream().map(v -> v.getTypes()).flatMap(Set::stream).map(v -> v.getQualifiedName()).collect(Collectors.toList())) {
-    for(String classQName : classQNameList) {
-
+    for(String classQName : model.getComponents().stream().map(v -> v.getTypes()).flatMap(Set::stream).map(v -> v.getQualifiedName()).collect(Collectors.toList())) {
+    // for(String classQName : classQNameList) {
       CtType<?> startType = model.getTypeWithQualifiedName(classQName);
       if(startType == null) {
         System.out.println("Type not found: " + classQName);
         continue;
       }
     LayerClassSplit refactoring = new LayerClassSplit(architecture, startType, new Selection());
-    refactoring.createRefactoring().refactor(project);
+    try {
+      refactoring.createRefactoring().refactor(project);
+    } catch(Exception e) {
+      System.out.println("Refactoring failed: " + e.getMessage());
+      continue;
+    }
+    
     }
     project.getSimulatorModel().prettyprint(Path.of("F:/OneDrive - bwedu/Uni zeugs/Hiwi/Software/eval/smartgrid-refactored/scenario"+scenarioNumber)); 
   }
