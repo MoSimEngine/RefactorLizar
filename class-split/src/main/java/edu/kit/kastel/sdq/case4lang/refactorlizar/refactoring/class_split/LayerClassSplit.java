@@ -354,7 +354,7 @@ public class LayerClassSplit {
         try {
 
             if (Types.hasSuperclass(type)) {
-                var methodsOfSuperclass = type.getSuperclass().getTypeDeclaration().getAllMethods();
+                var methodsOfSuperclass = type.getSuperclass().getTypeDeclaration().getMethods();
                 for (CtMethod<?> superClassMethod : methodsOfSuperclass) {
                     if (superClassMethod.isAbstract()) {
                         Iterables.tryFind(methodsOfType, v -> v.isOverriding(superClassMethod))
@@ -573,7 +573,7 @@ public class LayerClassSplit {
             moveInnerTypes(layerClasses);
             adjustStaticVariableAccess(layerClasses, model);
             adjustMethods(layerClasses);
-            removeEmptyTypes(layerClasses);
+            // removeEmptyTypes(layerClasses);
             adjustRecursiveGenerics(layerClasses);
             adjustTypeReferences(model, layerClasses);
             swapClasses(Models.getComponent(model, classToSplit).get(), layerClasses);

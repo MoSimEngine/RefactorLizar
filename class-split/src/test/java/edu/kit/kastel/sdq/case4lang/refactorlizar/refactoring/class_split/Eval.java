@@ -24,24 +24,24 @@ import spoon.reflect.reference.CtTypeReference;
 public class Eval {
   @Test
   public void main() {
-    String langPath = "F:/OneDrive - bwedu/Uni zeugs/Hiwi/Software/SmartGrid/SmartGridLang/metamodel/refactored";
-    String simulatorPath = "F:/OneDrive - bwedu/Uni zeugs/Hiwi/Software/eval/smartgrid-angepasst/Smart-Grid-ICT-Resilience-Framework/bundles";
+    String langPath = "F:/OneDrive - bwedu/Uni zeugs/Hiwi/Software/mKAMP-eval-scenarios/language_modularized/kamp4aps";
+    String simulatorPath = "F:/OneDrive - bwedu/Uni zeugs/Hiwi/Software/mKAMP-eval-scenarios/scenario01/before/src";
     List<String> classQNameList = List.of(
-     "smartgrid.attackersimulation.strategies.AttackStrategies"
+     "edu.kit.ipd.sdq.kamp4aps.core.scenarios.SwitchChanges"
     );
-    String scenarioNumber = "X";
-    LayerArchitecture architecture = new LayerArchitecture("paradigm,domain,analysis");
+    String scenarioNumber = "X3";
+    LayerArchitecture architecture = new LayerArchitecture("paradigm,domain,quality,analysis");
 
     Project project = buildProject(List.of(langPath), List.of(simulatorPath));
     SimulatorModel model = project.getSimulatorModel();
-    for(String classQName : model.getComponents().stream().map(v -> v.getTypes()).flatMap(Set::stream).map(v -> v.getQualifiedName()).collect(Collectors.toList())) {
-    // for(String classQName : classQNameList) {
+    // for(String classQName : model.getComponents().stream().map(v -> v.getTypes()).flatMap(Set::stream).map(v -> v.getQualifiedName()).collect(Collectors.toList())) {
+    for(String classQName : classQNameList) {
       CtType<?> startType = model.getTypeWithQualifiedName(classQName);
       if(startType == null) {
         System.out.println("Type not found: " + classQName);
         continue;
       }
-    LayerClassSplit refactoring = new LayerClassSplit(architecture, startType, new Selection());
+    LayerClassSplit refactoring = new LayerClassSplit(architecture, startType);
     try {
       refactoring.createRefactoring().refactor(project);
     } catch(Exception e) {

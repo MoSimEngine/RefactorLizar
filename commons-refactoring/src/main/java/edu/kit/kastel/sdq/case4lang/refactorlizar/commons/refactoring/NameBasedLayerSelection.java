@@ -1,12 +1,13 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.commons.refactoring;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.layer.Layer;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons.layer.LayerArchitecture;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.commons_query.Elements;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.model.Project;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.reference.CtFieldReference;
 import spoon.reflect.reference.CtTypeReference;
@@ -44,7 +45,17 @@ public class NameBasedLayerSelection implements LayerSelection {
     @Override
     public Iterable<Layer> getUsedLayers(Project project, CtElement element,
             LayerArchitecture layers) {
-
-                return null;
+                Set<CtTypeReference<?>> referencedTypes = element.getReferencedTypes();
+        List<CtFieldReference<?>> fieldReferences = Elements.getReferencedFields(element);
+        fieldReferences.forEach(v -> referencedTypes.addAll(v.getReferencedTypes()));
+        fieldReferences.forEach(v -> referencedTypes.add(v.getType()));
+        referencedTypes.removeIf(Objects::isNull);
+        Set<Layer> usedLayers = new HashSet<>();
+        for (Layer layer : layers.getLayers()) {
+            if (checkLayerExistence(referencedTypes, layer)) {
+                usedLayers.add(layer);
+            }
+        }
+        return usedLayers;
     }
 }
