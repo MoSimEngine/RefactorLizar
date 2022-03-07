@@ -1,11 +1,11 @@
 package edu.kit.kastel.sdq.case4lang.refactorlizar.commons;
 /**
- * This defines an immutable settingsentry. An settingsentry is a value with 2 flags, mandatory and
- * defaultvalue flag.
+ * This defines an immutable settings entry. An settings entry is a value with 2 flags: mandatory and
+ * default value flag.
  *
  * <ul>
  *   <li>mandatory: a value must be set
- *   <li>defaultvalue: the current value is the starting value
+ *   <li>default value: the current value is the starting value
  * </ul>
  */
 public interface SettingsEntry {
