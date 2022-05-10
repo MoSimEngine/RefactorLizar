@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import spoon.reflect.declaration.CtMethod;
+import spoon.reflect.declaration.CtParameter;
 import spoon.reflect.declaration.CtType;
 
 public class PrimitiveObession extends AbstractAnalyzer {
@@ -29,25 +30,28 @@ public class PrimitiveObession extends AbstractAnalyzer {
                         .collect(Collectors.toSet());
         for (CtType<?> ctType : types) {
             for (CtMethod<?> method : ctType.getMethods()) {
-                if (method.getParameters().stream()
-                                .filter(
-                                        v ->
-                                                v.getType()
-                                                                .equals(
-                                                                        v.getFactory()
-                                                                                .Type()
-                                                                                .stringType())
-                                                        || v.getType().isPrimitive())
-                                .count()
-                        > 1) {
+                if (hasPrimitiveParameter(method)) {
                     methods.add(method);
                 }
             }
         }
-        System.out.println(methods.size());
-        for (CtMethod<?> method : methods) {
-            System.out.println(method.getSignature());
+        String title = String.format("%s methods with primitive parameters found", methods.size());
+        StringBuilder description = new StringBuilder();
+        for (CtMethod<?> ctMethod : methods) {
+            description.append(
+                    String.format(
+                            "Method %s from type %s has primitive parameters",
+                            ctMethod.getSignature(),
+                            ctMethod.getDeclaringType().getQualifiedName()));
         }
-        return null;
+        return new Report(title, description.toString(), methods.size() > 0);
+    }
+
+    private boolean hasPrimitiveParameter(CtMethod<?> method) {
+        return method.getParameters().stream().filter(this::isPrimitiveType).count() > 1;
+    }
+
+    private boolean isPrimitiveType(CtParameter<?> v) {
+        return v.getType().equals(v.getFactory().Type().stringType()) || v.getType().isPrimitive();
     }
 }

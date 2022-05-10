@@ -31,10 +31,10 @@ public class DuplicateAbstraction extends AbstractAnalyzer {
         for (CtType<?> origin : types) {
             for (CtType<?> target : types) {
                 for (CtMethod<?> method : origin.getMethods()) {
-                    if (target.getMethods().contains(method) && !origin.equals(target)) {
-                        if (method.getBody() != null && !method.getBody().isImplicit()) {
-                            clones.add(method);
-                        }
+                    if (target.getMethods().contains(method)
+                            && isSameMethod(origin, target)
+                            && isConcreteMethod(method)) {
+                        clones.add(method);
                     }
                 }
             }
@@ -49,5 +49,13 @@ public class DuplicateAbstraction extends AbstractAnalyzer {
                             ctMethod.getDeclaringType().getQualifiedName()));
         }
         return new Report(title, description.toString(), true);
+    }
+
+    private boolean isSameMethod(CtType<?> origin, CtType<?> target) {
+        return !origin.equals(target);
+    }
+
+    private boolean isConcreteMethod(CtMethod<?> method) {
+        return method.getBody() != null && !method.getBody().isImplicit();
     }
 }

@@ -27,10 +27,7 @@ public class LanguageBlob extends AbstractAnalyzer {
     @Override
     protected Report fullAnalysis(
             ModularLanguage language, SimulatorModel simulatorModel, Settings settings) {
-        Set<CtType<?>> types =
-                simulatorModel.getComponents().stream()
-                        .flatMap(v -> v.getTypes().stream())
-                        .collect(Collectors.toSet());
+        Set<CtType<?>> types = getAllTypes(simulatorModel);
         List<Pair<CtType<?>, Map<Component, Set<CtTypeReference<?>>>>> pairs = new ArrayList<>();
         for (CtType<?> ctType : types) {
             Set<CtTypeReference<?>> references = new HashSet<>(ctType.getReferencedTypes());
@@ -54,6 +51,26 @@ public class LanguageBlob extends AbstractAnalyzer {
                 pairs.add(Pair.of(ctType, map));
             }
         }
-        return null;
+        String title = String.format("%s language blobs found", pairs.size());
+        StringBuilder sb = new StringBuilder();
+        for (Pair<CtType<?>, Map<Component, Set<CtTypeReference<?>>>> pair : pairs) {
+            sb.append(
+                    String.format(
+                            "Type %s produces a language blob%n",
+                            pair.getLeft().getQualifiedName()));
+            sb.append(
+                    String.format(
+                            "\t%s%n",
+                            pair.getRight().keySet().stream()
+                                    .map(Component::getName)
+                                    .collect(Collectors.joining(", "))));
+        }
+        return new Report(title, sb.toString(), pairs.size() > 0);
+    }
+
+    private Set<CtType<?>> getAllTypes(SimulatorModel simulatorModel) {
+        return simulatorModel.getComponents().stream()
+                .flatMap(v -> v.getTypes().stream())
+                .collect(Collectors.toSet());
     }
 }

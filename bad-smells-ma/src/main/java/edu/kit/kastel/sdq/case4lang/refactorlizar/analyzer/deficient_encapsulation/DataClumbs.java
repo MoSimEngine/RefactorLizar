@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,7 +38,7 @@ public class DataClumbs extends AbstractAnalyzer {
     @Override
     protected Report fullAnalysis(
             ModularLanguage language, SimulatorModel simulatorModel, Settings settings) {
-        HashMap<List<CtTypeReference<?>>, Integer> map = new HashMap<>();
+        Map<List<CtTypeReference<?>>, Integer> map = new HashMap<>();
         Set<CtType<?>> types = getAllTypes(simulatorModel);
         for (CtType<?> ctType : types) {
             for (CtMethod<?> method : ctType.getMethods()) {
@@ -48,11 +49,9 @@ public class DataClumbs extends AbstractAnalyzer {
                 // unwanted pairs like (a,a) and (b,b) are removed
                 tuples.removeIf(v -> v.get(0).equals(v.get(1)));
                 for (List<CtTypeReference<?>> tuple : tuples) {
-                    new ArrayList<>(tuple)
-                            .sort(
-                                    ((o1, o2) ->
-                                            o1.getQualifiedName()
-                                                    .compareTo(o2.getQualifiedName())));
+                    tuple = new ArrayList<>(tuple);
+                    tuple.sort(
+                            ((o1, o2) -> o1.getQualifiedName().compareTo(o2.getQualifiedName())));
                     if (map.containsKey(tuple)) {
                         map.put(tuple, map.get(tuple) + 1);
                     } else {
@@ -66,26 +65,47 @@ public class DataClumbs extends AbstractAnalyzer {
         map.keySet()
                 .removeIf(
                         v ->
-                                !(language.getTypeWithQualifiedName(v.get(0).getQualifiedName())
-                                                != null
-                                        || language.getTypeWithQualifiedName(
-                                                        v.get(1).getQualifiedName())
-                                                != null));
-        var result =
+                                !(isLanguageType(language, v.get(0).getQualifiedName())
+                                        || isLanguageType(language, v.get(1).getQualifiedName())));
+        List<Entry<List<CtTypeReference<?>>, Integer>> result =
                 map.entrySet().stream()
                         .sorted((o1, o2) -> o2.getValue().compareTo(o1.getValue()))
                         .limit(20)
                         .collect(Collectors.toList());
+
+        StringBuilder sb = new StringBuilder();
         for (Entry<List<CtTypeReference<?>>, Integer> entry : result) {
-            System.out.println(
-                    entry.getKey().get(0).getQualifiedName()
+            // resugar the report to be more readable
+            for (CtType<?> type : types) {
+                for (CtMethod<?> method : type.getMethods()) {
+                    if (method.getParameters().stream()
+                            .map(CtTypedElement::getType)
+                            .collect(Collectors.toSet())
+                            .containsAll(entry.getKey())) {
+                        sb.append(
+                                        method.getDeclaringType().getQualifiedName()
+                                                + "#"
+                                                + method.getSimpleName())
+                                .append("\n");
+                    }
+                }
+            }
+            sb.append("\n");
+            sb.append(
+                    entry.getKey().stream()
+                                    .map(CtTypeReference::getQualifiedName)
+                                    .collect(Collectors.joining(", "))
                             + " "
-                            + entry.getKey().get(1).getQualifiedName()
-                            + " "
-                            + entry.getValue());
-            new Repair().repair(language, simulatorModel, entry.getKey());
+                            + entry.getValue()
+                            + "\n");
+            sb.append("\n");
+            sb.append("\n");
         }
-        return null;
+        return new Report(getName(), sb.toString(), sb.length() > 0);
+    }
+
+    private boolean isLanguageType(ModularLanguage language, String fqName) {
+        return language.getTypeWithQualifiedName(fqName) != null;
     }
 
     private ArrayList<List<CtTypeReference<?>>> createTuples(CtMethod<?> method) {

@@ -13,16 +13,6 @@ import spoon.reflect.visitor.filter.TypeFilter;
 public class SwitchStatements extends AbstractAnalyzer {
 
     @Override
-    public String getDescription() {
-        return "null";
-    }
-
-    @Override
-    public String getName() {
-        return "null";
-    }
-
-    @Override
     protected void checkSettings(Settings settings) {}
 
     @Override
@@ -35,8 +25,15 @@ public class SwitchStatements extends AbstractAnalyzer {
                         .filter(m -> !m.getSelector().getReferencedTypes().isEmpty())
                         .filter(m -> extracted(language, m))
                         .collect(Collectors.toList());
-        System.out.println(switches.size());
-        return null;
+        StringBuilder sb = new StringBuilder();
+        int counter = switches.size();
+        for (CtSwitch<?> ctSwitch : switches) {
+            sb.append(ctSwitch.getPosition().getCompilationUnit().getMainType().getQualifiedName())
+                    .append(" -> ")
+                    .append(ctSwitch.getSelector())
+                    .append("\n");
+        }
+        return new Report("SwitchStatements", sb.toString(), counter > 0);
     }
 
     private boolean extracted(ModularLanguage language, CtSwitch<?> m) {

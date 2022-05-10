@@ -50,7 +50,6 @@ public class SpeculativeGenerality extends AbstractAnalyzer {
                             ctType.getElements(new FieldAccessFilter(field.getReference()));
                     if (elements.isEmpty()) {
                         removable.add(field);
-                        System.out.println(ctType.getQualifiedName() + "#" + field.getSimpleName());
                     }
                 }
             }
@@ -63,13 +62,16 @@ public class SpeculativeGenerality extends AbstractAnalyzer {
                                 && state.getMethod().equals(method)
                                 && state.checkCallState()) {
                             removable.add(method);
-                            System.out.println(
-                                    ctType.getQualifiedName() + "#" + method.getSimpleName());
                         }
                     }
                 }
             }
         }
-        return null;
+        String title = String.format("%s unused elements found", removable.size());
+        StringBuilder description = new StringBuilder();
+        for (CtElement ctElement : removable) {
+            description.append(ctElement.getPath() + "\n");
+        }
+        return new Report(title, description.toString(), !removable.isEmpty());
     }
 }

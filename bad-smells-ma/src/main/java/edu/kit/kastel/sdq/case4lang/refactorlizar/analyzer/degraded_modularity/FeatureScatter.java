@@ -29,7 +29,7 @@ public class FeatureScatter extends AbstractAnalyzer {
         TypeGraphs.removeEdgesWithoutLanguageTarget(language, graph);
         TypeGraphs.removeEdgesWithSimulatorAsTarget(graph, simulatorModel);
         removeNonScatter(graph, type -> JavaUtils.isLanguageType(language, type));
-        return null;
+        return TypeLevelReportGeneration.generateReport(graph, simulatorModel, language);
     }
 
     private <T, R> boolean hasOnePredecessor(MutableNetwork<T, Edge<T, R>> graph, T type) {
