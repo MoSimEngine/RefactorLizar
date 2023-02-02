@@ -45,7 +45,7 @@ spotless {
 		target "**/*.java"
 		targetExclude "**/test/resources/**", "**/build/**"
 		trimTrailingWhitespace()
-		removeUnusedImports()
+		// removeUnusedImports()
 		googleJavaFormat().aosp()
 	}
 	groovy {
