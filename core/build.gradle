@@ -9,7 +9,7 @@ plugins {
 dependencies {
 	implementation project(':model')
 	implementation project(':analyzer-api')
-	implementation 'com.google.code.gson:gson:2.8.8'
+	implementation 'com.google.code.gson:gson:2.10.1'
 }
 application {
 	mainClassName 'edu.kit.kastel.sdq.case4lang.refactorlizar.core.RefactorLizar'
