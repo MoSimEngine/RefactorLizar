@@ -3,7 +3,7 @@
 plugins {
 	id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions'
 	id "application"
-	id 'org.beryx.runtime' version '1.12.5'
+	id 'org.beryx.runtime' version '1.13.1'
 }
 
 dependencies {
