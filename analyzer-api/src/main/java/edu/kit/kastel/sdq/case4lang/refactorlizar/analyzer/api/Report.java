@@ -16,8 +16,8 @@ public class Report {
     private Map<String, Set<String>> featureScatterings = Collections.emptyMap();
     private Map<String, Set<String>> languageBlobs = Collections.emptyMap();
 
-    public Report(String text, String description, boolean smellFound) {
-        this.text = text;
+    public Report(String title, String description, boolean smellFound) {
+        this.text = title;
         this.description = description;
         solutions = Collections.emptyList();
         this.smellFound = smellFound;

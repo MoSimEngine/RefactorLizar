@@ -1,0 +1,21 @@
+
+
+plugins {
+	id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions'
+}
+dependencies {
+	implementation project(":"+project.commons)
+	implementation project(":commons-analyzer")
+	implementation project(":core")
+}
+allprojects {
+	repositories {
+		maven { url 'https://jitpack.io' }
+	}
+}
+description = 'badsmells-ma'
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(11)
+	}
+}

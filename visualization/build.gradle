@@ -1,0 +1,37 @@
+
+
+plugins {
+	id 'edu.kit.kastel.sdq.case4lang.refactorlizar.java-conventions'
+	id 'org.openjfx.javafxplugin' version '0.0.12'
+}
+dependencies {
+	implementation project(":"+project.commons)
+	implementation 'org.jgrapht:jgrapht-core:1.5.1'
+	implementation("org.jgrapht:jgrapht-ext:+")
+	implementation("org.jgrapht:jgrapht-guava:+")
+	implementation 'org.jgrapht:jgrapht-io:1.5.1'
+	implementation project(":commons-analyzer")
+	implementation project(":core")
+	implementation "org.graphstream:gs-core:+"
+	implementation("org.graphstream:gs-ui-javafx:+")
+	implementation 'org.neo4j:neo4j:+'
+	implementation 'org.neo4j.driver:neo4j-java-driver:+'
+}
+allprojects {
+	repositories {
+		maven { url 'https://jitpack.io' }
+	}
+}
+description = 'visualization'
+javafx {
+	modules = [
+		'javafx.controls',
+		'javafx.fxml',
+		"javafx.graphics"
+	]
+}
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(11)
+	}
+}

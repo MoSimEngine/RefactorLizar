@@ -16,4 +16,14 @@ public abstract class AbstractAnalyzer implements IAnalyzer {
 
     protected abstract Report fullAnalysis(
             ModularLanguage language, SimulatorModel simulatorModel, Settings settings);
+
+    @Override
+    public String getDescription() {
+        return "MISSING";
+    }
+
+    @Override
+    public String getName() {
+        return "MISSING";
+    }
 }
